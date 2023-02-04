@@ -4,7 +4,11 @@
   roles:
     - k8s
 
-- hosts: database_nodes
+- hosts: k8s_control_plane
   roles:
-    - common
-    - database
+    - k8s
+
+- hosts: k8s_nodes
+  roles:
+    - k8s
+
