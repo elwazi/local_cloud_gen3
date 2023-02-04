@@ -7,7 +7,8 @@ resource "local_file" "hosts_cfg" {
   content = templatefile("templates/inventory.tpl",
     {
       k8s_node_float_ip = openstack_networking_floatingip_v2.k8s_float_ip.address
-      k8s_nodes = openstack_compute_instance_v2.k8s_nodes.*.access_ip_v4
+      k8s_nodes = [for node in openstack_compute_instance_v2.k8s_nodes.*: node ]
+      k8s_control_plane = openstack_compute_instance_v2.k8s_control_plane
       admin_user = var.admin_user
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password
