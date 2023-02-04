@@ -6,9 +6,11 @@
 
 - hosts: k8s_control_plane
   roles:
+    - common
     - k8s
 
 - hosts: k8s_nodes
   roles:
+    - common
     - k8s
 
