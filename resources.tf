@@ -4,7 +4,7 @@ resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
 }
 
 resource "local_file" "hosts_cfg" {
-  content = templatefile("templates/hosts.tpl",
+  content = templatefile("templates/inventory.tpl",
     {
       k8s_node_float_ip = openstack_networking_floatingip_v2.k8s_float_ip.address
       k8s_nodes = openstack_compute_instance_v2.k8s_nodes.*.access_ip_v4
