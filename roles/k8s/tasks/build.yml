@@ -1,0 +1,75 @@
+---
+# tasks file for building docker image
+- name: Initialise docker image
+  become: yes
+  tags: never, build
+  block:
+    - name: Upgrade all existing packages
+      apt:
+        upgrade: full
+        update-cache: yes
+      register: apt_res
+      retries: 3
+      delay: 15
+      until: apt_res is success
+
+    - name: Install required/commonly used packages
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        update-cache: yes
+
+    - name: Add k8s signing key from https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Get DEB architecture
+      tags: build
+      shell: dpkg --print-architecture
+      register: deb_architecture
+
+    - name: Get lsb release
+      tags: build
+      shell: lsb_release -cs
+      register: lsb_release
+
+# Note below: the rescue block is a workaround as focal doesn't have an apt repo yet
+    - name: Add k8s repository
+      block:
+        - name: "Add k8s repository deb [arch={{ deb_architecture.stdout }}] https://apt.kubernetes.io/ kubernetes-{{ lsb_release.stdout }} main"
+          apt_repository:
+            repo: "deb [arch={{ deb_architecture.stdout }}] https://apt.kubernetes.io/ kubernetes-{{ lsb_release.stdout }} main"
+            state: present
+      rescue:
+        - name: "{{ lsb_release.stdout }} failed. Adding k8s repository deb [arch={{ deb_architecture.stdout }}] https://apt.kubernetes.io/ kubernetes-xenial main"
+          apt_repository:
+            repo: "deb [arch={{ deb_architecture.stdout }}] https://apt.kubernetes.io/ kubernetes-xenial main"
+            state: present
+
+    - name: Install k8s components
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+          - kubernetes-cni
+        update-cache: yes
+
+    - name: Clean up packages
+      apt:
+        autoclean: yes
+        autoremove: yes
+
+    - name: Disable swap
+      shell: swapoff -a
+
+    - name: Disable swap in fstab
+      lineinfile:
+          path: /etc/fstab
+          regexp: '^/swapfile'
+          line: '#/swapfile'
+          state: present

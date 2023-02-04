@@ -1,0 +1,10 @@
+---
+# database.yml
+- hosts: k8s_image
+  roles:
+    - k8s
+
+- hosts: database_nodes
+  roles:
+    - common
+    - database

@@ -1,0 +1,4 @@
+---
+# tasks file for k8s
+- { import_tasks: build.yml }
+#- { include: configure.yml, tags: k8s }
