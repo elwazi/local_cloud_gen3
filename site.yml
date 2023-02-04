@@ -1,3 +1,4 @@
 ---
-- import_playbook: database.yml
-- import_playbook: docker.yml
+# - import_playbook: database.yml
+#- import_playbook: docker.yml
+- import_playbook: k8s.yml
