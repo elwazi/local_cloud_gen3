@@ -9,7 +9,7 @@ resource "openstack_compute_instance_v2" "k8s_control_plane" {
   }
 }
 
-resource "openstack_compute_instance_v2" "k8s_node_node" {
+resource "openstack_compute_instance_v2" "k8s_nodes" {
   count           = var.k8s_node_count
   name            = "${ var.k8s_node_name }-${ count.index + 1 }"
   image_name      = var.k8s_image_name

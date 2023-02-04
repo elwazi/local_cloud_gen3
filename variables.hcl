@@ -52,6 +52,11 @@ variable "k8s_node_name" {
   description = "k8s node's base hostname"
 }
 
+variable "k8s_node_count" {
+  type = number
+  description = "Number of k8s nodes to create"
+}
+
 variable "floating_ip_network_id" {
   description = "The name of the Floating IP network in your OpenStack"
   type = string

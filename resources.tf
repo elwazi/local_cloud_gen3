@@ -6,9 +6,8 @@ resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
 resource "local_file" "hosts_cfg" {
   content = templatefile("templates/hosts.tpl",
     {
-      docker_node_float_ip = openstack_networking_floatingip_v2.docker_float_ip.address
-      database_node_private_ip = openstack_compute_instance_v2.database_node.network[0].fixed_ip_v4
-      docker_node_private_ip   = openstack_compute_instance_v2.docker_node.network[0].fixed_ip_v4
+      k8s_node_float_ip = openstack_networking_floatingip_v2.k8s_float_ip.address
+      k8s_nodes = openstack_compute_instance_v2.k8s_nodes.*.access_ip_v4
       admin_user = var.admin_user
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password
