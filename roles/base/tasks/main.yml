@@ -24,8 +24,14 @@
       tags: build
       apt:
         name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
           - fail2ban
+          - gnupg
+          - lsb-release
           - tmux
+          - zsh
 
     - name: Clean up packages
       apt:
