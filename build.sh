@@ -18,8 +18,9 @@ fi
 echo "" | openstack -q image list &> /dev/null || { echo -e "Openstack seemingly not connected. Remember to source your '?-openrc.sh' file.\nAborting build."; exit 1; }
 
 BASE_IMAGE_NAME=$(grep "^base_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-DATABASE_IMAGE_NAME=$(grep "^database_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-DOCKER_IMAGE_NAME=$(grep "^docker_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
+#DATABASE_IMAGE_NAME=$(grep "^database_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
+#DOCKER_IMAGE_NAME=$(grep "^docker_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
+K8S_IMAGE_NAME=$(grep "^k8s_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
 
 if openstack image show "${BASE_IMAGE_NAME}" &> /dev/null
 then
@@ -29,18 +30,26 @@ else
   packer build -only="step1.openstack.base_image" .
 fi
 
-if openstack image show "${DATABASE_IMAGE_NAME}" &> /dev/null
+if openstack image show "${K8S_IMAGE_NAME}" &> /dev/null
 then
-  echo "Openstack image '${DATABASE_IMAGE_NAME}' found. Not rebuilding."
+  echo "Openstack image '${K8S_IMAGE_NAME}' found. Not rebuilding."
 else
-  echo "Openstack image '${DATABASE_IMAGE_NAME}' not found. Creating…"
-  packer build -only="step2.openstack.database_image" .
+  echo "Openstack image '${K8S_IMAGE_NAME}' not found. Creating…"
+  packer build -only="step2.openstack.k8s_image" .
 fi
 
-if openstack image show "${DOCKER_IMAGE_NAME}" &> /dev/null
-then
-  echo "Openstack image '${DOCKER_IMAGE_NAME}' found. Not rebuilding."
-else
-  echo "Openstack image '${DOCKER_IMAGE_NAME}' not found. Creating…"
-  packer build -only="step3.openstack.docker_image" .
-fi
+#if openstack image show "${DATABASE_IMAGE_NAME}" &> /dev/null
+#then
+#  echo "Openstack image '${DATABASE_IMAGE_NAME}' found. Not rebuilding."
+#else
+#  echo "Openstack image '${DATABASE_IMAGE_NAME}' not found. Creating…"
+#  packer build -only="step2.openstack.database_image" .
+#fi
+#
+#if openstack image show "${DOCKER_IMAGE_NAME}" &> /dev/null
+#then
+#  echo "Openstack image '${DOCKER_IMAGE_NAME}' found. Not rebuilding."
+#else
+#  echo "Openstack image '${DOCKER_IMAGE_NAME}' not found. Creating…"
+#  packer build -only="step3.openstack.docker_image" .
+#fi

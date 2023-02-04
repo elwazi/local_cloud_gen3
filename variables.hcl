@@ -27,24 +27,29 @@ variable "build_image_flavour" {
   description = "Virtual Image Flavour to be used when building images"
 }
 
-variable "database_image_name" {
+#variable "database_image_name" {
+#  type = string
+#  description = "Name to give the database image"
+#}
+#
+#variable "database_node_name" {
+#  type = string
+#  description = "Database node's hostname"
+#}
+
+variable "k8s_image_name" {
   type = string
-  description = "Name to give the database image"
+  description = "Name to give the k8s image"
 }
 
-variable "database_node_name" {
+variable "k8s_control_plane_node_name" {
   type = string
-  description = "Database node's hostname"
+  description = "k8s control plane's node's hostname"
 }
 
-variable "docker_image_name" {
+variable "k8s_node_name" {
   type = string
-  description = "Name to give the docker image"
-}
-
-variable "docker_node_name" {
-  type = string
-  description = "Docker node's hostname"
+  description = "k8s node's base hostname"
 }
 
 variable "floating_ip_network_id" {
@@ -64,14 +69,19 @@ variable "security_groups" {
 
 // Terraform Variables
 
-variable "database_node_flavour" {
+#variable "database_node_flavour" {
+#  type = string
+#  description = "OpenStack VM flavour to use for the database node"
+#}
+
+variable "k8s_control_plane_node_flavour" {
   type = string
-  description = "OpenStack VM flavour to use for the database node"
+  description = "OpenStack VM flavour to use for the k8s control plane"
 }
 
-variable "docker_node_flavour" {
+variable "k8s_node_flavour" {
   type = string
-  description = "OpenStack VM flavour to use for the docker node"
+  description = "OpenStack VM flavour to use for the k8s nodes"
 }
 
 variable "floating_ip_pool_name" {
