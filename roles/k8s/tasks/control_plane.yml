@@ -1,0 +1,30 @@
+- name: Configure control plane
+  when: "'k8s_control_plane' in group_names"
+  become: yes
+  tags: control_plane
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  block:
+    - name: Check if kubeadm has been initialized
+      command: kubectl get cs
+      register: kubeadm_init_check
+      ignore_errors: yes
+    - name: Initialise control plane
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      when: kubeadm_init_check is failed
+    - name: Get kubeadm join command
+      command: kubeadm token create --print-join-command
+      register: kubeadm_join_command
+    - name: Set kubeadm join command fact to "{{ kubeadm_join_command.stdout }}"
+      set_fact:
+        kubeadm_join_command: "{{ kubeadm_join_command.stdout }}"
+
+    - name: Deploy pod network
+      tags: pod_network, flannel
+      block:
+        - name: Copy flannel config
+          copy:
+            src: kube-flannel.yml
+            dest: /tmp/kube-flannel.yml
+        - name: Deploy flannel
+          command: kubectl apply -f /tmp/kube-flannel.yml
