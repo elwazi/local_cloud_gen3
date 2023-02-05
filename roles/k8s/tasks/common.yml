@@ -1,0 +1,6 @@
+- name: Ensure containerd toml file /etc/containerd/config.toml does not exist
+  file:
+    path: /etc/containerd/config.toml
+    state: absent
+  notify: restart containerd
+
