@@ -1,5 +1,5 @@
 ---
-# database.yml
+# k8s.yml
 - hosts: k8s_image
   roles:
     - k8s
