@@ -1,5 +1,0 @@
----
-# tasks file for docker
-# tasks file for gen3 database
-- { include: build.yml }
-- { include: configure.yml, tags: docker }
