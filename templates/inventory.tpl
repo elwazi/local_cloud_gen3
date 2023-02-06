@@ -31,4 +31,5 @@ ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/
 [k8s_control_plane]
 ${ k8s_control_plane.name } ansible_host=${k8s_node_float_ip} private_ip=${k8s_control_plane.access_ip_v4}
 
-
+[gen3]
+${ k8s_control_plane.name } ansible_host=${k8s_node_float_ip} private_ip=${k8s_control_plane.access_ip_v4}
