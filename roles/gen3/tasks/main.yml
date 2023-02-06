@@ -1,0 +1,4 @@
+---
+# tasks file for gen3
+- { import_tasks: helm.yml, tags: helm }
+- { import_tasks: gen3.yml, tags: gen3 }

@@ -1,0 +1,5 @@
+---
+# gen3.yml
+- hosts: gen3
+  roles:
+    - gen3
