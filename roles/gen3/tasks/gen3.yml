@@ -6,7 +6,7 @@
 
 - name: Update helm repos
   become: no
-  command: helm repo update
+  command: helm repo update gen3
   register: helm_repo_update
 
 - name: Create/update values.yml
