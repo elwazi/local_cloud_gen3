@@ -27,14 +27,19 @@ variable "build_image_flavour" {
   description = "Virtual Image Flavour to be used when building images"
 }
 
-#variable "database_image_name" {
+variable "database_image_name" {
+  type = string
+  description = "Name to give the database image"
+}
+
+variable "database_node_name" {
+  type = string
+  description = "Database node's hostname"
+}
+
+#variable "database_image_flavour" {
 #  type = string
-#  description = "Name to give the database image"
-#}
-#
-#variable "database_node_name" {
-#  type = string
-#  description = "Database node's hostname"
+#  description = "Virtual Image Flavour to be used when building images"
 #}
 
 variable "k8s_image_name" {
@@ -74,10 +79,15 @@ variable "security_groups" {
 
 // Terraform Variables
 
-#variable "database_node_flavour" {
-#  type = string
-#  description = "OpenStack VM flavour to use for the database node"
-#}
+variable "database_node_flavour" {
+  type = string
+  description = "OpenStack VM flavour to use for the database node"
+}
+
+variable "gen3_hostname" {
+  type = string
+  description = "Hostname for the gen3 deployment"
+}
 
 variable "k8s_control_plane_node_flavour" {
   type = string
