@@ -35,6 +35,8 @@ resource "local_file" "group_vars_all" {
       timezone = var.timezone
       google_client_id = var.google_client_id
       google_client_secret = var.google_client_secret
+      awsAccessKeyId = var.awsAccessKeyId
+      awsSecretAccessKey = var.awsSecretAccessKey
 #      gen3_subnet = var.gen3_subnet
       gen3_hostname = var.gen3_hostname
       k8s_node_float_ip = openstack_networking_floatingip_v2.k8s_float_ip.address
