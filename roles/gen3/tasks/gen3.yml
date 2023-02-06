@@ -1,0 +1,5 @@
+- name: Add gen3 helm repo
+  become: no
+  command: helm repo add gen3 https://helm.gen3.org
+  register: helm_repo_add_gen3
+  changed_when: '"already exists" not in helm_repo_add_gen3.stdout'
