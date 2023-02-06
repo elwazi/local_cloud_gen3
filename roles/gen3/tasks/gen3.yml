@@ -8,3 +8,11 @@
   become: no
   command: helm repo update
   register: helm_repo_update
+
+- name: Copy values config
+  become: no
+  tags: values
+  template:
+    src: values.yml
+    dest: "/home/{{ ansible_user }}/values.yml"
+    mode: 0600
