@@ -6,9 +6,11 @@ resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
 resource "local_file" "hosts_cfg" {
   content = templatefile("templates/inventory.tpl",
     {
+      gen3_hostname = var.gen3_hostname
       k8s_node_float_ip = openstack_networking_floatingip_v2.k8s_float_ip.address
       k8s_nodes = [for node in openstack_compute_instance_v2.k8s_nodes.*: node ]
       k8s_control_plane = openstack_compute_instance_v2.k8s_control_plane
+      database_node = openstack_compute_instance_v2.database_node
       admin_user = var.admin_user
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password
