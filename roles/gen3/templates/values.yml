@@ -1,0 +1,9 @@
+global:
+  hostname: {{ gen3.hostname }}
+
+fence:
+  FENCE_CONFIG:
+    OPENID_CONNECT:
+      google:
+        client_id: "insert.google.client_id.here"
+        client_secret: "insert.google.client_secret.here"
