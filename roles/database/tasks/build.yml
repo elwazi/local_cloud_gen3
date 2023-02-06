@@ -1,6 +1,6 @@
 ---
 # tasks file for building database image
-- name: Initialise docker image
+- name: Initialise database image
   become: yes
   tags: build, never
   block:
@@ -47,3 +47,8 @@
       apt:
         autoclean: yes
         autoremove: yes
+
+    - name: Ensure postgresql service is enabled
+      systemd:
+        name: postgresql
+        enabled: yes
