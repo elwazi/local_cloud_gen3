@@ -9,7 +9,7 @@ The infrastructure is managed with a set of scripts that make use of
 [Packer](https://www.packer.io/) (for creating the OpenStack virtual machine images
 that are used), [Terraform](https://www.terraform.io/) (for deploying  infrastructure
 on OpenStack), and finally [Ansible](https://www.ansible.com/) for configuring the
-infrastructure — largely using the [gen3 helm charts](https://github.com/uc-cdis/gen3-helm)
+infrastructure — largely using the [gen3 helm charts](https://github.com/uc-cdis/gen3-helm).
 
 ## Installing software requirements on your machine
 You will need to install [Packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli)
