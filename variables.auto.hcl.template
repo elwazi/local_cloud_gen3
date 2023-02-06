@@ -37,3 +37,5 @@ postgres_arborist_password = "TODO:CONFIGURE_ME"
 
 google_client_id = "TODO:CONFIGURE_ME"
 google_client_secret = "TODO:CONFIGURE_ME"
+awsAccessKeyId = "TODO:CONFIGURE_ME"
+awsSecretAccessKey = "TODO:CONFIGURE_ME"
