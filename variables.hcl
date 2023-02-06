@@ -77,6 +77,11 @@ variable "security_groups" {
   description = "Security groups to be used (this should include an incoming ssh rule…)"
 }
 
+variable "timezone" {
+  type = string
+  description = "Timezone to be used in machines"
+}
+
 // Terraform Variables
 
 variable "database_node_flavour" {
@@ -115,6 +120,17 @@ variable "ssh_public_key" {
 }
 
 // variables used in ansible configuration
+
+variable "google_client_id" {
+  type        = string
+  description = "Google client id"
+}
+
+variable "google_client_secret" {
+  type        = string
+  description = "Google client secret"
+  sensitive   = true
+}
 
 variable "postgres_user" {
   type = string
