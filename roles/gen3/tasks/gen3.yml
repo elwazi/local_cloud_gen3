@@ -9,7 +9,7 @@
   command: helm repo update
   register: helm_repo_update
 
-- name: Copy values config
+- name: Create/update values.yml
   become: no
   tags: values
   template:
