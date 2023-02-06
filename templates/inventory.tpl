@@ -15,7 +15,6 @@ postgres_indexd_user=${postgres_indexd_user}
 postgres_indexd_password=${postgres_indexd_password}
 postgres_arborist_user=${postgres_arborist_user}
 postgres_arborist_password=${postgres_arborist_password}
-gen3={'hostname': '${gen3_hostname}'}
 
 [all:children]
 k8s_nodes
