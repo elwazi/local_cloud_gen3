@@ -1,23 +1,43 @@
 - name: Configure control plane
   when: "'k8s_control_plane' in group_names"
   become: yes
-  tags: control_plane
+  tags: k8s_control_plane
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
   block:
+    - name: Ensure {{ ansible_user }} is in the docker group
+      become: yes
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
     - name: Check if kubeadm has been initialized
       command: kubectl get cs
       register: kubeadm_init_check
       ignore_errors: yes
+
     - name: Initialise control plane
       command: kubeadm init --pod-network-cidr=10.244.0.0/16
       when: kubeadm_init_check is failed
-    - name: Get kubeadm join command
-      command: kubeadm token create --print-join-command
-      register: kubeadm_join_command
-    - name: Set kubeadm join command fact to "{{ kubeadm_join_command.stdout }}"
-      set_fact:
-        kubeadm_join_command: "{{ kubeadm_join_command.stdout }}"
+      register: kubeadm_init
+
+    - name: Ensure ~{{ ansible_user }}/.kube directory exists
+      file:
+        path: /home/{{ ansible_user }}/.kube
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0700
+
+    - name: Copy /etc/kubernetes/admin.conf to {{ ansible_user }}
+      copy:
+        src: /etc/kubernetes/admin.conf
+        remote_src: true
+        dest: /home/{{ ansible_user }}/.kube/config
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
 
     - name: Deploy pod network
       tags: pod_network, flannel
