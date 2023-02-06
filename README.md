@@ -53,15 +53,26 @@ The variables to be set are:
 * `base_image_source_format`: Image format of base image (qcow2 / raw / …)
 * `build_image_flavour`: Virtual Image Flavour to be used when building images
 * `database_image_name`: Name to give the database image
-* `docker_image_name`: Name to give the docker image
+* `database_node_name`: Database node's hostname
+* `k8s_image_name`: Name to give the k8s image
+* `k8s_control_plane_node_name`: k8s control plane's node's hostname
+* `k8s_node_name`: k8s node's base hostname
+* `k8s_node_count`: Number of k8s nodes to create
 * `floating_ip_network_id`: The name of the Floating IP network in your OpenStack
 * `network_ids`: Name of networks to be used when building images
 * `security_groups`: Security groups to be used (this should include an incoming ssh rule…)
+* `timezone`: Timezone to be used in machines
 * `database_node_flavour`: OpenStack VM flavour to use for the database node
-* `docker_node_flavour`: OpenStack VM flavour to use for the docker node
+* `gen3_hostname`: Hostname for the gen3 deployment
+* `k8s_control_plane_node_flavour`: OpenStack VM flavour to use for the k8s control plane
+* `k8s_node_flavour`: OpenStack VM flavour to use for the k8s nodes
 * `floating_ip_pool_name`: OpenStack Floating IP address pool name
 * `name_prefix`: Name used in terraform infrastructure
 * `ssh_public_key`: Your ssh public key
+* `google_client_id`: Google client id
+* `google_client_secret`: Google client secret
+* `awsAccessKeyId`: AWS access key id
+* `awsSecretAccessKey`: AWS secret access key
 * `postgres_user`: Main postgres username
 * `postgres_password`: Main postgres user password
 * `postgres_fence_user`: fence user postgres username
@@ -74,8 +85,6 @@ The variables to be set are:
 * `postgres_indexd_password`: indexd user postgres password
 * `postgres_arborist_user`: arborist user postgres username
 * `postgres_arborist_password`: arborist user postgres password
-
-
 
 ### Ansible
 Ansible requires some of its own variables and these can be created by setting up the
