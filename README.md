@@ -2,6 +2,8 @@
 Repository for keeping track of eLwazi private openstack gen3 infrastructure and
 documentation.
 
+[Installing gen3 on existing machines](#setting-up-the-infrastructure-on-existing-machines-using-ansible)
+
 # Setting up the infrastructure on OpenStack using Packer, Terraform and Ansible
 The infrastructure is managed with a set of scripts that make use of
 [Packer](https://www.packer.io/) (for creating the OpenStack virtual machine images
