@@ -37,11 +37,6 @@ variable "database_node_name" {
   description = "Database node's hostname"
 }
 
-#variable "database_image_flavour" {
-#  type = string
-#  description = "Virtual Image Flavour to be used when building images"
-#}
-
 variable "k8s_image_name" {
   type = string
   description = "Name to give the k8s image"
