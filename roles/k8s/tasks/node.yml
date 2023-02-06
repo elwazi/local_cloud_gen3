@@ -1,0 +1,43 @@
+- name: Configure kubernetes node
+  when: "'k8s_nodes' in group_names"
+  become: yes
+  tags: k8s_node
+  block:
+    - name: Get nodes
+      run_once: true
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      become: true
+      block:
+        - name: Get nodes
+          command: kubectl get nodes --no-headers=true -o custom-columns=NAME:.metadata.name
+          delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+          register: kubectl_get_nodes
+
+        - name: "Set kubectl_get_nodes fact to: {{ kubectl_get_nodes.stdout.split('\n') }}"
+          set_fact:
+            kubectl_get_nodes: "{{ kubectl_get_nodes.stdout.split('\n') }}"
+
+        - name: Show registered Nodes
+          debug:
+            msg: "{{ kubectl_get_nodes }}"
+
+    - name: Get kubeadm join command
+      delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+      run_once: true
+      block:
+        - name: Get kubeadm join command
+          command: kubeadm token create --print-join-command
+          register: kubeadm_join_command
+        - name: Set kubeadm join command fact to "{{ kubeadm_join_command.stdout }}"
+          set_fact:
+            kubeadm_join: "{{ kubeadm_join_command.stdout }}"
+
+    - name: Register unregistered nodes
+      when: inventory_hostname not in kubectl_get_nodes
+      block:
+
+
+        - name: Register node
+          command: "{{ kubeadm_join }}"
+
