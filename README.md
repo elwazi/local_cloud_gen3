@@ -117,5 +117,3 @@ easily be found by searching for the `TODO:CONFIGURE_ME` text.
 
 Then the playbook should be run with the command: `ansible-playbook -i inventory site.yml`.
 This will connect to the nodes and finalise the configuration of services on the nodes.
-
-
