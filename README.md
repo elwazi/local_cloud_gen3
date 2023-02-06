@@ -117,3 +117,16 @@ easily be found by searching for the `TODO:CONFIGURE_ME` text.
 
 Then the playbook should be run with the command: `ansible-playbook -i inventory site.yml`.
 This will connect to the nodes and finalise the configuration of services on the nodes.
+
+# Setting up the infrastructure on existing machines using Ansible
+The first method which starts off using packer and terraform is useful if you have access
+to OpenStack cloud infrastructure, however if you simply have access to some Ubuntu machines
+(or virtual machines) then you can use the ansible scripts to install the infrastucture. The
+main difficulty is configuring the inventory and variables files so that the ansible scripts
+know what to do where.
+
+## Setting up your inventory
+
+## Setting up your variables
+
+## Running the ansible scripts
