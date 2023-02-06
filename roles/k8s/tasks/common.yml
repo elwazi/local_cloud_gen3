@@ -1,4 +1,5 @@
 - name: Ensure containerd toml file /etc/containerd/config.toml does not exist
+  become: yes
   file:
     path: /etc/containerd/config.toml
     state: absent
