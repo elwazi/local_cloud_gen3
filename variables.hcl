@@ -132,6 +132,17 @@ variable "google_client_secret" {
   sensitive   = true
 }
 
+variable "awsAccessKeyId" {
+  type        = string
+  description = "AWS access key id"
+}
+
+variable "awsSecretAccessKey" {
+  type        = string
+  description = "AWS secret access key"
+  sensitive   = true
+}
+
 variable "postgres_user" {
   type = string
   description = "Main postgres username"
