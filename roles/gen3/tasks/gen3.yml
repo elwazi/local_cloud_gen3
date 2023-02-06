@@ -3,3 +3,8 @@
   command: helm repo add gen3 https://helm.gen3.org
   register: helm_repo_add_gen3
   changed_when: '"already exists" not in helm_repo_add_gen3.stdout'
+
+- name: Update helm repos
+  become: no
+  command: helm repo update
+  register: helm_repo_update
