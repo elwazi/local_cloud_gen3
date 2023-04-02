@@ -110,6 +110,14 @@ resource "openstack_networking_secgroup_rule_v2" "kubelet_api" {
   security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "k8s_icmp" {
+    direction         = "ingress"
+    ethertype         = "IPv4"
+    protocol          = "icmp"
+    remote_ip_prefix  = "192.168.10.0/24"
+    security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
 resource "openstack_networking_secgroup_v2" "gen3_k8s_control_plane" {
   name        = "${var.name_prefix}-k8s-control-plane"
   description = "kubernetes control plane networks"
@@ -203,6 +211,14 @@ resource "openstack_networking_secgroup_rule_v2" "elasticsearch" {
   port_range_max    = 9300
   remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.gen3_postgres.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "postgres_icmp" {
+    direction         = "ingress"
+    ethertype         = "IPv4"
+    protocol          = "icmp"
+    remote_ip_prefix  = "192.168.10.0/24"
+    security_group_id = openstack_networking_secgroup_v2.gen3_postgres.id
 }
 
 resource "openstack_networking_floatingip_v2" "k8s_float_ip" {

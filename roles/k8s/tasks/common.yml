@@ -5,3 +5,7 @@
     state: absent
   notify: restart containerd
 
+- name: Flush handlers
+  meta: flush_handlers
+
+

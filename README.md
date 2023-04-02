@@ -110,10 +110,10 @@ The machines are first deployed with terraform. Firstly the environment must be
 initialised with `terraform init`. Afterwards `terraform plan` and `terraform apply`
 can be used to actually create the infrastructure including: the network and subnetwork;
 the security groups; the docker node; the database node. This will also create an
-`inventory` file which can be used with ansible.
+`inventory.ini` file which can be used with ansible.
 
 ## Infrastructure Configuration
-Finally the infrastructure can be configured using ansible. The `inventory` file generated
+Finally the infrastructure can be configured using ansible. The `inventory.ini` file generated
 in the previous should be updated — specifically the passwords should be updated – these can
 easily be found by searching for the `TODO:CONFIGURE_ME` text.
 

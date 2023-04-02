@@ -43,49 +43,58 @@
         line: "host    all             all             {{ gen3_subnet }}         md5"
       notify: Restart postgres
 
-    - name: Create databases
-      become: yes
-      become_user: postgres
-      community.postgresql.postgresql_db:
-        name: "{{ item }}"
-      loop:
-        - metadata_db
-        - fence_db
-        - indexd_db
-
-    - name: Create users
+    - name: Configure postgres superuser password
       become: yes
       become_user: postgres
       community.postgresql.postgresql_user:
-        name: "{{ item.user }}"
-        password: "{{ item.password }}"
+        name: "{{ postgres.user }}"
+        password: "{{ postgres.password }}"
         role_attr_flags: "SUPERUSER"
-      loop:
-        - {
-            user: "{{ postgres_user }}",
-            password: "{{ postgres_password }}"
-          }
-        - {
-            user: "{{ postgres_fence_user }}",
-            password: "{{ postgres_fence_password }}"
-        }
-        - {
-            user: "{{ postgres_indexd_user }}",
-            password: "{{ postgres_indexd_password }}"
-        }
-        - {
-            user: "{{ postgres_peregrine_user }}",
-            password: "{{ postgres_peregrine_password }}"
-        }
-        - {
-            user: "{{ postgres_sheepdog_user }}",
-            password: "{{ postgres_sheepdog_password }}"
+        encrypted: yes
 
-        }
-        - {
-            user: "{{ postgres_arborist_user }}",
-            password: "{{ postgres_arborist_password }}"
-        }
+#    - name: Create databases
+#      become: yes
+#      become_user: postgres
+#      community.postgresql.postgresql_db:
+#        name: "{{ item }}"
+#      loop:
+#        - metadata_db
+#        - fence_db
+#        - indexd_db
+#
+#    - name: Create users
+#      become: yes
+#      become_user: postgres
+#      community.postgresql.postgresql_user:
+#        name: "{{ item.user }}"
+#        password: "{{ item.password }}"
+#        role_attr_flags: "SUPERUSER"
+#      loop:
+#        - {
+#            user: "{{ postgres_user }}",
+#            password: "{{ postgres_password }}"
+#          }
+#        - {
+#            user: "{{ postgres_fence_user }}",
+#            password: "{{ postgres_fence_password }}"
+#        }
+#        - {
+#            user: "{{ postgres_indexd_user }}",
+#            password: "{{ postgres_indexd_password }}"
+#        }
+#        - {
+#            user: "{{ postgres_peregrine_user }}",
+#            password: "{{ postgres_peregrine_password }}"
+#        }
+#        - {
+#            user: "{{ postgres_sheepdog_user }}",
+#            password: "{{ postgres_sheepdog_password }}"
+#
+#        }
+#        - {
+#            user: "{{ postgres_arborist_user }}",
+#            password: "{{ postgres_arborist_password }}"
+#        }
 
 - name: Update elasticsearch
   tags:

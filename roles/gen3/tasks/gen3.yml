@@ -16,3 +16,7 @@
     src: values.yml
     dest: "/home/{{ ansible_user }}/values.yml"
     mode: 0600
+
+- name: Start gen3 helm
+  become: no
+  command: helm upgrade --install gen3 gen3/gen3 -f /home/{{ ansible_user }}/values.yml

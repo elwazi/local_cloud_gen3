@@ -8,8 +8,8 @@ global:
     db_create: true
     master:
       host: postgres
-      username: {{ postgres_user }}
-      password: {{ postgres_password }}
+      username: {{ postgres.user }}
+      password: {{ postgres.password }}
       port: 5432
 fence:
   FENCE_CONFIG:
