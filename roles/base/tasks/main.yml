@@ -23,6 +23,7 @@
     - name: Install commonly used packages
       tags: build
       apt:
+        update_cache: true
         name:
           - apt-transport-https
           - ca-certificates

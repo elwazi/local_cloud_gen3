@@ -1,5 +1,5 @@
 ---
-timezone: Africa/Johannesburg
+timezone: '${ timezone }'
 gen3_subnet: 192.168.10.0/24
 gen3 : {
   'hostname': '${gen3_hostname}'

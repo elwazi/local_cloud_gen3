@@ -1,0 +1,29 @@
+---
+# tasks file for building load balancer image
+- name: Install prerequisites for nginx installation
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - debian-archive-keyring
+      - gnupg2
+      - gnupg-agent
+      - lsb-release
+    update_cache: yes
+  retries: 5
+
+- name: Import official nginx signing key
+  apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: Add stable nginx repository
+  apt_repository:
+    repo: "deb https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx"
+    state: present
+
+- name: Install nginx
+  apt:
+    name: nginx
+    update_cache: yes

@@ -100,12 +100,112 @@ resource "openstack_networking_secgroup_rule_v2" "internal_ssh" {
   security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "calico_bgp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 179
+  port_range_max    = 179
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "kubernetes_node_driver_docker_daemon_tls" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 2376
+  port_range_max    = 2376
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "kubernetes_api_server_etcd" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 2379
+  port_range_max    = 2380
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "weave" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 6783
+  port_range_max    = 6783
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "weave_udp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
+  port_range_min    = 6783
+  port_range_max    = 6784
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "rancher_webhook" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 8443
+  port_range_max    = 8443
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "flannel_vxlan" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
+  port_range_min    = 8472
+  port_range_max    = 8472
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "canal_flannel_probe_and_node_exporter" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9099
+  port_range_max    = 9100
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "rancher_webhook2" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9443
+  port_range_max    = 9443
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "kubelet_api" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
   port_range_min    = 10250
   port_range_max    = 10250
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "ingress_controller_liveness_probe" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 10254
+  port_range_max    = 10254
   remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
@@ -129,16 +229,6 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_api" {
   protocol          = "tcp"
   port_range_min    = 6443
   port_range_max    = 6443
-  remote_ip_prefix  = "192.168.10.0/24"
-  security_group_id = openstack_networking_secgroup_v2.gen3_k8s_control_plane.id
-}
-
-resource "openstack_networking_secgroup_rule_v2" "kubernetes_api_server_etcd" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 2379
-  port_range_max    = 2380
   remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.gen3_k8s_control_plane.id
 }
@@ -221,6 +311,6 @@ resource "openstack_networking_secgroup_rule_v2" "postgres_icmp" {
     security_group_id = openstack_networking_secgroup_v2.gen3_postgres.id
 }
 
-resource "openstack_networking_floatingip_v2" "k8s_float_ip" {
+resource "openstack_networking_floatingip_v2" "load_balancer_float_ip" {
   pool = "${var.floating_ip_pool_name}"
 }

@@ -1,0 +1,10 @@
+---
+# database.yml
+- hosts: load_balancer_image
+  roles:
+    - load_balancer
+
+- hosts: load_balancer_nodes
+  roles:
+    - common
+    - load_balancer

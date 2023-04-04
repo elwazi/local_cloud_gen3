@@ -21,6 +21,7 @@ BASE_IMAGE_NAME=$(grep "^base_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)
 DATABASE_IMAGE_NAME=$(grep "^database_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
 #DOCKER_IMAGE_NAME=$(grep "^docker_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
 K8S_IMAGE_NAME=$(grep "^k8s_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
+LOADBALANCER_IMAGE_NAME=$(grep "^load_balancer_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
 
 if openstack image show "${BASE_IMAGE_NAME}" &> /dev/null
 then
@@ -45,11 +46,11 @@ else
   echo "Openstack image '${DATABASE_IMAGE_NAME}' not found. Creating…"
   packer build -only="step3.openstack.database_image" .
 fi
-#
-#if openstack image show "${DOCKER_IMAGE_NAME}" &> /dev/null
-#then
-#  echo "Openstack image '${DOCKER_IMAGE_NAME}' found. Not rebuilding."
-#else
-#  echo "Openstack image '${DOCKER_IMAGE_NAME}' not found. Creating…"
-#  packer build -only="step3.openstack.docker_image" .
-#fi
+
+if openstack image show "${LOADBALANCER_IMAGE_NAME}" &> /dev/null
+then
+  echo "Openstack image '${LOADBALANCER_IMAGE_NAME}' found. Not rebuilding."
+else
+  echo "Openstack image '${LOADBALANCER_IMAGE_NAME}' not found. Creating…"
+  packer build -only="step4.openstack.load_balancer_image" .
+fi

@@ -37,6 +37,18 @@ variable "database_node_name" {
   description = "Database node's hostname"
 }
 
+
+
+variable "load_balancer_image_name" {
+  type = string
+  description = "Name to give the load balancer image"
+}
+
+variable "load_balancer_node_name" {
+  type = string
+  description = "Load balancer's hostname"
+}
+
 variable "k8s_image_name" {
   type = string
   description = "Name to give the k8s image"
@@ -97,6 +109,11 @@ variable "k8s_control_plane_node_flavour" {
 variable "k8s_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the k8s nodes"
+}
+
+variable "load_balancer_node_flavour" {
+  type = string
+  description = "OpenStack VM flavour to use for the database node"
 }
 
 variable "floating_ip_pool_name" {
