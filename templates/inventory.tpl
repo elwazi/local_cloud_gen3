@@ -6,36 +6,32 @@ ansible_user=${admin_user}
 
 
 [all:children]
-k8s_nodes
-k8s_control_plane
-database_nodes
 load_balancer_nodes
+rancher_rke2_server_nodes
+rancher_rke2_worker_nodes
+database_nodes
 
 [load_balancer_nodes]
 ${ load_balancer_node.name } ansible_host=${load_balancer_float_ip} private_ip=${load_balancer_node.access_ip_v4}
+
+[rancher_rke2_server_nodes]
+%{ for server_node in rancher_rke2_server_nodes ~}
+${ server_node.name } ansible_host=${server_node.access_ip_v4} private_ip=${server_node.access_ip_v4}
+%{ endfor ~}
+
+[rancher_rke2_server_nodes:vars]
+ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
+
+[rancher_rke2_worker_nodes]
+%{ for worker_node in rancher_rke2_worker_nodes ~}
+${ worker_node.name } ansible_host=${worker_node.access_ip_v4} private_ip=${worker_node.access_ip_v4}
+%{ endfor ~}
+
+[rancher_rke2_worker_nodes:vars]
+ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
 
 [database_nodes]
 ${ database_node.name } ansible_host=${database_node.access_ip_v4} private_ip=${database_node.access_ip_v4}
 
 [database_nodes:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
-
-[k8s_nodes]
-%{ for k8s_node in k8s_nodes ~}
-${ k8s_node.name } ansible_host=${k8s_node.access_ip_v4} private_ip=${k8s_node.access_ip_v4}
-%{ endfor ~}
-
-[k8s_nodes:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
-
-[k8s_control_plane]
-${ k8s_control_plane.name } ansible_host=${k8s_control_plane.access_ip_v4} private_ip=${k8s_control_plane.access_ip_v4}
-
-[k8s_control_plane:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
-
-[gen3]
-${ k8s_control_plane.name } ansible_host=${k8s_control_plane.access_ip_v4} private_ip=${k8s_control_plane.access_ip_v4}
-
-[gen3:vars]
 ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"

@@ -1,0 +1,3 @@
+---
+# tasks file for rancher
+- { import_tasks: build.yml,  become: yes }

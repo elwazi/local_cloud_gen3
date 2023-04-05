@@ -1,0 +1,11 @@
+---
+# database.yml
+- hosts: rancher_rke2_image
+  roles:
+    - rancher
+
+- hosts: rancher_rke2_server_nodes,rancher_rke2_worker_nodes
+  roles:
+    - common
+    - rancher
+

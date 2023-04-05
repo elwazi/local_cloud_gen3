@@ -1,0 +1,34 @@
+# tasks file for building rancher management image
+- name: Build server
+  tags: [never,build_server]
+  become: no
+  block:
+    - name: Download the rancher rke2 installer
+      get_url:
+          url: https://get.rke2.io
+          dest: /tmp/rke2-installer.sh
+          mode: 0755
+    - name: Run rancher rke2 installer
+      become: yes
+      command: /tmp/rke2-installer.sh
+#    - name: Enable rke2-server service
+#      systemd:
+#          name: rke2-server
+#          enabled: yes
+#          state: started
+
+
+- name: Build worker
+  tags: [never,build_worker]
+  become: no
+  block:
+    - name: Download the rancher rke2 installer
+      get_url:
+          url: https://get.rke2.io
+          dest: /tmp/rke2-installer.sh
+          mode: 0755
+    - name: Run rancher rke2 installer for agent
+      become: yes
+      command: /tmp/rke2-installer.sh
+      environment:
+            INSTALL_RKE2_TYPE: agent

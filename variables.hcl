@@ -37,8 +37,6 @@ variable "database_node_name" {
   description = "Database node's hostname"
 }
 
-
-
 variable "load_balancer_image_name" {
   type = string
   description = "Name to give the load balancer image"
@@ -49,24 +47,24 @@ variable "load_balancer_node_name" {
   description = "Load balancer's hostname"
 }
 
-variable "k8s_image_name" {
+variable "rancher_rke2_server_image_name" {
   type = string
-  description = "Name to give the k8s image"
+  description = "Name to give the rke2 server image"
 }
 
-variable "k8s_control_plane_node_name" {
+variable "rancher_rke2_worker_image_name" {
   type = string
-  description = "k8s control plane's node's hostname"
+  description = "Name to give the rke2 worker image"
 }
 
-variable "k8s_node_name" {
+variable "rancher_rke2_worker_node_name" {
   type = string
-  description = "k8s node's base hostname"
+  description = "rke2 worker node's base hostname"
 }
 
-variable "k8s_node_count" {
+variable "rancher_rke2_worker_node_count" {
   type = number
-  description = "Number of k8s nodes to create"
+  description = "Number of rke2 worker nodes to create"
 }
 
 variable "floating_ip_network_id" {
@@ -89,6 +87,11 @@ variable "timezone" {
   description = "Timezone to be used in machines"
 }
 
+variable "rancher_rke2_version" {
+  type = string
+  description = "Rancher RKE version to use"
+}
+
 // Terraform Variables
 
 variable "database_node_flavour" {
@@ -101,19 +104,29 @@ variable "gen3_hostname" {
   description = "Hostname for the gen3 deployment"
 }
 
-variable "k8s_control_plane_node_flavour" {
+variable "rancher_rke2_server_node_flavour" {
   type = string
-  description = "OpenStack VM flavour to use for the k8s control plane"
+  description = "OpenStack VM flavour to use for the rke2 server nodes"
 }
 
-variable "k8s_node_flavour" {
+variable "rancher_rke2_worker_node_flavour" {
   type = string
-  description = "OpenStack VM flavour to use for the k8s nodes"
+  description = "OpenStack VM flavour to use for the rke2 worker nodes"
 }
 
 variable "load_balancer_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the database node"
+}
+
+variable "rancher_rke2_server_node_name" {
+  type = string
+  description = "Rancher management node's hostname"
+}
+
+variable "rancher_rke2_server_node_count" {
+  type = number
+  description = "Number of rancher management nodes to create"
 }
 
 variable "floating_ip_pool_name" {
