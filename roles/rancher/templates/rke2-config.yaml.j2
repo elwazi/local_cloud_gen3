@@ -1,0 +1,10 @@
+{% if inventory_hostname != groups['rancher_rke2_server_nodes'][0] %}
+server:  https://{{ hostvars[groups['rancher_rke2_server_nodes'][0]].private_ip }}:9345
+{% endif %}
+token: {{ RANCHER_RKE2_TOKEN }}
+tls-san:
+  - {{ gen3.hostname }}
+{% if inventory_hostname in groups['rancher_rke2_server_nodes'] %}
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
+{% endif %}

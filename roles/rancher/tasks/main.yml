@@ -1,3 +1,31 @@
 ---
 # tasks file for rancher
 - { import_tasks: build.yml,  become: yes }
+
+- { import_tasks: configure_server.yml, when: "inventory_hostname in groups['rancher_rke2_server_nodes']", tags: [configure_rke2] }
+
+- { import_tasks: configure_worker.yml, when: "inventory_hostname in groups['rancher_rke2_worker_nodes']", tags: [configure_rke2] }
+
+- name: Make sure rke2 is running on primary server
+  become: yes
+  systemd:
+      name: rke2-server
+      state: started
+      enabled: yes
+  register: rke2_server_service
+  when: "inventory_hostname == groups['rancher_rke2_server_nodes'][0]"
+  until: rke2_server_service.status.ActiveState == "active"
+  retries: 5
+  delay: 20
+
+- name: Ensure rke2 is running on secondary servers
+  become: yes
+  systemd:
+    name: rke2-server
+    state: started
+    enabled: yes
+  register: rke2_server_service
+  when: "inventory_hostname != groups['rancher_rke2_server_nodes'][0]"
+  until: rke2_server_service.status.ActiveState == "active"
+  retries: 5
+  delay: 20

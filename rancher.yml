@@ -5,6 +5,7 @@
     - rancher
 
 - hosts: rancher_rke2_server_nodes,rancher_rke2_worker_nodes
+  tags: [rancher-rke2]
   roles:
     - common
     - rancher

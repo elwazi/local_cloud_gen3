@@ -28,18 +28,3 @@ stream {
         proxy_pass rancher_servers_https;
     }
 }
-
-#http {
-#    server {
-#        listen 443 ssl;
-#        proxy_pass rancher_servers_https;
-#        ssl_certificate /path/to/tls.crt;
-#        ssl_certificate_key /path/to/key.key;
-#        location / {
-#            proxy_pass https://rancher_servers_https;
-#            proxy_set_header Host https://{{ hostvars['control-plane']['ansible_default_ipv4']['address'] }}:443;
-#            proxy_ssl_server_name on;
-#            proxy_ssl_name https://{{ hostvars['control-plane']['ansible_default_ipv4']['address'] }}:443;
-#        }
-#    }
-#}

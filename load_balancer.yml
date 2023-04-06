@@ -4,6 +4,9 @@
   roles:
     - load_balancer
 
+- name: Gather facts from rke2 server nodes
+  hosts: rancher_rke2_server_nodes
+
 - hosts: load_balancer_nodes
   roles:
     - common

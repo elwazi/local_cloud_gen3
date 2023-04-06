@@ -3,14 +3,23 @@
   tags: [never,build_server]
   become: no
   block:
+    - name: Check if rke2 is installed
+      stat:
+        path: /usr/local/bin/rke2
+      register: rke2_installed
     - name: Download the rancher rke2 installer
+      when: rke2_installed.stat.exists == False
       get_url:
           url: https://get.rke2.io
           dest: /tmp/rke2-installer.sh
           mode: 0755
     - name: Run rancher rke2 installer
+      when: rke2_installed.stat.exists == False
       become: yes
       command: /tmp/rke2-installer.sh
+      environment:
+        INSTALL_RKE2_TYPE: server
+        INSTALL_RKE2_CHANNEL: stable
 #    - name: Enable rke2-server service
 #      systemd:
 #          name: rke2-server
@@ -22,13 +31,20 @@
   tags: [never,build_worker]
   become: no
   block:
+    - name: Check if rke2 is installed
+      stat:
+        path: /usr/local/bin/rke2
+      register: rke2_installed
     - name: Download the rancher rke2 installer
+      when: rke2_installed.stat.exists == False
       get_url:
           url: https://get.rke2.io
           dest: /tmp/rke2-installer.sh
           mode: 0755
     - name: Run rancher rke2 installer for agent
+      when: rke2_installed.stat.exists == False
       become: yes
       command: /tmp/rke2-installer.sh
       environment:
-            INSTALL_RKE2_TYPE: agent
+        INSTALL_RKE2_TYPE: agent
+        INSTALL_RKE2_CHANNEL: stable
