@@ -8,7 +8,7 @@ events {
 stream {
     upstream rancher_servers_http {
         least_conn;
-{% for node in groups['rancher_rke2_server_nodes'] %}
+{% for node in groups['rancher_rke2_worker_nodes'] %}
         server {{ hostvars[node]['ansible_default_ipv4']['address'] }}:80 max_fails=3 fail_timeout=5s;
 {% endfor %}
     }
@@ -19,7 +19,7 @@ stream {
 
     upstream rancher_servers_https {
         least_conn;
-{% for node in groups['rancher_rke2_server_nodes'] %}
+{% for node in groups['rancher_rke2_worker_nodes'] %}
         server {{ hostvars[node]['ansible_default_ipv4']['address'] }}:443 max_fails=3 fail_timeout=5s;
 {% endfor %}
     }

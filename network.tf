@@ -241,6 +241,31 @@ resource "openstack_networking_secgroup_rule_v2" "k8s_icmp" {
     security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
+resource "openstack_networking_secgroup_v2" "kubernetes_worker_web_traffic" {
+  name        = "${var.name_prefix}-loadbalancer"
+  description = "web traffic from load balancer"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "lb_http" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 80
+  port_range_max    = 80
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.kubernetes_worker_web_traffic.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "lb_https" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 443
+  port_range_max    = 443
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.kubernetes_worker_web_traffic.id
+}
+
 resource "openstack_networking_secgroup_v2" "gen3_postgres" {
   name        = "${var.name_prefix}-postgres"
   description = "To access database ssh and postgres port"

@@ -20,7 +20,7 @@ resource "openstack_compute_instance_v2" "rancher_rke2_worker_nodes" {
   image_name      = var.rancher_rke2_worker_image_name
   flavor_name     = var.rancher_rke2_worker_node_flavour
   key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
-  security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name]
+  security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name, openstack_networking_secgroup_v2.kubernetes_worker_web_traffic.name]
   network {
     name = openstack_networking_network_v2.gen3_network.name
   }
@@ -32,7 +32,7 @@ resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
     image_name      = var.rancher_rke2_server_image_name
     flavor_name     = var.rancher_rke2_server_node_flavour
     key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
-    security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name, openstack_networking_secgroup_v2.gen3_web.name]
+    security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name]
     network {
         name = openstack_networking_network_v2.gen3_network.name
     }
