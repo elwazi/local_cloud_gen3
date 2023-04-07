@@ -1,0 +1,36 @@
+
+- name: Check for rke2 config file
+  become: yes
+  stat:
+    path: /etc/rancher/rke2/config.yaml
+  register: rke2_config_file
+
+- name: Configure servers
+  when: rke2_config_file.stat.exists == False
+  block:
+    - name: Fetch rke2 token from primary server
+      become: yes
+      command: cat /etc/rancher/rke2/config.yaml
+      delegate_to: "{{ groups['rancher_rke2_server_nodes'][0] }}"
+      register: rke2_token_line
+
+    - name: Set rke2 token fact
+      set_fact:
+        RANCHER_RKE2_TOKEN: "{{ rke2_token_line.stdout | regex_search('token: (.*)') | regex_replace('token: ', '') }}"
+
+    - name: Ensure rke2 config directory exists
+      become: yes
+      file:
+        path: /etc/rancher/rke2/config.d
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+    - name: Create rke2 config file
+      become: yes
+      template:
+        src: rke2-config.yaml.j2
+        dest: /etc/rancher/rke2/config.yaml
+        owner: root
+        group: root
+        mode: 0600

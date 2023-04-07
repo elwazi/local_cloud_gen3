@@ -8,3 +8,5 @@ tls-san:
 node-taint:
   - "CriticalAddonsOnly=true:NoExecute"
 {% endif %}
+{% if inventory_hostname in groups['rancher_rke2_worker_nodes'] %}
+{% endif %}

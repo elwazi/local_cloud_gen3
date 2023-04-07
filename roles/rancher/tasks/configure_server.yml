@@ -14,7 +14,7 @@
     - name: Ensure rke2 config directory exists
       become: yes
       file:
-        path: /etc/rancher/rke2
+        path: /etc/rancher/rke2/config.d
         state: directory
         owner: root
         group: root
