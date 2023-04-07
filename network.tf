@@ -182,22 +182,22 @@ resource "openstack_networking_secgroup_rule_v2" "calico_health_checks" {
   security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
-resource "openstack_networking_secgroup_rule_v2" "rancher_webhook2" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 9443
-  port_range_max    = 9443
-  remote_ip_prefix  = "192.168.10.0/24"
-  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
-}
-
 resource "openstack_networking_secgroup_rule_v2" "kubernetes_api" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
   port_range_min    = 9345
   port_range_max    = 9345
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "rancher_webhook2" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9443
+  port_range_max    = 9443
   remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
