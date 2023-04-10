@@ -7,7 +7,9 @@ resource "local_file" "hosts_cfg" {
   content = templatefile("templates/inventory.tpl",
     {
       gen3_hostname = var.gen3_hostname
-      load_balancer_float_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address
+      rancher_hostname = var.rancher_hostname
+      #load_balancer_float_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address  # todo: change back to this
+      load_balancer_float_ip = data.openstack_networking_floatingip_v2.load_balancer_fixed_floating_ip.address
       rancher_rke2_worker_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_worker_nodes.*: node ]
       rancher_rke2_server_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_server_nodes.*: node ]
       database_node = openstack_compute_instance_v2.database_node
@@ -27,6 +29,7 @@ resource "local_file" "group_vars_all" {
       awsAccessKeyId = var.awsAccessKeyId
       awsSecretAccessKey = var.awsSecretAccessKey
       gen3_hostname = var.gen3_hostname
+      rancher_hostname = var.rancher_hostname
 
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password

@@ -10,7 +10,8 @@ resource "openstack_compute_instance_v2" "load_balancer_node" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "k8s_fip" {
-  floating_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address
+  #floating_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address  # todo: change this back
+  floating_ip = data.openstack_networking_floatingip_v2.load_balancer_fixed_floating_ip.address
   instance_id = openstack_compute_instance_v2.load_balancer_node.id
 }
 
