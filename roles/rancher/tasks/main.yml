@@ -41,3 +41,80 @@
   until: rke2_agent_service.status.ActiveState == "active"
   retries: 5
   delay: 20
+
+- name: Create ssh key for rancher user
+  tags: [ssh]
+  become: yes
+  become_user: ubuntu
+  shell: ssh-keygen -t ed25519 -f ~/.ssh/id_25519 -q -N ""
+  args:
+    creates: /home/ubuntu/.ssh/id_25519
+  register: ssh_keygen
+  changed_when: ssh_keygen.rc == 0
+  run_once: true
+  delegate_to: "{{ groups['rancher_rke2_server_nodes'][0] }}"
+
+- name: Copy ssh key to all servers
+  tags: [ssh]
+  become: yes
+  become_user: ubuntu
+  block:
+    - name: Fetch private ssh key
+      command: cat /home/ubuntu/.ssh/id_25519
+      register: private_ssh_key
+      delegate_to: "{{ groups['rancher_rke2_server_nodes'][0] }}"
+    - name: Fetch public ssh key
+      command: cat /home/ubuntu/.ssh/id_25519.pub
+      register: public_ssh_key
+      delegate_to: "{{ groups['rancher_rke2_server_nodes'][0] }}"
+    - name: Create .ssh directory
+      when: inventory_hostname != groups['rancher_rke2_server_nodes'][0]
+      file:
+          path: /home/ubuntu/.ssh
+          state: directory
+          owner: ubuntu
+          group: ubuntu
+          mode: 0700
+    - name: Copy private ssh key
+      when: inventory_hostname != groups['rancher_rke2_server_nodes'][0]
+      copy:
+          content: "{{ private_ssh_key.stdout }}\n"
+          dest: /home/ubuntu/.ssh/id_25519
+          owner: ubuntu
+          group: ubuntu
+          mode: 0600
+    - name: Copy public ssh key
+      when: inventory_hostname != groups['rancher_rke2_server_nodes'][0]
+      copy:
+          content: "{{ public_ssh_key.stdout }}\n"
+          dest: /home/ubuntu/.ssh/id_25519.pub
+          owner: ubuntu
+          group: ubuntu
+          mode: 0644
+    - name: Add key to authorized keys
+      lineinfile:
+          path: /home/ubuntu/.ssh/authorized_keys
+          line: "{{ public_ssh_key.stdout }}"
+          owner: ubuntu
+          group: ubuntu
+          mode: 0600
+          create: yes
+    - name: Configure ssh config
+      copy:
+          content: |
+              Host *
+                  StrictHostKeyChecking no
+                  Compression yes
+                  AddKeysToAgent yes
+
+              ControlMaster auto
+              ControlPath ~/.ssh/cm_temp/%h_%p_%r
+              ControlPersist 15m
+
+              Host rancher-server-* rancher-worker-* gen3-postgresql
+                  User ubuntu
+                  IdentityFile ~/.ssh/id_25519
+          dest: /home/ubuntu/.ssh/config
+          owner: ubuntu
+          group: ubuntu
+          mode: 0600
