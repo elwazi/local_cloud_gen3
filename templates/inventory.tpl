@@ -20,7 +20,7 @@ ${ server_node.name } ansible_host=${server_node.access_ip_v4} private_ip=${serv
 %{ endfor ~}
 
 [rancher_rke2_server_nodes:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
+ansible_ssh_extra_args="-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
 
 [rancher_rke2_worker_nodes]
 %{ for worker_node in rancher_rke2_worker_nodes ~}
@@ -28,10 +28,10 @@ ${ worker_node.name } ansible_host=${worker_node.access_ip_v4} private_ip=${work
 %{ endfor ~}
 
 [rancher_rke2_worker_nodes:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
+ansible_ssh_extra_args="-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
 
 [database_nodes]
 ${ database_node.name } ansible_host=${database_node.access_ip_v4} private_ip=${database_node.access_ip_v4}
 
 [database_nodes:vars]
-ansible_ssh_extra_args="-o ProxyCommand='ssh -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"
+ansible_ssh_extra_args="-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ControlPersist=15m -A -i ~/.ssh/ilifu/id_rsa ${admin_user}@${load_balancer_float_ip} nc %h 22'"

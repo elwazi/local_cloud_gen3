@@ -67,6 +67,11 @@ variable "rancher_rke2_worker_node_count" {
   description = "Number of rke2 worker nodes to create"
 }
 
+variable "rancher_hostname" {
+  type = string
+  description = "name of rancher host"
+}
+
 variable "floating_ip_network_id" {
   description = "The name of the Floating IP network in your OpenStack"
   type = string
