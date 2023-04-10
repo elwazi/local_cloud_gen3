@@ -9,5 +9,4 @@
 
 - hosts: load_balancer_nodes
   roles:
-    - common
     - load_balancer

@@ -6,5 +6,4 @@
 
 - hosts: database_nodes
   roles:
-    - common
     - database
