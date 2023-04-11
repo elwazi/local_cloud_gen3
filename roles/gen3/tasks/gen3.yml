@@ -1,71 +1,17 @@
-- name: Deploy flannel with helm
-  tags: flannel
-  become: no
-  block:
-    - name: Create kube-flannel namespace
-      command: kubectl create namespace kube-flannel
-      register: create_flannel_namespace
-      failed_when:
-        - create_flannel_namespace.rc != 0
-        - '"AlreadyExists" not in create_flannel_namespace.stderr'
-    - name: label kube-flannel namespace
-      command: kubectl label --overwrite ns kube-flannel pod-security.kubernetes.io/enforce=privileged
-    - name: Add helm repo for flannel
-      command: helm repo add flannel https://flannel-io.github.io/flannel/
-    - name: Install flannel
-      command: helm install flannel --set podCidr="10.244.0.0/16" --namespace kube-flannel flannel/flannel
-      register: install_flannel
-      failed_when:
-        - install_flannel.rc != 0
-        - '"cannot re-use a name that is still in use" not in install_flannel.stderr'
-
-- name: Install rancher with helm
-  tags: rancher
-  become: no
-  block:
-    - name: Add rancher helm repo
-      command: helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
-    - name: Create rancher namespace
-      command: kubectl create namespace cattle-system
-      register: create_rancher_namespace
-      failed_when:
-        - create_rancher_namespace.rc != 0
-        - '"AlreadyExists" not in create_rancher_namespace.stderr'
-    - name: Appy certmanager
-      command: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
-    - name: Add jetstack helm repo
-      command: helm repo add jetstack https://charts.jetstack.io
-    - name: Update helm
-      command: helm repo update
-    - name: Install certmanager
-      command: helm install cert-manager jetstack/cert-manager --namespace cattle-system --create-namespace --version v1.7.1
-      register: install_certmanager
-      failed_when:
-          - install_certmanager.rc != 0
-          - '"rendered manifests contain a resource that already exists." not in install_certmanager.stderr'
-    - name: Install rancher
-      command: helm install rancher rancher-stable/rancher --namespace cattle-system --create-namespace --set hostname=gen3-elwazi.ilifu.ac.za
-      register: install_rancher
-      failed_when:
-          - install_rancher.rc != 0
-
 - name: Add gen3 helm repo
-  become: no
-  command: helm repo add gen3 https://helm.gen3.org
+  command: bin/helm repo add gen3 https://helm.gen3.org
   register: helm_repo_add_gen3
   changed_when: '"already exists" not in helm_repo_add_gen3.stdout'
 
 - name: Update helm repos
-  become: no
-  command: helm repo update gen3
+  command: bin/helm repo update gen3
   register: helm_repo_update
 
 - name: Create/update values.yml
-  become: no
   tags: values
   template:
     src: values.yml
-    dest: "/home/{{ ansible_user }}/values.yml"
+    dest: "~/values.yml"
     mode: 0600
 
 #- name: Start gen3 helm

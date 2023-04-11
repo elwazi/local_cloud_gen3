@@ -1,0 +1,14 @@
+- name: Install k9s
+  tags: k9s
+  block:
+    - name: Download k9s
+      get_url:
+        url: https://github.com/derailed/k9s/releases/download/v0.27.3/k9s_Linux_amd64.tar.gz
+        dest: ~/src/k9s.tar.gz
+
+    - name: Extract k9s
+      unarchive:
+        src: ~/src/k9s.tar.gz
+        dest: ~/bin
+        remote_src: true
+        creates: ~/bin/k9s

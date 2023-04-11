@@ -1,44 +1,30 @@
 - name: Install helm
   vars:
-    url: https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz
-    checksum: 'sha256:6c3440d829a56071a4386dd3ce6254eab113bc9b1fe924a6ee99f7ff869b9e0b'
+    url: https://get.helm.sh/helm-v3.11.2-linux-amd64.tar.gz
+    checksum: 'sha256:781d826daec584f9d50a01f0f7dadfd25a3312217a14aa2fbb85107b014ac8ca'
   block:
-    - name: Ensure src exists
-      file:
-        path: "/home/{{ ansible_user }}/src"
-        state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: 0755
     - name: Download helm
       get_url:
         url: "{{ url }}"
-        dest: "/home/{{ ansible_user }}/src/helm.tar.gz"
+        dest: "~/src/helm.tar.gz"
         checksum: "{{ checksum }}"
         mode: 0755
     - name: Create helm directory
       file:
-        path: "/home/{{ ansible_user }}/helm"
+        path: "~/helm"
         state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
         mode: 0755
     - name: Extract helm
       unarchive:
-          src: "/home/{{ ansible_user }}/src/helm.tar.gz"
-          dest: "/home/{{ ansible_user }}/helm"
+          src: "~/src/helm.tar.gz"
+          dest: "~/helm"
           remote_src: true
-          owner: "{{ ansible_user }}"
-          group: "{{ ansible_user }}"
           mode: 0755
-          creates: "/home/{{ ansible_user }}/helm/linux-amd64/helm"
-    - name: Copy helm to /usr/local/bin
-      become: yes
+          creates: "~/helm/linux-amd64/helm"
+    - name: Copy helm to gen3 bin
       copy:
-          src: "/home/{{ ansible_user }}/helm/linux-amd64/helm"
-          dest: /usr/local/bin/helm
-          owner: "{{ ansible_user }}"
-          group: "{{ ansible_user }}"
+          src: "~/helm/linux-amd64/helm"
+          dest: "~/bin/helm"
           mode: 0755
           remote_src: true
 

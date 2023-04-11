@@ -1,4 +1,57 @@
 ---
 # tasks file for gen3
-- { import_tasks: helm.yml, tags: helm }
-- { import_tasks: gen3.yml, tags: gen3 }
+
+- name: Add gen3 unix group
+  become: yes
+  group:
+      name: "{{ gen3.user }}"
+      state: present
+
+- name: Add gen3 unix user
+  become: yes
+  user:
+      name: "{{ gen3.user }}"
+      group: "{{ gen3.user }}"
+      home: "/home/{{ gen3.user }}"
+      state: present
+      skeleton: /etc/skel
+      shell: /bin/bash
+
+- name: Make sure ~/bin and ~/src exists
+  become: yes
+  become_user: "{{ gen3.user }}"
+  file:
+    path: "~/{{ item }}"
+    state: directory
+  with_items:
+    - bin
+    - src
+    - .kube
+
+- name: Copy kubeconfig file
+  tags: [kubeconfig]
+  become: yes
+  copy:
+      src: "/etc/rancher/rke2/rke2.yaml"
+      dest: "/home/{{ gen3.user }}/.kube/config"
+      owner: "{{ gen3.user }}"
+      group: "{{ gen3.user }}"
+      remote_src: true
+      mode: 0600
+
+- name: Copy kubectl binaries to bin
+  become: yes
+  become_user: "{{ gen3.user }}"
+  tags: [kubectl]
+  copy:
+    src: "{{ item }}"
+    dest: "~/bin/"
+    mode: 0755
+    remote_src: true
+  with_items:
+    - /var/lib/rancher/rke2/bin/kubectl
+    - /var/lib/rancher/rke2/bin/kubelet
+
+- { import_tasks: helm.yml, tags: helm, become: yes, become_user: "{{ gen3.user }}" }
+- { import_tasks: k9s.yml, tags: k9s, become: yes, become_user: "{{ gen3.user }}" }
+- { import_tasks: gen3.yml, tags: gen3, become: yes, become_user: "{{ gen3.user }}" }
