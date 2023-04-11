@@ -5,6 +5,6 @@
 - import_playbook: load_balancer.yml
 - import_playbook: database.yml
 - import_playbook: rancher.yml
-#- import_playbook: gen3.yml
+- import_playbook: gen3.yml
 
 
