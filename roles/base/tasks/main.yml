@@ -25,6 +25,7 @@
       apt:
         update_cache: true
         name:
+          - acl
           - apt-transport-https
           - ca-certificates
           - curl
