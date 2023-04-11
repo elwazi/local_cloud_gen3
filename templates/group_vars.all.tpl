@@ -2,11 +2,12 @@
 timezone: '${ timezone }'
 gen3_subnet: 192.168.10.0/24
 rancher: {
-  'hostname': '${rancher_hostname}'
+  'hostname': '${rancher_hostname}',
 }
 
 gen3 : {
-  'hostname': '${gen3_hostname}'
+  'hostname': '${gen3_hostname}',
+  'user': '${gen3_user}',
 }
 
 postgres: {
