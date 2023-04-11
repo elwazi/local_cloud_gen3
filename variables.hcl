@@ -109,6 +109,11 @@ variable "gen3_hostname" {
   description = "Hostname for the gen3 deployment"
 }
 
+variable "gen3_user" {
+  type = string
+  description = "Login name for gen3 user"
+}
+
 variable "rancher_rke2_server_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the rke2 server nodes"
@@ -117,6 +122,11 @@ variable "rancher_rke2_server_node_flavour" {
 variable "rancher_rke2_worker_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the rke2 worker nodes"
+}
+
+variable "rancher_rke2_worker_node_disk_size_gib" {
+  type = number
+  description = "Disk size in GiB for the rke2 worker nodes"
 }
 
 variable "load_balancer_node_flavour" {

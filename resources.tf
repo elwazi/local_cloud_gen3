@@ -29,6 +29,7 @@ resource "local_file" "group_vars_all" {
       awsAccessKeyId = var.awsAccessKeyId
       awsSecretAccessKey = var.awsSecretAccessKey
       gen3_hostname = var.gen3_hostname
+      gen3_user = var.gen3_user
       rancher_hostname = var.rancher_hostname
 
       postgres_user = var.postgres_user
