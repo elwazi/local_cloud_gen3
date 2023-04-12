@@ -13,7 +13,7 @@
 
     - name: Upgrade all existing packages
       apt:
-        upgrade: dist
+        upgrade: full
         update-cache: yes
       register: apt_res
       retries: 3
