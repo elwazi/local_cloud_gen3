@@ -32,6 +32,7 @@ resource "local_file" "group_vars_all" {
       gen3_user = var.gen3_user
       rancher_hostname = var.rancher_hostname
 
+      database_node_name = var.database_node_name
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password
 

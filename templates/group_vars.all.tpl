@@ -11,6 +11,7 @@ gen3 : {
 }
 
 postgres: {
+  'hostname': '${ database_node_name }',
   'user': '${postgres_user}',
   'password': '${postgres_password}',
 }

@@ -104,6 +104,11 @@ variable "database_node_flavour" {
   description = "OpenStack VM flavour to use for the database node"
 }
 
+variable "database_node_disk_size_gib" {
+  type = number
+  description = "Disk size in GiB for the database node"
+}
+
 variable "gen3_hostname" {
   type = string
   description = "Hostname for the gen3 deployment"
@@ -127,6 +132,11 @@ variable "rancher_rke2_worker_node_flavour" {
 variable "rancher_rke2_worker_node_disk_size_gib" {
   type = number
   description = "Disk size in GiB for the rke2 worker nodes"
+}
+
+variable "rancher_rke2_server_node_disk_size_gib" {
+  type = number
+  description = "Disk size in GiB for the rke2 server nodes"
 }
 
 variable "load_balancer_node_flavour" {

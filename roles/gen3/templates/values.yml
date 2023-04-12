@@ -7,7 +7,7 @@ global:
   postgres:
     db_create: true
     master:
-      host: postgres
+      host: {{ postgres.hostname }}
       username: {{ postgres.user }}
       password: {{ postgres.password }}
       port: 5432
