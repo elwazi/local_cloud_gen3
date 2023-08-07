@@ -12,3 +12,24 @@
     group: root
     mode: 0644
   notify: restart nginx
+
+- name: Configure .ssh
+  tags: [ssh]
+  become: no
+  copy:
+    dest: ~/.ssh/config
+    content: |
+      Host *
+        StrictHostKeyChecking no
+        UserKnownHostsFile=/dev/null
+        LogLevel=ERROR
+
+- name: Configure tmux
+  tags: [tmux]
+  become: no
+  copy:
+    dest: ~/.tmux.conf
+    content: |
+      set -g prefix C-a
+      set -g default-terminal "screen-256color"
+

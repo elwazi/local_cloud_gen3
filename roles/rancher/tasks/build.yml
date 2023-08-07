@@ -20,12 +20,6 @@
       environment:
         INSTALL_RKE2_TYPE: server
         INSTALL_RKE2_CHANNEL: stable
-#    - name: Enable rke2-server service
-#      systemd:
-#          name: rke2-server
-#          enabled: yes
-#          state: started
-
 
 - name: Build worker
   tags: [never,build_worker]

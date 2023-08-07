@@ -6,6 +6,15 @@
 
 - { import_tasks: configure_worker.yml, when: "inventory_hostname in groups['rancher_rke2_worker_nodes']", tags: [configure_rke2] }
 
+- name: Increase vm.max_map_count
+  tags: [never,max_map_count]
+  become: yes
+  sysctl:
+    name: vm.max_map_count
+    value: 262144
+    state: present
+    reload: yes
+
 - name: Make sure rke2 server is running on primary server
   become: yes
   systemd:

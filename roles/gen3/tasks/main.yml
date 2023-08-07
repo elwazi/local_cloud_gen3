@@ -9,13 +9,14 @@
 
 - name: Add gen3 unix user
   become: yes
+  tags: [gen3user]
   user:
       name: "{{ gen3.user }}"
       group: "{{ gen3.user }}"
       home: "/home/{{ gen3.user }}"
       state: present
       skeleton: /etc/skel
-      shell: /bin/bash
+      shell: /bin/zsh
 
 - name: Make sure ~/bin and ~/src exists
   become: yes
@@ -27,6 +28,48 @@
     - bin
     - src
     - .kube
+
+- name: Ensure pygments is installed
+  tags: [pygments]
+  become: yes
+  apt:
+    name: python3-pygments
+    state: present
+
+- name: Install oh-my-zsh
+  become: yes
+  become_user: "{{ gen3.user }}"
+  tags: [zsh]
+  block:
+    - name: Download oh-my-zsh install script
+      get_url:
+        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: ~/src/install_ohmyzsh.sh
+        mode: u=rwx,g=r,o=r
+    - name: Run oh-my-zsh install script
+      shell:
+        cmd: ~/src/install_ohmyzsh.sh --unattended
+        creates: ~/.oh-my-zsh
+    - name: Copy zshrc
+      copy:
+        src: zshrc
+        dest: ~/.zshrc
+        mode: 0600
+    - name: Install plugins
+      block:
+        - name: Install powerlevel 10k
+          tags: [powerlevel10k]
+          git:
+            repo: https://github.com/romkatv/powerlevel10k.git
+            dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+        - name: Install zsh autosuggestions
+          git:
+            repo: https://github.com/zsh-users/zsh-autosuggestions
+            dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+        - name: Install zsh syntax highlighting
+          git:
+            repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+            dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
 - name: Copy kubeconfig file
   tags: [kubeconfig]
@@ -51,6 +94,17 @@
   with_items:
     - /var/lib/rancher/rke2/bin/kubectl
     - /var/lib/rancher/rke2/bin/kubelet
+
+- name: Add kubectl command line completion
+  become: yes
+  become_user: "{{ gen3.user }}"
+  tags: [kubectl]
+  lineinfile:
+    path: ~/.bashrc
+    line: 'source <(~/bin/kubectl completion bash)'
+    insertafter: EOF
+    state: present
+    create: yes
 
 - { import_tasks: helm.yml, tags: helm, become: yes, become_user: "{{ gen3.user }}" }
 - { import_tasks: k9s.yml, tags: k9s, become: yes, become_user: "{{ gen3.user }}" }

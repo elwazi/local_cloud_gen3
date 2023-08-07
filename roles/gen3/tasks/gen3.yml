@@ -1,10 +1,14 @@
 - name: Add gen3 helm repo
   command: bin/helm repo add gen3 https://helm.gen3.org
+  args:
+    chdir: /home/{{ gen3.user }}
   register: helm_repo_add_gen3
   changed_when: '"already exists" not in helm_repo_add_gen3.stdout'
 
-- name: Update helm repos
+- name: Update gen3 helm repos
   command: bin/helm repo update gen3
+  args:
+    chdir: /home/{{ gen3.user }}
   register: helm_repo_update
 
 - name: Create/update values.yml
