@@ -1,6 +1,27 @@
+packer {
+  required_plugins {
+    ansible = {
+      source  = "github.com/hashicorp/ansible"
+      version = "~> 1"
+    }
+    openstack = {
+      version = ">= 1.1.1"
+      source  = "github.com/hashicorp/openstack"
+    }
+  }
+}
+
+locals {
+  base_image_name = "base.${var.image_suffix}"
+  database_image_name = "database.${var.image_suffix}"
+  rancher_rke2_server_image_name = "rke2.server.${var.image_suffix}"
+  rancher_rke2_worker_image_name = "rke2.worker.${var.image_suffix}"
+  load_balancer_image_name = "loadbalancer.${var.image_suffix}"
+}
+
 source "openstack" "base_image" {
   flavor       = "${var.build_image_flavour}"
-  image_name   = "${var.base_image_name}"
+  image_name   = "${local.base_image_name}"
   external_source_image_url = "${var.base_image_source}"
   external_source_image_format = "${var.base_image_source_format}"
   ssh_username = "${var.admin_user}"
@@ -18,8 +39,8 @@ source "openstack" "base_image" {
 
 source "openstack" "database_image" {
   flavor       = "${var.build_image_flavour}"
-  image_name   = "${var.database_image_name}"
-  source_image_name = "${var.base_image_name}"
+  image_name   = "${local.database_image_name}"
+  source_image_name = "${local.base_image_name}"
   ssh_username = "${var.admin_user}"
   networks = "${var.network_ids}"
   floating_ip_network = "${var.floating_ip_network_id}"
@@ -35,8 +56,8 @@ source "openstack" "database_image" {
 
 source "openstack" "load_balancer_image" {
   flavor       = "${var.build_image_flavour}"
-  image_name   = "${var.load_balancer_image_name}"
-  source_image_name = "${var.base_image_name}"
+  image_name   = "${local.load_balancer_image_name}"
+  source_image_name = "${local.base_image_name}"
   ssh_username = "${var.admin_user}"
   networks = "${var.network_ids}"
   floating_ip_network = "${var.floating_ip_network_id}"
@@ -52,8 +73,8 @@ source "openstack" "load_balancer_image" {
 
 source "openstack" "rancher_rke2_server_image" {
   flavor       = "${var.build_image_flavour}"
-  image_name   = "${var.rancher_rke2_server_image_name}"
-  source_image_name = "${var.base_image_name}"
+  image_name   = "${local.rancher_rke2_server_image_name}"
+  source_image_name = "${local.base_image_name}"
   ssh_username = "${var.admin_user}"
   networks = "${var.network_ids}"
   floating_ip_network = "${var.floating_ip_network_id}"
@@ -69,8 +90,8 @@ source "openstack" "rancher_rke2_server_image" {
 
 source "openstack" "rancher_rke2_worker_image" {
   flavor       = "${var.build_image_flavour}"
-  image_name   = "${var.rancher_rke2_worker_image_name}"
-  source_image_name = "${var.base_image_name}"
+  image_name   = "${local.rancher_rke2_worker_image_name}"
+  source_image_name = "${local.base_image_name}"
   ssh_username = "${var.admin_user}"
   networks = "${var.network_ids}"
   floating_ip_network = "${var.floating_ip_network_id}"

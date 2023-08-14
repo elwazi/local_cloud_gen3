@@ -17,11 +17,13 @@ fi
 
 echo "" | openstack -q image list &> /dev/null || { echo -e "Openstack seemingly not connected. Remember to source your '?-openrc.sh' file.\nAborting build."; exit 1; }
 
-BASE_IMAGE_NAME=$(grep "^base_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-DATABASE_IMAGE_NAME=$(grep "^database_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-RANCHER_RKE2_SERVER_IMAGE_NAME=$(grep "^rancher_rke2_server_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-RANCHER_RKE2_WORKER_IMAGE_NAME=$(grep "^rancher_rke2_worker_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
-LOADBALANCER_IMAGE_NAME=$(grep "^load_balancer_image_name" ${VARIABLES_FILE} | sed 's/.*= "\(.*\)"$/\1/')
+VARIABLES=$(packer inspect .)
+
+BASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.base_image_name" | sed 's/.*: //')
+DATABASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.database_image_name" | sed 's/.*: //')
+RANCHER_RKE2_SERVER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_server_image_name" | sed 's/.*: //')
+RANCHER_RKE2_WORKER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_worker_image_name" | sed 's/.*: //')
+LOADBALANCER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.load_balancer_image_name" | sed 's/.*: //')
 
 if openstack image show "${BASE_IMAGE_NAME}" &> /dev/null
 then
