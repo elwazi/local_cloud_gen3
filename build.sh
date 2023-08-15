@@ -19,11 +19,11 @@ echo "" | openstack -q image list &> /dev/null || { echo -e "Openstack seemingly
 
 VARIABLES=$(packer inspect .)
 
-BASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.base_image_name" | sed 's/.*: //')
-DATABASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.database_image_name" | sed 's/.*: //')
-RANCHER_RKE2_SERVER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_server_image_name" | sed 's/.*: //')
-RANCHER_RKE2_WORKER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_worker_image_name" | sed 's/.*: //')
-LOADBALANCER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.load_balancer_image_name" | sed 's/.*: //')
+BASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.base_image_name" | sed 's/.*: //' | sed 's/\"//g')
+DATABASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.database_image_name" | sed 's/.*: //' | sed 's/\"//g')
+RANCHER_RKE2_SERVER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_server_image_name" | sed 's/.*: //' | sed 's/\"//g')
+RANCHER_RKE2_WORKER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_worker_image_name" | sed 's/.*: //' | sed 's/\"//g')
+LOADBALANCER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.load_balancer_image_name" | sed 's/.*: //' | sed 's/\"//g')
 
 if openstack image show "${BASE_IMAGE_NAME}" &> /dev/null
 then
