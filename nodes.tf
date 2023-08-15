@@ -1,6 +1,19 @@
+locals {
+  base_image_name = "base.${var.image_suffix}"
+  database_image_name = "database.${var.image_suffix}"
+  rancher_rke2_server_image_name = "rke2.server.${var.image_suffix}"
+  rancher_rke2_worker_image_name = "rke2.worker.${var.image_suffix}"
+  load_balancer_image_name = "loadbalancer.${var.image_suffix}"
+
+  load_balancer_node_name = "load-balancer.${var.node_suffix}"
+  rancher_rke2_worker_node_name = "rke2-worker.${var.node_suffix}"
+  rancher_rke2_server_node_name = "rke2-server.${var.node_suffix}"
+  database_node_name = "gen3-database.${var.node_suffix}"
+}
+
 resource "openstack_compute_instance_v2" "load_balancer_node" {
-  name            = var.load_balancer_node_name
-  image_name      = var.load_balancer_image_name
+  name            = local.load_balancer_node_name
+  image_name      = local.load_balancer_image_name
   flavor_name     = var.load_balancer_node_flavour
   key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
   security_groups = [openstack_networking_secgroup_v2.gen3_ssh.name, openstack_networking_secgroup_v2.gen3_web.name]
@@ -16,12 +29,12 @@ resource "openstack_compute_floatingip_associate_v2" "k8s_fip" {
 }
 
 data "openstack_images_image_v2" "rancher_rke2_worker_image" {
-  name = var.rancher_rke2_worker_image_name
+  name = local.rancher_rke2_worker_image_name
 }
 
 resource "openstack_compute_instance_v2" "rancher_rke2_worker_nodes" {
   count           = var.rancher_rke2_worker_node_count
-  name            = "${ var.rancher_rke2_worker_node_name }-${ count.index + 1 }"
+  name            = "${ local.rancher_rke2_worker_node_name }-${ count.index + 1 }"
 #  image_name      = var.rancher_rke2_worker_image_name
   flavor_name     = var.rancher_rke2_worker_node_flavour
   key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
@@ -39,12 +52,12 @@ resource "openstack_compute_instance_v2" "rancher_rke2_worker_nodes" {
 }
 
 data "openstack_images_image_v2" "rancher_rke2_server_image" {
-  name = var.rancher_rke2_server_image_name
+  name = local.rancher_rke2_server_image_name
 }
 
 resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
     count           = var.rancher_rke2_server_node_count
-    name            = "${ var.rancher_rke2_server_node_name }-${ count.index + 1 }"
+    name            = "${ local.rancher_rke2_server_node_name }-${ count.index + 1 }"
 #    image_name      = var.rancher_rke2_server_image_name
     flavor_name     = var.rancher_rke2_server_node_flavour
     key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
@@ -62,11 +75,11 @@ resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
 }
 
 data "openstack_images_image_v2" "database_image" {
-  name = var.database_image_name
+  name = local.database_image_name
 }
 
 resource "openstack_compute_instance_v2" "database_node" {
-  name            = var.database_node_name
+  name            = local.database_node_name
 #  image_name      = var.database_image_name
   flavor_name     = var.database_node_flavour
   key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name

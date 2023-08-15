@@ -1,9 +1,6 @@
 ---
 timezone: '${ timezone }'
 gen3_subnet: 192.168.10.0/24
-rancher: {
-  'hostname': '${rancher_hostname}',
-}
 
 gen3 : {
   'hostname': '${gen3_hostname}',
