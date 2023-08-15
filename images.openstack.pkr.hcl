@@ -113,11 +113,7 @@ build {
   provisioner "ansible" {
     use_proxy = false
     playbook_file = "./base.yml"
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     extra_arguments = ["--tags", "build", "--extra-vars", "timezone=${var.timezone}"]  // , "-vvvv"]
-//    extra_arguments = ["-vvv"]
     user = "${var.admin_user}"
     groups = [
       "base_image"
@@ -134,9 +130,6 @@ build {
     use_proxy = false
     playbook_file = "./rancher.yml"
     extra_arguments = ["--tags", "build_server"]
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     user = "${var.admin_user}"
     groups = [
       "rancher_rke2_image"
@@ -153,9 +146,6 @@ build {
     use_proxy = false
     playbook_file = "./rancher.yml"
     extra_arguments = ["--tags", "build_worker"]
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     user = "${var.admin_user}"
     groups = [
       "rancher_rke2_image"
@@ -172,9 +162,6 @@ build {
     use_proxy = false
     playbook_file = "./database.yml"
     extra_arguments = ["--tags", "build"]
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     user = "${var.admin_user}"
     groups = [
       "database_image"
@@ -191,9 +178,6 @@ build {
     use_proxy = false
     playbook_file = "./load_balancer.yml"
     extra_arguments = ["--tags", "build"]
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     user = "${var.admin_user}"
     groups = [
       "load_balancer_image"
@@ -210,9 +194,6 @@ build {
     use_proxy = false
     playbook_file = "./rancher.yml"
     extra_arguments = ["--tags", "build"]
-    ansible_env_vars = [
-#      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o AddKeysToAgent=no -o IdentitiesOnly=yes'"
-    ]
     user = "${var.admin_user}"
     groups = [
       "rancher_image"
