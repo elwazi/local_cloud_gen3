@@ -7,10 +7,16 @@
   become: yes
   template:
     src: nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
+    dest: /etc/nginx/conf.d/gen3.conf
     owner: root
     group: root
     mode: 0644
+  notify: restart nginx
+
+- name: Run certbot to get certs
+  tags: [certbot]
+  become: yes
+  shell: certbot certonly --nginx -n -d "{{ gen3.hostname }}" --agree-tos --email "dane@idia.ac.za"
   notify: restart nginx
 
 - name: Configure .ssh

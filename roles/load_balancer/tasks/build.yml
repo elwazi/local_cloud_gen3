@@ -10,6 +10,7 @@
       - gnupg2
       - gnupg-agent
       - lsb-release
+      - python3-virtualenv
     update_cache: yes
   retries: 5
 
@@ -27,3 +28,27 @@
   apt:
     name: nginx
     update_cache: yes
+
+- name: Install certbot using snap
+  tags: [certbot]
+  snap:
+      name: certbot
+      classic: yes
+      state: present
+
+#- name: Install certbot from pip
+#  tags: [certbot]
+#  pip:
+#    name:
+#      - certbot
+#      - certbot-nginx
+#    state: present
+#    virtualenv: /opt/certbot
+#
+#- name: Create symlink for certbot
+#  tags: [certbot]
+#  file:
+#      src: /opt/certbot/bin/certbot
+#      dest: /usr/local/bin/certbot
+#      state: link
+

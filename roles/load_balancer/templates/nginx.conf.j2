@@ -1,30 +1,33 @@
-worker_processes 4;
-worker_rlimit_nofile 40000;
+# worker_processes 4;
+# worker_rlimit_nofile 40000;
 
-events {
-    worker_connections 8192;
+# events {
+#     worker_connections 8192;
+# }
+
+upstream rancher_servers_http {
+    least_conn;
+{% for node in groups['rancher_rke2_worker_nodes'] %}
+    server {{ hostvars[node]['ansible_default_ipv4']['address'] }} max_fails=3 fail_timeout=5s;
+{% endfor %}
 }
 
-stream {
-    upstream rancher_servers_http {
-        least_conn;
-{% for node in groups['rancher_rke2_worker_nodes'] %}
-        server {{ hostvars[node]['ansible_default_ipv4']['address'] }}:80 max_fails=3 fail_timeout=5s;
-{% endfor %}
-    }
-    server {
-        listen 80;
-        proxy_pass rancher_servers_http;
+server {
+    listen 80;
+    server_name  {{ gen3.hostname }};
+    location / {
+        proxy_pass http://rancher_servers_http;
+        #proxy_pass rancher_servers_http;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $host;
     }
 
-    upstream rancher_servers_https {
-        least_conn;
-{% for node in groups['rancher_rke2_worker_nodes'] %}
-        server {{ hostvars[node]['ansible_default_ipv4']['address'] }}:443 max_fails=3 fail_timeout=5s;
-{% endfor %}
-    }
-    server {
-        listen     443;
-        proxy_pass rancher_servers_https;
-    }
+#    listen 443 ssl; # managed by Certbot
+#    ssl_certificate /etc/letsencrypt/live/gen3-elwazi.ilifu.ac.za/fullchain.pem; # managed by Certbot
+#    ssl_certificate_key /etc/letsencrypt/live/gen3-elwazi.ilifu.ac.za/privkey.pem; # managed by Certbot
+#    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+#    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
 }
