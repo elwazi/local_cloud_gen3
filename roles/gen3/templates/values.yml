@@ -1,9 +1,5 @@
 global:
-#  environment: devplanetv1
-#  aws:
-#    enabled: true
   hostname: {{ gen3.hostname }}
-#  revproxyArn: arn:aws:acm:us-east-1:707767160287:certificate/520ede2f-fc82-4bb9-af96-4b4af7deabbd
   postgres:
     db_create: true
     master:
