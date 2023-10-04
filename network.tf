@@ -311,8 +311,9 @@ resource "openstack_networking_secgroup_rule_v2" "postgres_icmp" {
 
 resource "openstack_networking_floatingip_v2" "load_balancer_float_ip" {
   pool = "${var.floating_ip_pool_name}"
+  description = "floating ip for load balancer ${var.name_prefix}"
 }
 # todo: change this fixed one back
-data "openstack_networking_floatingip_v2" "load_balancer_fixed_floating_ip" {
-  address = "154.114.10.227"
-}
+#data "openstack_networking_floatingip_v2" "load_balancer_fixed_floating_ip" {
+#  address = "154.114.10.227"
+#}
