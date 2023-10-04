@@ -30,6 +30,7 @@ variable "base_image_source_format" {
 variable "build_image_flavour" {
   type = string
   description = "Virtual Image Flavour to be used when building images"
+  default = "ilifu-B"
 }
 
 #variable "database_image_name" {
@@ -113,6 +114,7 @@ variable "node_suffix" {
 variable "database_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the database node"
+  default = "ilifu-B"
 }
 
 variable "database_node_disk_size_gib" {
