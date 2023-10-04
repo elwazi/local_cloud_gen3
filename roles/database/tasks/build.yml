@@ -19,10 +19,26 @@
           - acl
           - default-jre
           - libpq-dev
-          - postgresql
-          - postgresql-contrib
           - python3-psycopg2
         update-cache: yes
+
+    - name: Add postgres apt repository key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add postgres repository
+      apt_repository:
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        state: present
+
+    - name: Install postgres 13
+      apt:
+          name:
+            - postgresql-13
+            - postgresql-client-13
+            - postgresql-contrib-13
+          update-cache: yes
 
     - name: Add elasticsearch repo key
       apt_key:
@@ -42,6 +58,7 @@
       systemd:
         name: elasticsearch
         enabled: yes
+        state: started
 
     - name: Clean up packages
       apt:
@@ -52,3 +69,4 @@
       systemd:
         name: postgresql
         enabled: yes
+        state: started
