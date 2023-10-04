@@ -4,7 +4,7 @@ server:  https://{{ hostvars[groups['rancher_rke2_server_nodes'][0]].private_ip 
 token: {{ RANCHER_RKE2_TOKEN }}
 tls-san:
   - {{ hostvars[groups['load_balancer_nodes'][0]].ansible_host }}
-  - {{ rancher.hostname }}
+  - {{ gen3.hostname }}
 {# disable: rke2-coredns #}
 {% if inventory_hostname in groups['rancher_rke2_server_nodes'] %}
 node-taint:
