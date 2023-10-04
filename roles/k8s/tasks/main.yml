@@ -1,6 +1,0 @@
----
-# tasks file for k8s (largely from https://www.cloudsigma.com/how-to-install-and-use-kubernetes-on-ubuntu-20-04/)
-- { import_tasks: build.yml }
-- { import_tasks: common.yml, tags: k8s }
-- { import_tasks: control_plane.yml, tags: k8s, when: "'k8s_control_plane' in group_names" }
-- { import_tasks: node.yml, tags: k8s, when: "'k8s_nodes' in group_names" }
