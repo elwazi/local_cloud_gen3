@@ -11,12 +11,19 @@
     chdir: /home/{{ gen3.user }}
   register: helm_repo_update
 
-- name: Create/update values.yml
+- name: Create/update values.yml and other config files
   tags: values
   template:
-    src: values.yml
-    dest: "~/values.yml"
+    src: "{{ item }}"
+    dest: "~/{{ item }}"
     mode: 0600
+  with_items:
+    - values.yml
+    - do_users.yaml
+    - ingress.yaml
+    - ingressconfig.yaml
+    - kubedns.yaml
+    - revproxy.yaml
 
 #- name: Start gen3 helm
 #  become: no
