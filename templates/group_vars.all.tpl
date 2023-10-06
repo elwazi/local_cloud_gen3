@@ -29,5 +29,3 @@ postgres: {
 
 google_client_id: "${google_client_id}"
 google_client_secret: "${google_client_secret}"
-aws_access_key_id: "${awsAccessKeyId}"
-aws_secret_access_key: "${awsSecretAccessKey}"

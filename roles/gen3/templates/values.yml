@@ -13,11 +13,19 @@ fence:
       google:
         client_id: "{{ google_client_id }}"
         client_secret: "{{ google_client_secret }}"
-
+  AWS_CREDENTIALS:
+    'gen3':
+      aws_access_key_id: "{{ gen3.ec2.access }}"
+      aws_secret_access_key: "{{ gen3.ec2.secret }}"
+  S3_BUCKETS:
+    the_bucket:
+      cred: 'gen3'
+      endpoint_url: 'https://{{ s3.host_base }}'
+  DATA_UPLOAD_BUCKET: 'the_bucket'
 
 secrets:
-  awsAccessKeyId: "{{ aws_access_key_id }}"
-  awsSecretAccessKey: "{{ aws_secret_access_key }}"
+  awsAccessKeyId: "{{ gen3.ec2.access }}"
+  awsSecretAccessKey: "{{ gen3.ec2.secret }}"
 
 {# hatchery:
   image:

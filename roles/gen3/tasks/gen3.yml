@@ -33,7 +33,7 @@
   command: "~/.venv/bin/s3cmd mb s3://{{ gen3.bucket_name }}"
 
 - name: Create/update values.yml and other config files
-  tags: values
+  tags: values,config
   template:
     src: "{{ item }}"
     dest: "~/{{ item }}"
@@ -46,7 +46,6 @@
     - kubedns.yaml
     - revproxy.yaml
 
-- name: Start gen3 helm
-  tags: helm
-  become: no
-  command: helm upgrade --install elwazirelease gen3/gen3 -f /home/{{ ansible_user }}/values.yml
+#- name: Start gen3 helm
+#  tags: helm
+#  command: helm upgrade --install elwazirelease gen3/gen3 -f ~//values.yml

@@ -6,6 +6,8 @@ ansible_ssh_private_key_file=~/.ssh/ilifu/id_rsa
 ansible_user=${admin_user}
 
 
+
+
 [all:children]
 load_balancer_nodes
 rancher_rke2_server_nodes
