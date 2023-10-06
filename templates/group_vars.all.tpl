@@ -12,7 +12,8 @@ gen3 : {
     'project_id': '${ec2_credentials.project_id}',
     'user_id': '${ec2_credentials.user_id}',
     'trust_id': '${ec2_credentials.trust_id}',
-  }
+  },
+  'bucket_name': '${gen3_hostname}-bucket',
 }
 
 postgres: {

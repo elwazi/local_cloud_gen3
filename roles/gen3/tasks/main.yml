@@ -1,5 +1,11 @@
 ---
 # tasks file for gen3
+- name: Install virtualenv
+  tags: [virtualenv]
+  become: yes
+  apt:
+    name: python3-virtualenv
+    state: present
 
 - name: Add gen3 unix group
   become: yes

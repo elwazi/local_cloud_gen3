@@ -11,6 +11,27 @@
     chdir: /home/{{ gen3.user }}
   register: helm_repo_update
 
+- name: Create .s3cfg file
+  tags: [s3cfg,s3]
+  template:
+    src: s3cfg
+    dest: ~/.s3cfg
+    mode: 0600
+
+- name: Create virtualenv
+  tags: [virtualenv]
+  pip:
+    name:
+      - s3cmd
+      - python-openstackclient
+    state: latest
+    virtualenv_command: virtualenv-
+    virtualenv: ~/.venv
+
+- name: Create s3 bucket
+  tags: [s3,bucket]
+  command: "~/.venv/bin/s3cmd mb s3://{{ gen3.bucket_name }}"
+
 - name: Create/update values.yml and other config files
   tags: values
   template:
@@ -25,6 +46,7 @@
     - kubedns.yaml
     - revproxy.yaml
 
-#- name: Start gen3 helm
-#  become: no
-#  command: helm upgrade --install elwazirelease gen3/gen3 -f /home/{{ ansible_user }}/values.yml
+- name: Start gen3 helm
+  tags: helm
+  become: no
+  command: helm upgrade --install elwazirelease gen3/gen3 -f /home/{{ ansible_user }}/values.yml
