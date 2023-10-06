@@ -6,3 +6,4 @@ variables.auto.hcl
 inventory
 inventory.ini
 variables.auto.hcl
+inventory.yaml
