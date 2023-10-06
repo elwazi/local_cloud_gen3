@@ -1,5 +1,5 @@
-host_base = oss.ilifu.ac.za:6780
-host_bucket = oss.ilifu.ac.za:6780
+host_base = {{ s3.host_base }}
+host_bucket = {{ s3.host_bucket }}
 access_key = {{ gen3.ec2.access }}
 secret_key = {{ gen3.ec2.secret }}
 use_https = True

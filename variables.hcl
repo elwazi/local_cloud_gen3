@@ -289,3 +289,15 @@ variable "postgres_arborist_password" {
   description = "arborist user postgres password"
   sensitive = true
 }
+
+variable "s3_host_server" {
+  type        = string
+  description = "S3 host server"
+  default     = "oss.ilifu.ac.za"
+}
+
+variable "s3_host_port" {
+    type        = number
+    description = "S3 host port"
+    default     = 6780
+}

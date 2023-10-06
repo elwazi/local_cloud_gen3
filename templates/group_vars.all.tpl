@@ -2,7 +2,7 @@
 timezone: '${ timezone }'
 gen3_subnet: 192.168.10.0/24
 
-gen3 : {
+gen3: {
   'hostname': '${gen3_hostname}',
   'user': '${gen3_user}',
   'admin_email': '${gen3_admin_email}',
@@ -14,6 +14,11 @@ gen3 : {
     'trust_id': '${ec2_credentials.trust_id}',
   },
   'bucket_name': '${gen3_hostname}-bucket',
+}
+
+s3: {
+  'host_base': ${s3_host_server}:${s3_host_port},
+  'host_bucket': ${s3_host_server}:${s3_host_port},
 }
 
 postgres: {
