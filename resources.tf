@@ -37,6 +37,7 @@ resource "local_file" "group_vars_all" {
       gen3_hostname = var.gen3_hostname
       gen3_user = var.gen3_user
       gen3_admin_email = var.gen3_admin_email
+      ec2_credentials = openstack_identity_ec2_credential_v3.ec2_credentials
 #      rancher_hostname = var.rancher_hostname
 
       database_node_name = local.database_node_name

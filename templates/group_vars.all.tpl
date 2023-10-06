@@ -6,6 +6,13 @@ gen3 : {
   'hostname': '${gen3_hostname}',
   'user': '${gen3_user}',
   'admin_email': '${gen3_admin_email}',
+  'ec2': {
+    'access': '${ec2_credentials.access}',
+    'secret': '${ec2_credentials.secret}',
+    'project_id': '${ec2_credentials.project_id}',
+    'user_id': '${ec2_credentials.user_id}',
+    'trust_id': '${ec2_credentials.trust_id}',
+  }
 }
 
 postgres: {
