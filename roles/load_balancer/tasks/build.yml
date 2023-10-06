@@ -1,6 +1,7 @@
 ---
 # tasks file for building load balancer image
 - name: Install prerequisites for nginx installation
+  tags: [nginx]
   apt:
     name:
       - apt-transport-https
@@ -15,16 +16,19 @@
   retries: 5
 
 - name: Import official nginx signing key
+  tags: [nginx]
   apt_key:
     url: https://nginx.org/keys/nginx_signing.key
     state: present
 
 - name: Add stable nginx repository
+  tags: [nginx]
   apt_repository:
     repo: "deb https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx"
     state: present
 
 - name: Install nginx
+  tags: [nginx]
   apt:
     name: nginx
     update_cache: yes

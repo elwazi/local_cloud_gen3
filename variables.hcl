@@ -133,6 +133,11 @@ variable "gen3_user" {
   description = "Login name for gen3 user"
 }
 
+variable "gen3_admin_email" {
+  type = string
+  description = "Email address for gen3 admin user"
+}
+
 variable "rancher_rke2_server_node_flavour" {
   type = string
   description = "OpenStack VM flavour to use for the rke2 server nodes"

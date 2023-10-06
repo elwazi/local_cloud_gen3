@@ -12,6 +12,7 @@ resource "local_file" "hosts_cfg" {
   content = templatefile("templates/inventory.tpl",
     {
       gen3_hostname = var.gen3_hostname
+
 #      rancher_hostname = var.rancher_hostname
       load_balancer_float_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address  # todo: change back to this
       #load_balancer_float_ip = data.openstack_networking_floatingip_v2.load_balancer_fixed_floating_ip.address
@@ -35,6 +36,7 @@ resource "local_file" "group_vars_all" {
       awsSecretAccessKey = var.awsSecretAccessKey
       gen3_hostname = var.gen3_hostname
       gen3_user = var.gen3_user
+      gen3_admin_email = var.gen3_admin_email
 #      rancher_hostname = var.rancher_hostname
 
       database_node_name = local.database_node_name
