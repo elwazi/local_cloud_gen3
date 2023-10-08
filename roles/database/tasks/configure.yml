@@ -13,8 +13,7 @@
           - acl
           - default-jre
           - libpq-dev
-          - postgresql
-          - postgresql-contrib
+          - postgresql-13
           - python3-psycopg2
         state: latest
 
@@ -31,7 +30,7 @@
 
     - name: Configure postgres to listen to local network
       lineinfile:
-        path: "/etc/postgresql/{{ postgres_version.version.major }}/main/postgresql.conf"
+        path: "/etc/postgresql/13/main/postgresql.conf"
         regex: "^listen_addresses.*"
         line: "listen_addresses = '{% for ip in ansible_all_ipv4_addresses %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
