@@ -4,7 +4,7 @@ global:
   postgres:
     db_create: true
     master:
-      host: {{ postgres.hostname }}
+      host: {{ postgres.host_ip }}
       username: {{ postgres.user }}
       password: {{ postgres.password }}
       port: "5432"
@@ -15,15 +15,15 @@ fence:
       google:
         client_id: "{{ google_client_id }}"
         client_secret: "{{ google_client_secret }}"
-  AWS_CREDENTIALS:
-    "gen3":
-      aws_access_key_id: "{{ gen3.ec2.access }}"
-      aws_secret_access_key: "{{ gen3.ec2.secret }}"
-  S3_BUCKETS:
-    bucket1:
-      cred: "gen3"
-      endpoint_url: "https://{{ s3.host_base }}"
-  DATA_UPLOAD_BUCKET: "bucket1"
+    AWS_CREDENTIALS:
+      "gen3":
+        aws_access_key_id: "{{ gen3.ec2.access }}"
+        aws_secret_access_key: "{{ gen3.ec2.secret }}"
+    S3_BUCKETS:
+      bucket1:
+        cred: "gen3"
+        endpoint_url: "https://{{ s3.host_base }}"
+    DATA_UPLOAD_BUCKET: "bucket1"
 
 secrets:
   awsAccessKeyId: "{{ gen3.ec2.access }}"
@@ -69,8 +69,9 @@ portal:
     tag: dev
 
 guppy:
-  enabled: true
-  db_restore: true
+  esEndpoint: "{{ postgres.host_ip }}:9200"
+#  enabled: true
+#  db_restore: true
 
 indexd:
   enabled: true

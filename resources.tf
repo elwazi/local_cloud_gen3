@@ -14,6 +14,7 @@ resource "local_file" "hosts_cfg" {
       admin_user = var.admin_user
 
       database_node = openstack_compute_instance_v2.database_node
+      database_node_ip = openstack_compute_instance_v2.database_node.access_ip_v4
       database_node_name = local.database_node_name
 
       ec2_credentials = openstack_identity_ec2_credential_v3.ec2_credentials

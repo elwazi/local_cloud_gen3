@@ -63,6 +63,7 @@ servers:
 
     postgres: {
       'hostname': '${ database_node_name }',
+      'host_ip': '${ database_node_ip }',
       'user': '${postgres_user}',
       'password': '${postgres_password}',
     }
