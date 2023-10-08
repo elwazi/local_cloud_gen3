@@ -46,6 +46,6 @@
     - kubedns.yaml
     - revproxy.yaml
 
-#- name: Start gen3 helm
-#  tags: helm
-#  command: helm upgrade --install elwazirelease gen3/gen3 -f ~//values.yml
+- name: Start gen3 helm
+  tags: helm
+  command: helm upgrade --install elwazirelease gen3/gen3 -f ~/values.yml -f ingress.yaml -f ingressconfig.yaml -f kubedns.yaml -f revproxy.yaml
