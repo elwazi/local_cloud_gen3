@@ -1,12 +1,14 @@
 global:
   hostname: {{ gen3.hostname }}
+  dev: false
   postgres:
     db_create: true
     master:
       host: {{ postgres.hostname }}
       username: {{ postgres.user }}
       password: {{ postgres.password }}
-      port: 5432
+      port: "5432"
+
 fence:
   FENCE_CONFIG:
     OPENID_CONNECT:
@@ -14,14 +16,14 @@ fence:
         client_id: "{{ google_client_id }}"
         client_secret: "{{ google_client_secret }}"
   AWS_CREDENTIALS:
-    'gen3':
+    "gen3":
       aws_access_key_id: "{{ gen3.ec2.access }}"
       aws_secret_access_key: "{{ gen3.ec2.secret }}"
   S3_BUCKETS:
-    the_bucket:
-      cred: 'gen3'
-      endpoint_url: 'https://{{ s3.host_base }}'
-  DATA_UPLOAD_BUCKET: 'the_bucket'
+    bucket1:
+      cred: "gen3"
+      endpoint_url: "https://{{ s3.host_base }}"
+  DATA_UPLOAD_BUCKET: "bucket1"
 
 secrets:
   awsAccessKeyId: "{{ gen3.ec2.access }}"
