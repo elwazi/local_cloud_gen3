@@ -1,0 +1,106 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: useryaml
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app: gen3job
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: fence-config
+          secret:
+            secretName: "fence-config"
+        - name: useryaml
+          configMap:
+            name: useryaml
+      containers:
+      - name: fence
+        image: "quay.io/cdis/fence:master"
+        imagePullPolicy: Always
+        env:
+          - name: GEN3_UWSGI_TIMEOUT
+            valueFrom:
+              configMapKeyRef:
+                name: manifest-global
+                key: uwsgi-timeout
+                optional: true
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: AWS_STS_REGIONAL_ENDPOINTS
+            value: regional
+          - name: PYTHONPATH
+            value: /var/www/fence
+          - name: GEN3_DEBUG
+            value: "False"
+          - name: FENCE_PUBLIC_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: manifest-fence
+                key: fence-config-public.yaml
+                optional: true
+          - name: PGHOST
+            valueFrom:
+              secretKeyRef:
+                name: fence-dbcreds
+                key: host
+                optional: false
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: fence-dbcreds
+                key: username
+                optional: false
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fence-dbcreds
+                key: password
+                optional: false
+          - name: PGDB
+            valueFrom:
+              secretKeyRef:
+                name: fence-dbcreds
+                key: database
+                optional: false
+          - name: DBREADY
+            valueFrom:
+              secretKeyRef:
+                name: fence-dbcreds
+                key: dbcreated
+                optional: false
+          - name: DB
+            value: postgresql://$(PGUSER):$(PGPASSWORD)@$(PGHOST):5432/$(PGDB)
+          - name: INDEXD_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: indexd-service-creds
+                key: fence
+          - name: gen3Env
+            valueFrom:
+              configMapKeyRef:
+                name: manifest-global
+                key: hostname
+        volumeMounts:
+          - name: "fence-config"
+            readOnly: true
+            mountPath: "/var/www/fence/fence-config.yaml"
+            subPath: fence-config.yaml
+          - name: "useryaml"
+            mountPath: "/var/www/fence/user.yaml"
+            subPath: useryaml
+        command: ["/bin/bash" ]
+        args:
+          - "-c"
+          # Script always succeeds if it runs (echo exits with 0)
+          - |
+            pip3 install SQLAlchemy==1.3.6
+            # can be removed once this is merged: https://github.com/uc-cdis/fence/pull/1096
+            fence-create sync --arborist http://arborist-service --yaml /var/www/fence/user.yaml
+      restartPolicy: OnFailure

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: revproxy2
+  annotations:
+spec:
+  rules:
+    - host: gen3-elwazi.ilifu.ac.za
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  revproxy-service
+                port:
+                  number: 80
