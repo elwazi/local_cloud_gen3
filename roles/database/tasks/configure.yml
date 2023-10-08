@@ -38,7 +38,7 @@
 
     - name: Configure postgres to allow connections on subnet
       lineinfile:
-        path: "/etc/postgresql/12/main/pg_hba.conf"
+        path: "/etc/postgresql/13/main/pg_hba.conf"
         regex: "host *all *all *{{ gen3_subnet }} *md5"
         line: "host    all             all             {{ gen3_subnet }}         md5"
       notify: Restart postgres
