@@ -5,7 +5,7 @@ metadata:
   annotations:
 spec:
   rules:
-    - host: gen3-elwazi.ilifu.ac.za
+    - host: {{ gen3.hostname }}
       http:
         paths:
           - path: /
