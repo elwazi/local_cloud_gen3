@@ -67,8 +67,7 @@ secrets:
 #}
 
 portal:
-  image:
-    tag: dev
+  enabled: true
 
 guppy:
   esEndpoint: "{{ postgres.host_ip }}:9200"
