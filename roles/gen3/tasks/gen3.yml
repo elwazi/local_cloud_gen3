@@ -25,7 +25,7 @@
       - s3cmd
       - python-openstackclient
     state: latest
-    virtualenv_command: virtualenv-
+    virtualenv_command: virtualenv
     virtualenv: ~/.venv
 
 - name: Create s3 bucket

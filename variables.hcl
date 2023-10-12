@@ -290,6 +290,30 @@ variable "postgres_arborist_password" {
   sensitive = true
 }
 
+variable "postgres_metadata_password" {
+  type = string
+  description = "metadata user postgres password"
+  sensitive = true
+}
+
+variable "postgres_guppy_password" {
+    type = string
+    description = "guppy user postgres password"
+    sensitive = true
+}
+
+variable "postgres_audit_password" {
+    type = string
+    description = "audit user postgres password"
+    sensitive = true
+}
+
+variable "postgres_wts_password" {
+    type = string
+    description = "wts user postgres password"
+    sensitive = true
+}
+
 variable "s3_host_server" {
   type        = string
   description = "S3 host server"

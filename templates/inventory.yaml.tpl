@@ -66,6 +66,16 @@ servers:
       'host_ip': '${ database_node_ip }',
       'user': '${postgres_user}',
       'password': '${postgres_password}',
+      'arborist_password': '${postgres_arborist_password}',
+      'fence_password': '${postgres_fence_password}',
+      'indexd_password': '${postgres_indexd_password}',
+      'peregrine_password': '${postgres_peregrine_password}',
+      'sheepdog_password': '${postgres_sheepdog_password}',
+      'metadata_password': '${postgres_metadata_password}',
+      'guppy_password': '${postgres_guppy_password}',
+      'audit_password': '${postgres_audit_password}',
+      'wts_password': '${postgres_wts_password}',
+      'audit_password': '${postgres_audit_password}',
     }
 
     google_client_id: "${google_client_id}"

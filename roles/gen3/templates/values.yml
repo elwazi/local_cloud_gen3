@@ -2,7 +2,7 @@ global:
   hostname: {{ gen3.hostname }}
   dev: false
   postgres:
-    db_create: true
+    dbCreate: true
     master:
       host: {{ postgres.host_ip }}
       username: {{ postgres.user }}
@@ -10,6 +10,8 @@ global:
       port: "5432"
 
 fence:
+  postgres:
+    password: "{{ postgres.fence_password }}"
   FENCE_CONFIG:
     OPENID_CONNECT:
       google:
@@ -70,17 +72,53 @@ portal:
 
 guppy:
   esEndpoint: "{{ postgres.host_ip }}:9200"
-#  enabled: true
-#  db_restore: true
+  tierAccessLimit: "1000"
+  enabled: false
+  dbRestore: false
+  postgres:
+    password: "meh"
+
+peregrine:
+  enabled: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.peregrine_password }}"
+
+arborist:
+  enabled: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.arborist_password }}"
 
 indexd:
   enabled: true
-  db_restore: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.indexd_password }}"
 
 metadata:
   enabled: true
-  db_restore: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.metadata_password }}"
 
 sheepdog:
   enabled: true
-  db_restore: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.sheepdog_password }}"
+
+wts:
+  enabled: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.wts_password }}"
+
+pidgin:
+    enabled: false
+
+audit:
+  enabled: true
+  dbRestore: false
+  postgres:
+    password: "{{ postgres.audit_password }}"

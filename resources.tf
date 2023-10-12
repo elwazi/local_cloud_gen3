@@ -31,6 +31,16 @@ resource "local_file" "hosts_cfg" {
 
       postgres_user = var.postgres_user
       postgres_password = var.postgres_password
+      postgres_fence_password = var.postgres_fence_password
+      postgres_peregrine_password = var.postgres_peregrine_password
+      postgres_sheepdog_password = var.postgres_sheepdog_password
+      postgres_indexd_password = var.postgres_indexd_password
+      postgres_arborist_password = var.postgres_arborist_password
+      postgres_metadata_password = var.postgres_metadata_password
+      postgres_guppy_password = var.postgres_guppy_password
+      postgres_audit_password = var.postgres_audit_password
+      postgres_wts_password = var.postgres_wts_password
+      postgres_audit_password = var.postgres_audit_password
 
       rancher_rke2_server_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_server_nodes.*: node ]
       rancher_rke2_worker_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_worker_nodes.*: node ]
