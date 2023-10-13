@@ -126,7 +126,7 @@ portal:
           },
           "login": {
             "title": "{{ gen3.portal.login.title }}",
-            "subTitle": "{{ gen3.portal.login.subTitle }}",
+            "subTitle": "{{ gen3.portal.login.subtitle }}",
             "text": "{{ gen3.portal.login.text }}",
             "contact": "If you have any questions about access or the registration process, please contact ",
             "email": "{{ gen3.portal.login.email }}",
