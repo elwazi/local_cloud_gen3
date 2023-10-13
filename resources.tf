@@ -30,6 +30,7 @@ resource "local_file" "hosts_cfg" {
       gen3_portal_login_subtitle = var.gen3_portal_login_subtitle
       gen3_portal_login_text = var.gen3_portal_login_text
       gen3_portal_login_email = var.gen3_portal_login_email
+      gen3_portal_logo = var.gen3_portal_logo_base64_png
 
       google_client_id = var.google_client_id
       google_client_secret = var.google_client_secret

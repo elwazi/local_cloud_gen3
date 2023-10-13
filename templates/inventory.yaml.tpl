@@ -70,8 +70,8 @@ servers:
             'subtitle': '${gen3_portal_login_subtitle}',
             'text': '${gen3_portal_login_text}',
             'email': '${gen3_portal_login_email}',
-            },
-        }
+        },
+        'logo_base64': '${gen3_portal_logo_base64}'
       }
     }
 
