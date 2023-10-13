@@ -22,6 +22,14 @@ resource "local_file" "hosts_cfg" {
       gen3_admin_email = var.gen3_admin_email
       gen3_hostname = var.gen3_hostname
       gen3_user = var.gen3_user
+      gen3_portal_appName = var.gen3_portal_appName
+      gen3_portal_index_introduction_heading = var.gen3_portal_index_introduction_heading
+      gen3_portal_index_introduction_text = var.gen3_portal_index_introduction_text
+      gen3_portal_navigation_title = var.gen3_portal_navigation_title
+      gen3_portal_login_title = var.gen3_portal_login_title
+      gen3_portal_login_subtitle = var.gen3_portal_login_subtitle
+      gen3_portal_login_text = var.gen3_portal_login_text
+      gen3_portal_login_email = var.gen3_portal_login_email
 
       google_client_id = var.google_client_id
       google_client_secret = var.google_client_secret

@@ -54,6 +54,25 @@ servers:
         'trust_id': '${ec2_credentials.trust_id}',
       },
       'bucket_name': '${gen3_hostname}-bucket',
+      'portal': {
+        'appName': '${gen3_portal_app_name}',
+        'index': {
+          'introduction': {
+            'heading': '${gen3_portal_index_introduction_heading}',
+            'text': '${gen3_portal_index_introduction_text}',
+          },
+        },
+        'navigation': {
+          'title': '${gen3_portal_navigation_title}',
+        },
+        'login': {
+            'title': '${gen3_portal_login_title}',
+            'subtitle': '${gen3_portal_login_subtitle}',
+            'text': '${gen3_portal_login_text}',
+            'email': '${gen3_portal_login_email}',
+            },
+        }
+      }
     }
 
     s3: {

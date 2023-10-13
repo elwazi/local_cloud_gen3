@@ -325,3 +325,51 @@ variable "s3_host_port" {
     description = "S3 host port"
     default     = 6780
 }
+
+variable "gen3_portal_appName" {
+    type        = string
+    description = "Gen3 portal app name"
+    default     = "eLwazi Gen3 Data Commons Portal"
+}
+
+variable "gen3_portal_index_introduction_heading" {
+    type        = string
+    description = "Gen3 portal index introduction heading"
+    default     = "eLwazi Data Commons"
+}
+
+variable "gen3_portal_index_introduction_text" {
+    type        = string
+    description = "Gen3 portal index introduction text"
+    default     = "The eLwazi Data Commons supports the management, analysis and sharing of data for the research community."
+}
+
+variable "gen3_portal_navigation_title" {
+    type        = string
+    description = "Gen3 portal navigation title"
+    default     = "eLwazi Gen3 Data Commons"
+}
+
+variable "gen3_portal_login_title" {
+    type        = string
+    description = "Gen3 portal login title"
+    default     = "eLwazi Gen3 Data Commons"
+}
+
+variable "gen3_portal_login_subtitle" {
+    type        = string
+    description = "Gen3 portal login subtitle"
+    default     = "Enabling data science applications for health in Africa"
+}
+
+variable "gen3_portal_login_text" {
+    type        = string
+    description = "Gen3 portal login text"
+    default     = "This African led open data science platform provides an interactive environment to apply data science techniques to diverse datasets for novel health discoveries."
+}
+
+variable "gen3_portal_login_email" {
+  type        = string
+  description = "Gen3 portal login email"
+  default     = "support@elwazi.org"
+}
