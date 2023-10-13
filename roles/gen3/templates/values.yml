@@ -66,9 +66,6 @@ secrets:
       gen3-volume-location: "/home/jovyan/.gen3"
 #}
 
-portal:
-  enabled: true
-
 guppy:
   esEndpoint: "{{ postgres.host_ip }}:9200"
   tierAccessLimit: "1000"
