@@ -30,7 +30,10 @@
 
 - name: Create s3 bucket
   tags: [s3,bucket]
-  command: "~/.venv/bin/s3cmd mb s3://{{ gen3.bucket_name }}"
+  command: "~/.venv/bin/s3cmd mb s3://{{ item }}"
+  with_items:
+    - "{{ gen3.user_bucket_name }}"
+    - "{{ gen3.data_bucket_name }}"
 
 - name: Create/update values.yml and other config files
   tags: values,config

@@ -22,10 +22,13 @@ fence:
         aws_access_key_id: "{{ gen3.ec2.access }}"
         aws_secret_access_key: "{{ gen3.ec2.secret }}"
     S3_BUCKETS:
-      bucket1:
+      {{ gen3.data_bucket_name }}:
         cred: "gen3"
-        endpoint_url: "https://{{ s3.host_base }}"
-    DATA_UPLOAD_BUCKET: "bucket1"
+#        endpoint_url: "https://{{ s3.host_base }}"
+      {{ gen3.user_bucket_name }}:
+        cred: "gen3"
+#        endpoint_url: "https://{{ s3.host_base }}"
+    DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
 
 secrets:
   awsAccessKeyId: "{{ gen3.ec2.access }}"

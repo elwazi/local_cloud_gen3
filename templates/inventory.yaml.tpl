@@ -53,7 +53,8 @@ servers:
         'user_id': '${ec2_credentials.user_id}',
         'trust_id': '${ec2_credentials.trust_id}',
       },
-      'bucket_name': '${gen3_hostname}-bucket',
+      'data_bucket_name': '${gen3_hostname}-data-bucket',
+      'user_bucket_name': '${gen3_hostname}-user-bucket',
       'portal': {
         'appName': '${gen3_portal_appName}',
         'index': {
