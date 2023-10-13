@@ -55,7 +55,7 @@ servers:
       },
       'bucket_name': '${gen3_hostname}-bucket',
       'portal': {
-        'appName': '${gen3_portal_app_name}',
+        'appName': '${gen3_portal_appName}',
         'index': {
           'introduction': {
             'heading': '${gen3_portal_index_introduction_heading}',
