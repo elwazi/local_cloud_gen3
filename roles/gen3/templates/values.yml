@@ -10,6 +10,8 @@ global:
       port: "5432"
 
 fence:
+  image:
+    pullPolicy: IfNotPresent
   postgres:
     password: "{{ postgres.fence_password }}"
   FENCE_CONFIG:
@@ -24,18 +26,18 @@ fence:
     S3_BUCKETS:
       {{ gen3.data_bucket_name }}:
         cred: "gen3"
-#        endpoint_url: "https://{{ s3.host_base }}"
+        endpoint_url: "https://{{ s3.host_base }}"
       {{ gen3.user_bucket_name }}:
         cred: "gen3"
-#        endpoint_url: "https://{{ s3.host_base }}"
+        endpoint_url: "https://{{ s3.host_base }}"
     DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
 
-usersync:
-  usersync: true
-  secrets:
-    aws_access_key_id: "{{ gen3.ec2.access }}"
-    aws_secret_access_key: "{{ gen3.ec2.secret }}"
-  userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
+  usersync:
+    usersync: true
+    secrets:
+      aws_access_key_id: "{{ gen3.ec2.access }}"
+      aws_secret_access_key: "{{ gen3.ec2.secret }}"
+    userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
 
 secrets:
   awsAccessKeyId: "{{ gen3.ec2.access }}"
@@ -77,6 +79,8 @@ secrets:
 #}
 
 guppy:
+  image:
+    pullPolicy: IfNotPresent
   esEndpoint: "{{ postgres.host_ip }}:9200"
   tierAccessLimit: "1000"
   enabled: false
@@ -85,45 +89,61 @@ guppy:
     password: "meh"
 
 peregrine:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.peregrine_password }}"
 
 arborist:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.arborist_password }}"
 
 indexd:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.indexd_password }}"
 
 metadata:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.metadata_password }}"
 
 sheepdog:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.sheepdog_password }}"
 
 wts:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:
     password: "{{ postgres.wts_password }}"
 
 pidgin:
-    enabled: false
+  image:
+    pullPolicy: IfNotPresent
+  enabled: false
 
 audit:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
   postgres:

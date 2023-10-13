@@ -1,4 +1,6 @@
 portal:
+  image:
+    pullPolicy: IfNotPresent
   enabled: true
   gitops:
     json: |
