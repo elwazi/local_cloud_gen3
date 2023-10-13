@@ -50,6 +50,11 @@
     - kubedns2.yaml
     - revproxy.yaml
     - portal.yaml
+    - user.yaml
+
+- name: Stick user.yaml in s3
+  tags: s3,user
+  command: "~/.venv/bin/s3cmd put ~/user.yaml s3://{{ gen3.user_bucket_name }}/user.yaml"
 
 - name: Start gen3 helm
   tags: helm
