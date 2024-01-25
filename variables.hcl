@@ -15,22 +15,25 @@ variable "admin_user" {
 variable "image_suffix" {
   type = string
   description = "Suffix to be appended to the end of image names"
+  default = "gen3-dev.elwazi.ubuntu.20_04"
 }
 
 variable "base_image_source" {
   type = string
   description = "Source URL for base image"
+  default = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
 }
 
 variable "base_image_source_format" {
   type = string
   description = "Image format of base image (qcow2 / raw / …)"
+  default = "qcow2"
 }
 
 variable "build_image_flavour" {
   type = string
   description = "Virtual Image Flavour to be used when building images"
-  default = "ilifu-B"
+  default = "ilifu-C"
 }
 
 #variable "database_image_name" {
@@ -82,21 +85,25 @@ variable "rancher_rke2_worker_node_count" {
 variable "floating_ip_network_id" {
   description = "The name of the Floating IP network in your OpenStack"
   type = string
+  default = "f99ab9af-902c-494b-abfc-32ccd5716234"
 }
 
 variable "network_ids" {
   type = list(string)
   description = "Name of networks to be used when building images"
+  default = ["0849e923-df2c-42a6-9ef8-1b0c9cd38182"]
 }
 
 variable "security_groups" {
   type = list(string)
   description = "Security groups to be used (this should include an incoming ssh rule…)"
+  default = ["07940fba-2a99-42e4-851b-8f226144c9bd"]
 }
 
 variable "timezone" {
   type = string
   description = "Timezone to be used in machines"
+  default = "Africa/Johannesburg"
 }
 
 #variable "rancher_rke2_version" {
@@ -109,6 +116,7 @@ variable "timezone" {
 variable "node_suffix" {
   type        = string
   description = "Suffix to be appended to the end of node names"
+  default = "dev"
 }
 
 variable "database_node_flavour" {
@@ -131,6 +139,7 @@ variable "gen3_hostname" {
 variable "gen3_user" {
   type = string
   description = "Login name for gen3 user"
+  default = "gen3"
 }
 
 variable "gen3_admin_email" {
@@ -182,11 +191,13 @@ variable "rancher_rke2_server_node_count" {
 variable "floating_ip_pool_name" {
   type = string
   description = "OpenStack Floating IP address pool name"
+  default = "Ext_Floating_IP"
 }
 
 variable "name_prefix" {
   type = string
   description = "Name used in terraform infrastructure"
+  default = "gen3-dev"
 }
 
 variable "ssh_public_key" {
