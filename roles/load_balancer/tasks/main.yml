@@ -13,6 +13,10 @@
     mode: 0644
   notify: restart nginx
 
+- name: Flush handlers
+  tags: [nginx]
+  meta: flush_handlers
+
 - name: Run certbot to get certs "certbot certonly --nginx -n -d "{{ gen3.hostname }}" --agree-tos --email "{{ gen3.admin_email }}""
   tags: [certbot]
   become: yes
