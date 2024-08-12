@@ -50,7 +50,24 @@
     - kubedns2.yaml
     - revproxy.yaml
     - portal.yaml
+
+- name: Create/update useryaml
+  tags: useryaml
+  template:
+    src: "{{ item }}"
+    dest: "~/{{ item }}"
+    mode: 0600
+  with_items:
     - user.yaml
+    - useryamljob.yaml
+
+- name: Update user.yaml
+  tags: useryaml
+  template:
+      src: user.yaml
+      dest: ~/user.yaml
+      mode: 0600
+  notify: run do_users
 
 - name: Stick user.yaml in s3
   tags: s3,user
