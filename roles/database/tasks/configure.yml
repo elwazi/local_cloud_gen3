@@ -5,6 +5,17 @@
   tags:
     - postgres
   block:
+# todo: add postgres repo so that postgres 13 can be installed
+    - name: Add postgres apt repository key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add postgres repository
+      apt_repository:
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        state: present
+
     - name: Ensure acl, psycopg2 and libpq-dev are installed and are latest version
       tags:
         - psycopg2
@@ -14,8 +25,11 @@
           - default-jre
           - libpq-dev
           - postgresql-13
+          - postgresql-client-13
+          - postgresql-contrib-13
           - python3-psycopg2
         state: latest
+        update-cache: yes
 
     - name: Get postgres version information
       become: yes

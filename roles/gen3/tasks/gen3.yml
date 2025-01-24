@@ -34,6 +34,10 @@
   with_items:
     - "{{ gen3.user_bucket_name }}"
     - "{{ gen3.data_bucket_name }}"
+  register: create_bucket
+  failed_when:
+    - create_bucket.rc != 0
+    - '"already exists" not in create_bucket.stderr'
 
 - name: Create/update values.yml and other config files
   tags: values,config
