@@ -1,0 +1,15 @@
+[packages]
+django = "*"
+gen3users = "*"
+gunicorn = "*"
+pyyaml = "*"
+psycopg = {extras = ["binary"], version = "*"}
+django-extensions = "*"
+
+[dev-packages]
+django-debug-toolbar = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-cov = "*"
+werkzeug = "*"
+model-mommy = "*"

@@ -1,0 +1,355 @@
+- model: users.gen3resource
+  fields:
+    name: workspace
+    parent_resource: null
+- model: users.gen3resource
+  fields:
+    name: data_file
+    parent_resource: null
+- model: users.gen3resource
+  fields:
+    name: services
+    parent_resource: null
+- model: users.gen3resource
+  fields:
+    name: sheepdog
+    parent_resource:
+    - services
+- model: users.gen3resource
+  fields:
+    name: submission
+    parent_resource:
+    - sheepdog
+    - - services
+- model: users.gen3resource
+  fields:
+    name: program
+    parent_resource:
+    - submission
+    - - sheepdog
+      - - services
+- model: users.gen3resource
+  fields:
+    name: project
+    parent_resource:
+    - submission
+    - - sheepdog
+      - - services
+- model: users.gen3resource
+  fields:
+    name: indexd
+    parent_resource:
+    - services
+- model: users.gen3resource
+  fields:
+    name: admin
+    parent_resource:
+    - indexd
+    - - services
+- model: users.gen3resource
+  fields:
+    name: audit
+    parent_resource:
+    - services
+- model: users.gen3resource
+  fields:
+    name: presigned_url
+    parent_resource:
+    - audit
+    - - services
+- model: users.gen3resource
+  fields:
+    name: login
+    parent_resource:
+    - audit
+    - - services
+- model: users.gen3resource
+  fields:
+    name: open
+    parent_resource: null
+- model: users.gen3resource
+  fields:
+    name: programs
+    parent_resource: null
+- model: users.gen3resource
+  fields:
+    name: eLwazi
+    parent_resource:
+    - programs
+- model: users.gen3resource
+  fields:
+    name: projects
+    parent_resource:
+    - eLwazi
+    - - programs
+- model: users.gen3resource
+  fields:
+    name: public
+    parent_resource:
+    - projects
+    - - eLwazi
+      - - programs
+- model: users.gen3resource
+  fields:
+    name: fence
+    parent_resource:
+    - services
+- model: users.gen3resource
+  fields:
+    name: jupyterhub
+    parent_resource:
+    - services
+- model: users.gen3action
+  fields:
+    service:
+    - fence
+    - - services
+    action: FU
+- model: users.gen3action
+  fields:
+    service:
+    - jupyterhub
+    - - services
+    action: AC
+- model: users.gen3action
+  fields:
+    service:
+    - sheepdog
+    - - services
+    action: AL
+- model: users.gen3action
+  fields:
+    service:
+    - indexd
+    - - services
+    action: AL
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: AL
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: CR
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: RD
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: UP
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: DL
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: WS
+- model: users.gen3action
+  fields:
+    service:
+    - services
+    action: RS
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - AL
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - CR
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - DL
+- model: users.gen3permission
+  fields:
+    action:
+    - fence
+    - FU
+- model: users.gen3permission
+  fields:
+    action:
+    - indexd
+    - AL
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - RD
+- model: users.gen3permission
+  fields:
+    action:
+    - sheepdog
+    - AL
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - WS
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - RS
+- model: users.gen3permission
+  fields:
+    action:
+    - services
+    - UP
+- model: users.gen3permission
+  fields:
+    action:
+    - jupyterhub
+    - AC
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - admin
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - creator
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - deleter
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - file_upload
+- model: users.gen3role
+  fields:
+    description: full access to indexd API
+    permissions:
+    - - indexd_admin
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - reader
+- model: users.gen3role
+  fields:
+    description: CRUD access to programs and projects
+    permissions:
+    - - sheepdog_admin_action
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - storage_reader
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - storage_creator
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - updater
+- model: users.gen3role
+  fields:
+    description: ''
+    permissions:
+    - - workspace_access
+- model: users.gen3policy
+  fields:
+    description: ''
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - reader
+    - - storage_reader
+    resources:
+    - - programs
+- model: users.gen3policy
+  fields:
+    description: upload raw data files to S3
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - file_uploader
+    resources:
+    - - data_file
+- model: users.gen3policy
+  fields:
+    description: ''
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - creator
+    - - deleter
+    - - reader
+    - - storage_reader
+    - - storage_writer
+    - - updater
+    resources:
+    - - public
+      - - projects
+        - - eLwazi
+          - - programs
+- model: users.gen3policy
+  fields:
+    description: full access to indexd API
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - indexd_admin
+    resources:
+    - - programs
+- model: users.gen3policy
+  fields:
+    description: ''
+    is_anonymous_policy: true
+    is_all_users_policy: false
+    roles:
+    - - reader
+    - - storage_reader
+    resources:
+    - - open
+- model: users.gen3policy
+  fields:
+    description: CRUD access to programs and projects
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - sheepdog_admin
+    resources:
+    - - program
+      - - submission
+        - - sheepdog
+          - - services
+    - - project
+      - - submission
+        - - sheepdog
+          - - services
+- model: users.gen3policy
+  fields:
+    description: be able to use workspace
+    is_anonymous_policy: false
+    is_all_users_policy: false
+    roles:
+    - - workspace_user
+    resources:
+    - - workspace
+- model: users.gen3client
+  fields:
+    policies:
+    - - all_programs_reader
+    - - open_data_reader

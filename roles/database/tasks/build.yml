@@ -2,7 +2,9 @@
 # tasks file for building database image
 - name: Initialise database image
   become: yes
-  tags: build, never
+  tags:
+    - build
+    - never
   block:
     - name: Upgrade all existing packages
       apt:

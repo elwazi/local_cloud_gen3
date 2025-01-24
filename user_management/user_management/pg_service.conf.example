@@ -1,0 +1,5 @@
+[user_management]
+host=localhost
+user=gen3_admin
+dbname=elwazi_gen3_users
+port=5432
