@@ -8,3 +8,4 @@ inventory.ini
 variables.auto.hcl
 inventory.yaml
 *openrc.sh
+*.auto.tfvars
