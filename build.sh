@@ -20,7 +20,7 @@ echo "" | openstack -q image list &> /dev/null || { echo -e "Openstack seemingly
 VARIABLES=$(packer inspect .)
 
 BASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.base_image_name" | sed 's/.*: //' | sed 's/\"//g')
-DATABASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.database_image_name" | sed 's/.*: //' | sed 's/\"//g')
+# DATABASE_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.database_image_name" | sed 's/.*: //' | sed 's/\"//g')
 RANCHER_RKE2_SERVER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_server_image_name" | sed 's/.*: //' | sed 's/\"//g')
 RANCHER_RKE2_WORKER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.rancher_rke2_worker_image_name" | sed 's/.*: //' | sed 's/\"//g')
 LOADBALANCER_IMAGE_NAME=$(echo "${VARIABLES}" | grep "^local.load_balancer_image_name" | sed 's/.*: //' | sed 's/\"//g')
@@ -53,14 +53,14 @@ else
   #packer build -only="step3.openstack.rancher_rke2_worker_image" .
 fi
 
-if openstack image show "${DATABASE_IMAGE_NAME}" &> /dev/null
-then
-  echo "Openstack image '${DATABASE_IMAGE_NAME}' found. Not rebuilding."
-else
-  echo "Openstack image '${DATABASE_IMAGE_NAME}' not found. Creating…"
-  to_build="${to_build},step4.openstack.database_image"
-  #packer build -only="step4.openstack.database_image" .
-fi
+#if openstack image show "${DATABASE_IMAGE_NAME}" &> /dev/null
+#then
+#  echo "Openstack image '${DATABASE_IMAGE_NAME}' found. Not rebuilding."
+#else
+#  echo "Openstack image '${DATABASE_IMAGE_NAME}' not found. Creating…"
+#  to_build="${to_build},step4.openstack.database_image"
+#  #packer build -only="step4.openstack.database_image" .
+#fi
 
 if openstack image show "${LOADBALANCER_IMAGE_NAME}" &> /dev/null
 then
