@@ -15,13 +15,13 @@ variable "admin_user" {
 variable "image_suffix" {
   type = string
   description = "Suffix to be appended to the end of image names"
-  default = "gen3-dev.elwazi.ubuntu.20_04"
+  default = "gen3-dev.elwazi.ubuntu.24_04"
 }
 
 variable "base_image_source" {
   type = string
   description = "Source URL for base image"
-  default = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+  default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
 variable "base_image_source_format" {
@@ -82,11 +82,18 @@ variable "rancher_rke2_worker_node_count" {
 #  description = "name of rancher host"
 #}
 
+variable "cidr" {
+  type    = string
+  default = "192.168.10.0/24"
+}
+
 variable "floating_ip_network_id" {
   description = "The name of the Floating IP network in your OpenStack"
   type = string
   default = "f99ab9af-902c-494b-abfc-32ccd5716234"
 }
+
+
 
 variable "network_ids" {
   type = list(string)
