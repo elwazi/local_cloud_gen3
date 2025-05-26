@@ -148,3 +148,21 @@ audit:
   dbRestore: false
   postgres:
     password: "{{ postgres.audit_password }}"
+
+minio:
+  enabled: {{ gen3_minio_enabled }}
+  image:
+    repository: minio/minio
+    tag: {{ gen3_minio_image_tag }}
+    pullPolicy: IfNotPresent
+  mode: standalone
+  accessKey: "{{ gen3_minio_access_key }}"
+  secretKey: "{{ gen3_minio_secret_key }}"
+  persistence:
+    size: {{ gen3_minio_persistence_size }}
+    storageClass: "{{ gen3_minio_persistence_storage_class }}"
+  service:
+    type: "{{ gen3_minio_service_type }}"
+    port: {{ gen3_minio_service_port }}
+  ingress:
+    enabled: false

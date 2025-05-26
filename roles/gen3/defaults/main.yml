@@ -1,2 +1,10 @@
----
-# defaults file for gen3
+gen3_minio_enabled: true
+gen3_minio_access_key: "minioadmin" # Default, recommend changing via vaulted var
+gen3_minio_secret_key: "minioadmin" # Default, recommend changing via vaulted var
+gen3_minio_namespace: "gen3"
+gen3_minio_chart_version: "" # Let Helm pick latest stable if empty, or specify e.g. "4.0.6"
+gen3_minio_image_tag: "RELEASE.2023-03-20T20-16-18Z" # Or a more recent tag
+gen3_minio_persistence_size: "10Gi"
+gen3_minio_persistence_storage_class: "" # Empty for default, or specify if needed
+gen3_minio_service_port: 9000
+gen3_minio_service_type: "ClusterIP"

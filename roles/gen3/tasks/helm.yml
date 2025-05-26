@@ -28,3 +28,18 @@
           mode: 0755
           remote_src: true
 
+- name: Add MinIO Helm repository
+  community.kubernetes.helm_repository:
+    name: minio
+    repo_url: "https://helm.min.io/"
+    state: present
+
+- name: Deploy MinIO
+  community.kubernetes.helm:
+    name: minio
+    chart_ref: minio/minio
+    release_namespace: "{{ gen3_minio_namespace }}"
+    version: "{{ gen3_minio_chart_version | default(omit) }}"
+    values: "{{ lookup('template', 'values.yml') | from_yaml | json_query('minio') }}"
+    when: gen3_minio_enabled | bool
+

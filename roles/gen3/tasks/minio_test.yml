@@ -1,0 +1,6 @@
+- name: Check MinIO service accessibility
+  uri:
+    url: "http://minio.{{ gen3_minio_namespace }}.svc.cluster.local:{{ gen3_minio_service_port }}/minio/health/live"
+    status_code: 200
+  when: gen3_minio_enabled | bool
+  tags: [minio_test]

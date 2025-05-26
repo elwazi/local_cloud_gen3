@@ -95,6 +95,38 @@ and then updating the contents.
 You can modify the ansible `group_vars/all` file to reflect some settings such as:
 * `timezone`: This is the time zone setting for all the virtual machines.
 
+### MinIO Object Storage
+MinIO is a High Performance, S3 compatible object storage system. In this project, it provides a scalable and resilient storage backend for various Gen3 services and can be used for storing user data, application data, and other artifacts.
+
+The MinIO deployment is managed via Ansible and deployed as a Helm chart within the Kubernetes cluster.
+
+**Enabling/Disabling MinIO:**
+The deployment of MinIO can be controlled by the `gen3_minio_enabled` Ansible variable. Set this to `true` to deploy MinIO or `false` to skip its deployment.
+
+**Configuration Variables:**
+Key configuration options for MinIO are defined as Ansible variables in `roles/gen3/defaults/main.yml`. You can override these in your `group_vars/all` or other inventory files. For sensitive values like access and secret keys, it is strongly recommended to use Ansible Vault.
+
+Important variables include:
+*   `gen3_minio_enabled`: (boolean) Enable or disable MinIO deployment.
+*   `gen3_minio_access_key`: (string) The access key for MinIO. Default: `minioadmin`. **Change this and store in Vault.**
+*   `gen3_minio_secret_key`: (string) The secret key for MinIO. Default: `minioadmin`. **Change this and store in Vault.**
+*   `gen3_minio_namespace`: (string) The Kubernetes namespace where MinIO will be deployed. Default: `gen3`.
+*   `gen3_minio_chart_version`: (string) Specific version of the MinIO Helm chart to deploy. If empty, the latest stable version is used.
+*   `gen3_minio_image_tag`: (string) Docker image tag for MinIO.
+*   `gen3_minio_persistence_size`: (string) Size of the persistent volume for MinIO storage (e.g., `10Gi`).
+*   `gen3_minio_persistence_storage_class`: (string) Storage class for MinIO's persistent volume. Leave empty for default.
+*   `gen3_minio_service_port`: (integer) Port number for the MinIO service. Default: `9000`.
+*   `gen3_minio_service_type`: (string) Kubernetes service type for MinIO. Default: `ClusterIP`.
+
+**Service Details:**
+*   **Service Name:** `minio`
+*   **Namespace:** `{{ gen3_minio_namespace }}` (typically `gen3`)
+*   **Port:** `{{ gen3_minio_service_port }}` (typically `9000`)
+
+**Accessing MinIO from within Kubernetes:**
+Applications running within the same Kubernetes cluster can typically access MinIO using its internal service endpoint:
+`http://minio.{{ gen3_minio_namespace }}.svc.cluster.local:{{ gen3_minio_service_port }}`
+
 ## Building the images
 Once the variables have been configured (the `build_image_flavour` is probably the most
 important as this often varies from system to system) the images can be built. This
