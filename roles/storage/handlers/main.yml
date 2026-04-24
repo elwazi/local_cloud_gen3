@@ -1,0 +1,6 @@
+---
+- name: restart garage
+  become: yes
+  systemd:
+    name: garage
+    state: restarted
