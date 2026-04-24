@@ -1,66 +1,63 @@
 ---
 # tasks file for building storage image (first provision only)
 
-- name: Install required packages
-  tags: [build]
+- name: Build storage node
   become: yes
-  apt:
-    name:
-      - acl
-    state: present
-    update_cache: yes
+  tags: [never, build]
+  block:
+    - name: Install required packages
+      apt:
+        name:
+          - acl
+        state: present
+        update_cache: yes
 
-- name: Download Garage binary
-  tags: [build]
-  get_url:
-    url: "https://garagehq.deuxfleurs.fr/_releases/{{ garage_version }}/x86_64-unknown-linux-musl/garage"
-    dest: /usr/local/bin/garage
-    mode: "0755"
+    - name: Download Garage binary
+      get_url:
+        url: "https://garagehq.deuxfleurs.fr/_releases/{{ garage_version }}/x86_64-unknown-linux-musl/garage"
+        dest: /usr/local/bin/garage
+        mode: "0755"
 
-- name: Create garage system user
-  tags: [build]
-  user:
-    name: garage
-    shell: /usr/sbin/nologin
-    create_home: no
-    system: yes
+    - name: Create garage system user
+      user:
+        name: garage
+        shell: /usr/sbin/nologin
+        create_home: no
+        system: yes
 
-- name: Create garage directories
-  tags: [build]
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: garage
-    group: garage
-    mode: "0755"
-  loop:
-    - /etc/garage
-    - /var/lib/garage/meta
-    - /data
+    - name: Create garage directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: garage
+        group: garage
+        mode: "0755"
+      loop:
+        - /etc/garage
+        - /var/lib/garage/meta
+        - /data
 
-- name: Install garage systemd unit
-  tags: [build]
-  copy:
-    dest: /etc/systemd/system/garage.service
-    owner: root
-    group: root
-    mode: "0644"
-    content: |
-      [Unit]
-      Description=Garage S3 object storage
-      After=network.target
+    - name: Install garage systemd unit
+      copy:
+        dest: /etc/systemd/system/garage.service
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Garage S3 object storage
+          After=network.target
 
-      [Service]
-      Type=simple
-      User=garage
-      ExecStart=/usr/local/bin/garage -c /etc/garage/garage.toml server
-      Restart=on-failure
-      RestartSec=5s
+          [Service]
+          Type=simple
+          User=garage
+          ExecStart=/usr/local/bin/garage -c /etc/garage/garage.toml server
+          Restart=on-failure
+          RestartSec=5s
 
-      [Install]
-      WantedBy=multi-user.target
+          [Install]
+          WantedBy=multi-user.target
 
-- name: Reload systemd daemon
-  tags: [build]
-  systemd:
-    daemon_reload: yes
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
