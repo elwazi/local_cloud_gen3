@@ -34,12 +34,12 @@
         repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
         state: present
 
-    - name: Install postgres 13
+    - name: Install postgres 18
       apt:
           name:
-            - postgresql-13
-            - postgresql-client-13
-            - postgresql-contrib-13
+            - postgresql-18
+            - postgresql-client-18
+            - postgresql-contrib-18
           update-cache: yes
 
     - name: Add elasticsearch repo key
