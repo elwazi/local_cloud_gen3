@@ -381,6 +381,24 @@ variable "gen3_portal_login_email" {
   default     = "support@elwazi.org"
 }
 
+variable "garage_rpc_secret" {
+  type        = string
+  description = "Garage RPC secret (hex string, generate with: openssl rand -hex 32)"
+  sensitive   = true
+}
+
+variable "garage_access_key" {
+  type        = string
+  description = "Garage S3 access key ID (hex string, generate with: openssl rand -hex 16)"
+  sensitive   = true
+}
+
+variable "garage_secret_key" {
+  type        = string
+  description = "Garage S3 secret key (hex string, generate with: openssl rand -hex 32)"
+  sensitive   = true
+}
+
 variable "gen3_portal_logo_base64_png" {
     type        = string
     description = "Gen3 portal logo base64 png"
