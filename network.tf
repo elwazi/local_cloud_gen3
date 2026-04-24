@@ -100,6 +100,16 @@ resource "openstack_networking_secgroup_rule_v2" "internal_open" {
     security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "internal_open_udp" {
+    direction         = "ingress"
+    ethertype         = "IPv4"
+    protocol          = "udp"
+    port_range_min    = 0
+    port_range_max    = 0
+    remote_ip_prefix  = "${var.cidr}"
+    security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+}
+
 # resource "openstack_networking_secgroup_rule_v2" "internal_ssh" {
 #   direction         = "ingress"
 #   ethertype         = "IPv4"

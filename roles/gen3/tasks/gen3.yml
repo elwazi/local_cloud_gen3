@@ -78,14 +78,29 @@
   tags: s3,user
   command: "~/.venv/bin/s3cmd put ~/user.yaml s3://{{ gen3.user_bucket_name }}/user.yaml"
 
+- name: Apply kubedns2.yaml
+  tags: kubedns
+  command: bin/kubectl apply -f ~/kubedns2.yaml
+  args:
+    chdir: /home/{{ gen3.user }}
+
 - name: Start gen3 helm
   tags: helm
   command: bin/helm upgrade --install elwazirelease gen3/gen3 -f ~/values.yml -f ~/portal.yaml  # -f ingress.yaml -f ingressconfig.yaml -f kubedns.yaml -f revproxy.yaml
   args:
     chdir: /home/{{ gen3.user }}
 
-- name: Apply kubedns2.yaml
-  tags: kubedns
-  command: bin/kubectl apply -f ~/kubedns2.yaml
+- name: Apply ingressconfig.yaml
+  tags: ingress
+  command: bin/kubectl apply -f ~/ingressconfig.yaml
   args:
-      chdir: /home/{{ gen3.user }}
+    chdir: /home/{{ gen3.user }}
+
+- name: Restart ingress-nginx controller pods
+  tags: ingress
+  command: >
+    bin/kubectl rollout restart daemonset rke2-ingress-nginx-controller
+    -n kube-system
+  args:
+    chdir: /home/{{ gen3.user }}
+  ignore_errors: true
