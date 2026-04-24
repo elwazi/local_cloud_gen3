@@ -184,6 +184,18 @@ variable "load_balancer_node_flavour" {
   default = "ilifu-B"
 }
 
+variable "storage_node_flavour" {
+  type        = string
+  description = "OpenStack VM flavour to use for the storage node"
+  default     = "ilifu-B"
+}
+
+variable "storage_node_disk_size_gib" {
+  type        = number
+  description = "Disk size in GiB for the Garage S3 storage volume"
+  default     = 500
+}
+
 #variable "rancher_rke2_server_node_name" {
 #  type = string
 #  description = "Rancher management node's hostname"
