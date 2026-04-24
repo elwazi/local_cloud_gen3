@@ -4,6 +4,7 @@ db_engine = "lmdb"
 replication_factor = 1
 
 rpc_secret = "{{ garage.rpc_secret }}"
+rpc_bind_addr = "0.0.0.0:3901"
 
 [s3_api]
 s3_region = "{{ garage_s3_region }}"
