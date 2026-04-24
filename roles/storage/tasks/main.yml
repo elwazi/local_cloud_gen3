@@ -115,8 +115,8 @@
   command: >
     /usr/local/bin/garage -c /etc/garage/garage.toml bucket allow
     --read --write --owner
-    --bucket {{ item }}
     --key {{ garage.access_key }}
+    {{ item }}
   loop:
     - "{{ gen3.data_bucket_name }}"
     - "{{ gen3.user_bucket_name }}"
