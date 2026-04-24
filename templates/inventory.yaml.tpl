@@ -48,7 +48,7 @@ servers:
     # ansible_ssh_private_key_file: ~/.ssh/ilifu/id_rsa
 
     timezone: '${ timezone }'
-    gen3_subnet: 192.168.10.0/24
+    gen3_subnet: ${cidr}
 
     gen3: {
       'hostname': '${gen3_hostname}',

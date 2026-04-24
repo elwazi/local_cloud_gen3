@@ -12,6 +12,7 @@ resource "local_file" "hosts_cfg" {
   content = templatefile("templates/inventory.yaml.tpl",
     {
       admin_user = var.admin_user
+      cidr       = var.cidr
 
       database_node      = openstack_compute_instance_v2.database_node
       database_node_name = local.database_node_name
