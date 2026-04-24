@@ -1,6 +1,15 @@
 ---
 # tasks file for building storage image (first provision only)
 
+- name: Install required packages
+  tags: [build]
+  become: yes
+  apt:
+    name:
+      - acl
+    state: present
+    update_cache: yes
+
 - name: Download Garage binary
   tags: [build]
   get_url:

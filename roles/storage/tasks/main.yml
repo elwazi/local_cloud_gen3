@@ -96,7 +96,7 @@
   command: >
     /usr/local/bin/garage -c /etc/garage/garage.toml key import
     --key-id {{ garage.access_key }}
-    --secret {{ garage.secret_key }}
+    --secret-key {{ garage.secret_key }}
     --name gen3
   when: garage_key_check.rc != 0
   tags: [garage, keys]
