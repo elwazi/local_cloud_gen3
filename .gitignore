@@ -10,3 +10,4 @@ inventory.yaml
 *openrc.sh
 *.auto.tfvars
 *auto*hcl
+.worktrees/
