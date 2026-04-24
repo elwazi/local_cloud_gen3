@@ -54,8 +54,10 @@ resource "local_file" "hosts_cfg" {
       rancher_rke2_server_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_server_nodes.* : node]
       rancher_rke2_worker_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_worker_nodes.* : node]
 
-      s3_host_server = var.s3_host_server
-      s3_host_port   = var.s3_host_port
+      storage_node      = openstack_compute_instance_v2.storage_node
+      garage_rpc_secret = var.garage_rpc_secret
+      garage_access_key = var.garage_access_key
+      garage_secret_key = var.garage_secret_key
 
       timezone = var.timezone
     }
