@@ -2,23 +2,6 @@
 # tasks file for storage role (Garage S3)
 - { import_tasks: build.yml, tags: [never, build], become: yes }
 
-- name: Find data volume device
-  set_fact:
-    data_device: >-
-      /dev/{{ (ansible_devices | dict2items |
-        selectattr('value.removable', 'equalto', '0') |
-        selectattr('key', 'match', 'vd[b-z]') |
-        map(attribute='key') | first) }}
-  tags: [storage, mount]
-
-- name: Validate data device was found
-  assert:
-    that:
-      - data_device is defined
-      - data_device != '/dev/'
-    fail_msg: "Could not detect a data volume matching vd[b-z]. Check ansible_devices on the target host."
-  tags: [storage, mount]
-
 - name: Create ext4 filesystem on data volume
   become: yes
   community.general.filesystem:
@@ -106,9 +89,8 @@
   become_user: garage
   command: >
     /usr/local/bin/garage -c /etc/garage/garage.toml key import
-    --key-id {{ garage.access_key }}
-    --secret-key {{ garage.secret_key }}
     --name gen3
+    {{ garage.access_key }} {{ garage.secret_key }}
   when: garage_key_check.rc != 0
   changed_when: true
   tags: [garage, keys]
