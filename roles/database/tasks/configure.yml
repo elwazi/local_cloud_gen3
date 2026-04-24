@@ -46,7 +46,7 @@
       lineinfile:
         path: "/etc/postgresql/18/main/postgresql.conf"
         regex: "^listen_addresses.*"
-        line: "listen_addresses = '{% for ip in ansible_facts["all_ipv4_addresses"] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
+        line: "listen_addresses = '{% for ip in ansible_facts['all_ipv4_addresses'] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
 
     - name: Configure postgres to allow connections on subnet
