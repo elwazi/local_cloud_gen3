@@ -13,7 +13,7 @@
 
     - name: Add postgres repository
       apt_repository:
-        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts["distribution_release"] }}-pgdg main
         state: present
 
     - name: Ensure acl, psycopg2 and libpq-dev are installed and are latest version
@@ -46,7 +46,7 @@
       lineinfile:
         path: "/etc/postgresql/18/main/postgresql.conf"
         regex: "^listen_addresses.*"
-        line: "listen_addresses = '{% for ip in ansible_all_ipv4_addresses %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
+        line: "listen_addresses = '{% for ip in ansible_facts["all_ipv4_addresses"] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
 
     - name: Configure postgres to allow connections on subnet
@@ -117,7 +117,7 @@
       lineinfile:
         path: "/etc/elasticsearch/elasticsearch.yml"
         regex: "^network.host:.*"
-        line: "network.host: {{ ansible_default_ipv4.address }}"
+        line: "network.host: {{ ansible_facts["default_ipv4"]["address"] }}"
         insertafter: "^#network.host:.*"
       become: yes
       notify: Restart elasticsearch
