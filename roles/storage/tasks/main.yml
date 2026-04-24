@@ -89,6 +89,7 @@
   become_user: garage
   command: >
     /usr/local/bin/garage -c /etc/garage/garage.toml key import
+    --yes -n gen3
     {{ garage.access_key }} {{ garage.secret_key }}
   when: garage_key_check.rc != 0
   changed_when: true
