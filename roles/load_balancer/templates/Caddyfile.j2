@@ -12,3 +12,7 @@
         header_up X-Forwarded-Proto {scheme}
     }
 }
+
+{{ gen3.hostname }}:9000 {
+    reverse_proxy {{ hostvars[groups['storage_nodes'][0]].private_ip }}:3900
+}

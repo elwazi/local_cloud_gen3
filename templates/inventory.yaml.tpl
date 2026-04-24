@@ -1,5 +1,10 @@
 servers:
   children:
+    storage_nodes:
+      hosts:
+        ${ storage_node.name }:
+          ansible_host: ${ storage_node.access_ip_v4 }
+          private_ip: ${ storage_node.access_ip_v4 }
     load_balancer_nodes:
       hosts:
         ${ load_balancer_node.name }:
@@ -63,12 +68,22 @@ servers:
             'email': '${gen3_portal_login_email}',
         },
         'logo_base64': '${gen3_portal_logo}'
-      }
+      },
+      'ec2': {
+        'access': '${garage_access_key}',
+        'secret': '${garage_secret_key}',
+      },
     }
 
     s3: {
-      'host_base': ${s3_host_server}:${s3_host_port},
-      'host_bucket': ${s3_host_server}:${s3_host_port},
+      'host_base': '${gen3_hostname}:9000',
+      'host_bucket': '${gen3_hostname}:9000',
+    }
+
+    garage: {
+      'rpc_secret': '${garage_rpc_secret}',
+      'access_key': '${garage_access_key}',
+      'secret_key': '${garage_secret_key}',
     }
 
     google_client_id: "${google_client_id}"

@@ -1,0 +1,5 @@
+---
+garage_version: "v1.0.1"
+garage_data_dir: /data
+garage_meta_dir: /var/lib/garage/meta
+garage_s3_region: "us-east-1"
