@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+mkdir -p logs
+
+echo "Running common.yml..."
+ansible-playbook common.yml
+
+echo "Running database.yml, storage.yml, load_balancer.yml in parallel..."
+ansible-playbook database.yml     > logs/database.log     2>&1 & pid_db=$!
+ansible-playbook storage.yml      > logs/storage.log      2>&1 & pid_storage=$!
+ansible-playbook load_balancer.yml > logs/load_balancer.log 2>&1 & pid_lb=$!
+
+fail=0
+wait $pid_db      || { echo "database.yml failed — see logs/database.log";      fail=1; }
+wait $pid_storage || { echo "storage.yml failed — see logs/storage.log";        fail=1; }
+wait $pid_lb      || { echo "load_balancer.yml failed — see logs/load_balancer.log"; fail=1; }
+[[ $fail -eq 0 ]] || exit 1
+
+echo "Parallel playbooks complete. Running rancher.yml..."
+ansible-playbook rancher.yml
+
+echo "Running gen3.yml..."
+ansible-playbook gen3.yml
+
+echo "Deploy complete."
