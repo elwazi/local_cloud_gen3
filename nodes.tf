@@ -1,14 +1,15 @@
 locals {
-  base_image_name = "base.${var.image_suffix}"
-  database_image_name = "database.${var.image_suffix}"
+  base_image_name                = "base.${var.image_suffix}"
+  database_image_name            = "database.${var.image_suffix}"
   rancher_rke2_server_image_name = "rke2.server.${var.image_suffix}"
   rancher_rke2_worker_image_name = "rke2.worker.${var.image_suffix}"
-  load_balancer_image_name = "loadbalancer.${var.image_suffix}"
+  load_balancer_image_name       = "loadbalancer.${var.image_suffix}"
 
-  load_balancer_node_name = "load-balancer.${var.node_suffix}"
+  load_balancer_node_name       = "load-balancer.${var.node_suffix}"
   rancher_rke2_worker_node_name = "rke2-worker.${var.node_suffix}"
   rancher_rke2_server_node_name = "rke2-server.${var.node_suffix}"
-  database_node_name = "gen3-database.${var.node_suffix}"
+  database_node_name            = "gen3-database.${var.node_suffix}"
+  storage_node_name             = "storage.${var.node_suffix}"
 }
 
 resource "openstack_compute_instance_v2" "load_balancer_node" {
@@ -33,9 +34,9 @@ data "openstack_images_image_v2" "rancher_rke2_worker_image" {
 }
 
 resource "openstack_compute_instance_v2" "rancher_rke2_worker_nodes" {
-  count           = var.rancher_rke2_worker_node_count
-  name            = "${ local.rancher_rke2_worker_node_name }-${ count.index + 1 }"
-#  image_name      = var.rancher_rke2_worker_image_name
+  count = var.rancher_rke2_worker_node_count
+  name  = "${local.rancher_rke2_worker_node_name}-${count.index + 1}"
+  #  image_name      = var.rancher_rke2_worker_image_name
   flavor_name     = var.rancher_rke2_worker_node_flavour
   key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
   security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name, openstack_networking_secgroup_v2.kubernetes_worker_web_traffic.name]
@@ -43,10 +44,10 @@ resource "openstack_compute_instance_v2" "rancher_rke2_worker_nodes" {
     name = openstack_networking_network_v2.gen3_network.name
   }
   block_device {
-    source_type = "image"
-    uuid        = data.openstack_images_image_v2.rancher_rke2_worker_image.id
-    volume_size = var.rancher_rke2_worker_node_disk_size_gib
-    destination_type = "volume"
+    source_type           = "image"
+    uuid                  = data.openstack_images_image_v2.rancher_rke2_worker_image.id
+    volume_size           = var.rancher_rke2_worker_node_disk_size_gib
+    destination_type      = "volume"
     delete_on_termination = true
   }
 }
@@ -56,22 +57,46 @@ data "openstack_images_image_v2" "rancher_rke2_server_image" {
 }
 
 resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
-    count           = var.rancher_rke2_server_node_count
-    name            = "${ local.rancher_rke2_server_node_name }-${ count.index + 1 }"
-#    image_name      = var.rancher_rke2_server_image_name
-    flavor_name     = var.rancher_rke2_server_node_flavour
-    key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
-    security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name]
-    network {
-        name = openstack_networking_network_v2.gen3_network.name
-    }
-    block_device {
-      source_type = "image"
-      uuid        = data.openstack_images_image_v2.rancher_rke2_server_image.id
-      volume_size = var.rancher_rke2_server_node_disk_size_gib
-      destination_type = "volume"
-      delete_on_termination = true
-    }
+  count = var.rancher_rke2_server_node_count
+  name  = "${local.rancher_rke2_server_node_name}-${count.index + 1}"
+  #    image_name      = var.rancher_rke2_server_image_name
+  flavor_name     = var.rancher_rke2_server_node_flavour
+  key_pair        = openstack_compute_keypair_v2.gen3_ssh_key.name
+  security_groups = [openstack_networking_secgroup_v2.gen3_kubernetes.name]
+  network {
+    name = openstack_networking_network_v2.gen3_network.name
+  }
+  block_device {
+    source_type           = "image"
+    uuid                  = data.openstack_images_image_v2.rancher_rke2_server_image.id
+    volume_size           = var.rancher_rke2_server_node_disk_size_gib
+    destination_type      = "volume"
+    delete_on_termination = true
+  }
+}
+
+resource "openstack_compute_instance_v2" "storage_node" {
+  name        = local.storage_node_name
+  image_name  = local.load_balancer_image_name
+  flavor_name = var.storage_node_flavour
+  key_pair    = openstack_compute_keypair_v2.gen3_ssh_key.name
+  security_groups = [
+    openstack_networking_secgroup_v2.gen3_ssh.name,
+    openstack_networking_secgroup_v2.gen3_storage.name,
+  ]
+  network {
+    name = openstack_networking_network_v2.gen3_network.name
+  }
+}
+
+resource "openstack_blockstorage_volume_v3" "storage_data_volume" {
+  name = "${var.name_prefix}-storage-data"
+  size = var.storage_node_disk_size_gib
+}
+
+resource "openstack_compute_volume_attach_v2" "storage_data_volume_attach" {
+  instance_id = openstack_compute_instance_v2.storage_node.id
+  volume_id   = openstack_blockstorage_volume_v3.storage_data_volume.id
 }
 
 # data "openstack_images_image_v2" "database_image" {

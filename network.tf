@@ -1,16 +1,16 @@
 resource "openstack_networking_network_v2" "gen3_network" {
-    name = "${var.name_prefix}-net"
-    admin_state_up = "true"
+  name           = "${var.name_prefix}-net"
+  admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "gen3_subnet" {
-    name = "${var.name_prefix}-subnet"
-    network_id = openstack_networking_network_v2.gen3_network.id
-    cidr = "${var.cidr}"
-    ip_version = 4
-    enable_dhcp = "true"
+  name        = "${var.name_prefix}-subnet"
+  network_id  = openstack_networking_network_v2.gen3_network.id
+  cidr        = var.cidr
+  ip_version  = 4
+  enable_dhcp = "true"
 
-    dns_nameservers = ["8.8.8.8"]
+  dns_nameservers = ["8.8.8.8"]
 }
 
 data "openstack_networking_network_v2" "public" {
@@ -91,23 +91,23 @@ resource "openstack_networking_secgroup_v2" "gen3_kubernetes" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "internal_open" {
-    direction         = "ingress"
-    ethertype         = "IPv4"
-    protocol          = "tcp"
-    port_range_min    = 0
-    port_range_max    = 0
-    remote_ip_prefix  = "${var.cidr}"
-    security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 0
+  port_range_max    = 0
+  remote_ip_prefix  = var.cidr
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "internal_open_udp" {
-    direction         = "ingress"
-    ethertype         = "IPv4"
-    protocol          = "udp"
-    port_range_min    = 0
-    port_range_max    = 0
-    remote_ip_prefix  = "${var.cidr}"
-    security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
+  port_range_min    = 0
+  port_range_max    = 0
+  remote_ip_prefix  = var.cidr
+  security_group_id = openstack_networking_secgroup_v2.gen3_kubernetes.id
 }
 
 # resource "openstack_networking_secgroup_rule_v2" "internal_ssh" {
@@ -330,10 +330,35 @@ resource "openstack_networking_secgroup_v2" "kubernetes_worker_web_traffic" {
 # }
 
 resource "openstack_networking_floatingip_v2" "load_balancer_float_ip" {
-  pool = "${var.floating_ip_pool_name}"
+  pool        = var.floating_ip_pool_name
   description = "floating ip for load balancer ${var.name_prefix}"
 }
 # todo: change this fixed one back
 #data "openstack_networking_floatingip_v2" "load_balancer_fixed_floating_ip" {
 #  address = "154.114.10.227"
 #}
+
+resource "openstack_networking_secgroup_rule_v2" "s3_public" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9000
+  port_range_max    = 9000
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.gen3_web.id
+}
+
+resource "openstack_networking_secgroup_v2" "gen3_storage" {
+  name        = "${var.name_prefix}-storage"
+  description = "Garage S3 API access from within VPC"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "garage_s3" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 3900
+  port_range_max    = 3900
+  remote_ip_prefix  = var.cidr
+  security_group_id = openstack_networking_secgroup_v2.gen3_storage.id
+}
