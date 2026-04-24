@@ -9,7 +9,7 @@ locals {
   rancher_rke2_worker_node_name = "rke2-worker.${var.node_suffix}"
   rancher_rke2_server_node_name = "rke2-server.${var.node_suffix}"
   database_node_name            = "gen3-database.${var.node_suffix}"
-  storage_node_name             = "storage.${var.node_suffix}"
+  storage_node_name             = "gen3-storage.${var.node_suffix}"
 }
 
 resource "openstack_compute_instance_v2" "load_balancer_node" {
@@ -77,7 +77,7 @@ resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
 
 resource "openstack_compute_instance_v2" "storage_node" {
   name        = local.storage_node_name
-  image_name  = local.load_balancer_image_name
+  image_name  = local.load_balancer_image_name # base Ubuntu image — Garage installed by Ansible
   flavor_name = var.storage_node_flavour
   key_pair    = openstack_compute_keypair_v2.gen3_ssh_key.name
   security_groups = [
