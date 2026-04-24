@@ -13,8 +13,7 @@ resource "local_file" "hosts_cfg" {
     {
       admin_user = var.admin_user
 
-      # database_node = openstack_compute_instance_v2.database_node
-      # database_node_ip = openstack_compute_instance_v2.database_node.access_ip_v4
+      database_node      = openstack_compute_instance_v2.database_node
       database_node_name = local.database_node_name
 
       # ec2_credentials = openstack_identity_ec2_credential_v3.ec2_credentials
@@ -54,7 +53,8 @@ resource "local_file" "hosts_cfg" {
       rancher_rke2_server_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_server_nodes.* : node]
       rancher_rke2_worker_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_worker_nodes.* : node]
 
-      storage_node      = openstack_compute_instance_v2.storage_node
+      storage_node             = openstack_compute_instance_v2.storage_node
+      storage_data_volume_attach = openstack_compute_volume_attach_v2.storage_data_volume_attach
       garage_rpc_secret = var.garage_rpc_secret
       garage_access_key = var.garage_access_key
       garage_secret_key = var.garage_secret_key

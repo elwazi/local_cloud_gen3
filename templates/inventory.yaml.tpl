@@ -5,6 +5,7 @@ servers:
         ${ storage_node.name }:
           ansible_host: ${ storage_node.access_ip_v4 }
           private_ip: ${ storage_node.access_ip_v4 }
+          data_device: ${ storage_data_volume_attach.device }
     load_balancer_nodes:
       hosts:
         ${ load_balancer_node.name }:
@@ -15,6 +16,11 @@ servers:
         ansible_user: ${admin_user}
         ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -i ~/.ssh/ilifu/id_rsa"
         # ansible_ssh_private_key_file: ~/.ssh/ilifu/id_rsa
+    database_nodes:
+      hosts:
+        ${ database_node.name }:
+          ansible_host: ${ database_node.access_ip_v4 }
+          private_ip: ${ database_node.access_ip_v4 }
     rancher_rke2_server_nodes:
       hosts:
 %{ for server_node in rancher_rke2_server_nodes ~}
@@ -88,3 +94,9 @@ servers:
 
     google_client_id: "${google_client_id}"
     google_client_secret: "${google_client_secret}"
+
+    postgres: {
+      'host_ip': '${database_node.access_ip_v4}',
+      'user': '${postgres_user}',
+      'password': '${postgres_password}',
+    }

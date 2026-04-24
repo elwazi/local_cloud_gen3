@@ -3,17 +3,16 @@ global:
   dev: false
   postgres:
     dbCreate: true
+    externalSecret: ""
     master:
-      host: {{ postgres.host_ip }}
       username: {{ postgres.user }}
       password: {{ postgres.password }}
+      host: {{ postgres.host_ip }}
       port: "5432"
 
 fence:
   image:
     pullPolicy: IfNotPresent
-  postgres:
-    password: "{{ postgres.fence_password }}"
   FENCE_CONFIG:
     OPENID_CONNECT:
       google:
@@ -85,56 +84,42 @@ guppy:
   tierAccessLimit: "1000"
   enabled: false
   dbRestore: false
-  postgres:
-    password: "meh"
 
 peregrine:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.peregrine_password }}"
 
 arborist:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.arborist_password }}"
 
 indexd:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.indexd_password }}"
 
 metadata:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.metadata_password }}"
 
 sheepdog:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.sheepdog_password }}"
 
 wts:
   image:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.wts_password }}"
 
 pidgin:
   image:
@@ -146,5 +131,3 @@ audit:
     pullPolicy: IfNotPresent
   enabled: true
   dbRestore: false
-  postgres:
-    password: "{{ postgres.audit_password }}"
