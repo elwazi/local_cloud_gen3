@@ -78,7 +78,7 @@
     NODE_ID=$(echo "{{ garage_node_id_output.stdout }}" | head -1 | cut -d' ' -f1 | cut -d'@' -f1)
     /usr/local/bin/garage -c /etc/garage/garage.toml layout assign -z dc1 -c 1G $NODE_ID
     /usr/local/bin/garage -c /etc/garage/garage.toml layout apply --version 1
-  when: "'Current cluster layout:' not in garage_layout_show.stdout or 'version: 1' not in garage_layout_show.stdout"
+  when: "'version: 1' not in garage_layout_show.stdout"
   tags: [garage, layout]
 
 - name: Check if Garage key exists
