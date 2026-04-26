@@ -1,5 +1,6 @@
 ---
 garage_version: "v1.0.1"
+garage_checksum: "sha256:3444d69063a91a1b4fb771a47f056db53c44f51d51e4eb58fb357fe62fe26f26"
 garage_data_dir: /data
 garage_meta_dir: /var/lib/garage/meta
 garage_s3_region: "us-east-1"
