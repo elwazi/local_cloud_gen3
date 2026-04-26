@@ -21,6 +21,9 @@ wait $pid_rancher || { echo "rancher.yml failed — see logs/rancher.log";      
 
 echo "Parallel playbooks complete."
 
+echo "Running argocd.yml..."
+ansible-playbook argocd.yml
+
 echo "Running gen3.yml..."
 ansible-playbook gen3.yml
 
