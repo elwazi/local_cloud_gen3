@@ -15,6 +15,12 @@ spec:
       valuesObject:
         global:
           hostname: "{{ gen3.hostname }}"
+          postgres:
+            master:
+              username: "{{ postgres.user }}"
+              password: "{{ postgres.password }}"
+              host: "{{ postgres.host_ip }}"
+              port: "5432"
         fence:
           FENCE_CONFIG:
             OPENID_CONNECT:
