@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gen3-db-creds
+  namespace: gen3
+type: Opaque
+stringData:
+  username: "{{ postgres.user }}"
+  password: "{{ postgres.password }}"
+  host: "{{ postgres.host_ip }}"
+  port: "5432"

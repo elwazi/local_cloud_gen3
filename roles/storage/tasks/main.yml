@@ -1,0 +1,136 @@
+---
+# tasks file for storage role (Garage S3)
+- { import_tasks: build.yml, tags: [build], become: yes }
+
+- name: Ensure garage_data_dir mount point exists
+  become: yes
+  file:
+    path: "{{ garage_data_dir }}"
+    state: directory
+    mode: "0755"
+  tags: [storage, mount]
+
+- name: Create ext4 filesystem on data volume
+  become: yes
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ data_device }}"
+  tags: [storage, mount]
+
+- name: Mount data volume
+  become: yes
+  ansible.posix.mount:
+    path: "{{ garage_data_dir }}"
+    src: "{{ data_device }}"
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  tags: [storage, mount]
+
+- name: Deploy garage.toml
+  become: yes
+  template:
+    src: garage.toml.j2
+    dest: /etc/garage/garage.toml
+    owner: garage
+    group: garage
+    mode: "0600"
+  notify: restart garage
+  tags: [garage, config]
+
+- name: Enable and start garage
+  become: yes
+  systemd:
+    name: garage
+    enabled: yes
+    state: started
+  tags: [garage]
+
+- name: Wait for Garage admin API to be ready
+  become: yes
+  wait_for:
+    host: 127.0.0.1
+    port: 3903
+    timeout: 30
+  tags: [garage, layout]
+
+- name: Get Garage node ID
+  become: yes
+  become_user: garage
+  command: /usr/local/bin/garage -c /etc/garage/garage.toml node id
+  register: garage_node_id_output
+  changed_when: false
+  tags: [garage, layout]
+
+- name: Check current layout version
+  become: yes
+  become_user: garage
+  command: /usr/local/bin/garage -c /etc/garage/garage.toml layout show
+  register: garage_layout_show
+  changed_when: false
+  tags: [garage, layout]
+
+- name: Assign and apply garage layout
+  become: yes
+  become_user: garage
+  shell: |
+    NODE_ID=$(echo "{{ garage_node_id_output.stdout }}" | head -1 | cut -d' ' -f1 | cut -d'@' -f1)
+    CURRENT_VERSION=$(/usr/local/bin/garage -c /etc/garage/garage.toml layout show | grep -oP 'version: \K[0-9]+' | head -1 || echo 0)
+    NEXT_VERSION=$((CURRENT_VERSION + 1))
+    /usr/local/bin/garage -c /etc/garage/garage.toml layout assign -z dc1 -c 1G $NODE_ID
+    /usr/local/bin/garage -c /etc/garage/garage.toml layout apply --version $NEXT_VERSION
+  when: "'version: 1' not in garage_layout_show.stdout"
+  changed_when: true
+  tags: [garage, layout]
+
+- name: Check if Garage key exists
+  become: yes
+  become_user: garage
+  command: /usr/local/bin/garage -c /etc/garage/garage.toml key info {{ garage.access_key }}
+  register: garage_key_check
+  failed_when: false
+  changed_when: false
+  tags: [garage, keys]
+
+- name: Import S3 access key into Garage
+  become: yes
+  become_user: garage
+  command: >
+    /usr/local/bin/garage -c /etc/garage/garage.toml key import
+    --yes -n gen3
+    {{ garage.access_key }} {{ garage.secret_key }}
+  when: garage_key_check.rc != 0
+  changed_when: true
+  tags: [garage, keys]
+
+- name: Create S3 buckets
+  become: yes
+  become_user: garage
+  command: /usr/local/bin/garage -c /etc/garage/garage.toml bucket create {{ item }}
+  loop:
+    - "{{ gen3.data_bucket_name }}"
+    - "{{ gen3.user_bucket_name }}"
+  register: create_bucket
+  failed_when:
+    - create_bucket.rc != 0
+    - '"already exists" not in create_bucket.stderr'
+  changed_when: create_bucket.rc == 0
+  tags: [garage, buckets]
+
+- name: Grant key access to buckets
+  become: yes
+  become_user: garage
+  command: >
+    /usr/local/bin/garage -c /etc/garage/garage.toml bucket allow
+    --read --write --owner
+    --key {{ garage.access_key }}
+    {{ item }}
+  loop:
+    - "{{ gen3.data_bucket_name }}"
+    - "{{ gen3.user_bucket_name }}"
+  register: grant_access
+  failed_when:
+    - grant_access.rc != 0
+    - '"already" not in grant_access.stderr'
+  changed_when: grant_access.rc == 0
+  tags: [garage, buckets]

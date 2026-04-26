@@ -1,0 +1,19 @@
+{{ gen3.hostname }} {
+    reverse_proxy {
+        {% for node in groups['rancher_rke2_worker_nodes'] %}
+        to {{ hostvars[node].private_ip | default(hostvars[node].ansible_host | default(node)) }}
+        {% endfor %}
+
+        lb_policy least_conn
+        health_timeout 5s
+
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+{{ gen3.hostname }}:9000 {
+    tls
+    reverse_proxy {{ hostvars[groups['storage_nodes'][0]].private_ip }}:3900
+}

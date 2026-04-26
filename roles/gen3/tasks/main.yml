@@ -112,6 +112,5 @@
     state: present
     create: yes
 
-- { import_tasks: helm.yml, tags: helm, become: yes, become_user: "{{ gen3.user }}" }
 - { import_tasks: k9s.yml, tags: k9s, become: yes, become_user: "{{ gen3.user }}" }
 - { import_tasks: gen3.yml, tags: gen3, become: yes, become_user: "{{ gen3.user }}" }

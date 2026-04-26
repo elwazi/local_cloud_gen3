@@ -5,7 +5,7 @@
   tags:
     - postgres
   block:
-# todo: add postgres repo so that postgres 13 can be installed
+# todo: add postgres repo so that postgres 18 can be installed
     - name: Add postgres apt repository key
       apt_key:
         url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -13,7 +13,7 @@
 
     - name: Add postgres repository
       apt_repository:
-        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts['distribution_release'] }}-pgdg main
         state: present
 
     - name: Ensure acl, psycopg2 and libpq-dev are installed and are latest version
@@ -24,9 +24,9 @@
           - acl
           - default-jre
           - libpq-dev
-          - postgresql-13
-          - postgresql-client-13
-          - postgresql-contrib-13
+          - postgresql-18
+          - postgresql-client-18
+          - postgresql-contrib-18
           - python3-psycopg2
         state: latest
         update-cache: yes
@@ -44,14 +44,14 @@
 
     - name: Configure postgres to listen to local network
       lineinfile:
-        path: "/etc/postgresql/13/main/postgresql.conf"
+        path: "/etc/postgresql/18/main/postgresql.conf"
         regex: "^listen_addresses.*"
-        line: "listen_addresses = '{% for ip in ansible_all_ipv4_addresses %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
+        line: "listen_addresses = '{% for ip in ansible_facts['all_ipv4_addresses'] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
 
     - name: Configure postgres to allow connections on subnet
       lineinfile:
-        path: "/etc/postgresql/13/main/pg_hba.conf"
+        path: "/etc/postgresql/18/main/pg_hba.conf"
         regex: "host *all *all *{{ gen3_subnet }} *md5"
         line: "host    all             all             {{ gen3_subnet }}         md5"
       notify: Restart postgres
@@ -117,7 +117,7 @@
       lineinfile:
         path: "/etc/elasticsearch/elasticsearch.yml"
         regex: "^network.host:.*"
-        line: "network.host: {{ ansible_default_ipv4.address }}"
+        line: "network.host: {{ ansible_facts['default_ipv4']['address'] }}"
         insertafter: "^#network.host:.*"
       become: yes
       notify: Restart elasticsearch

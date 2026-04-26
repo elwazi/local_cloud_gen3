@@ -1,18 +1,22 @@
-- name: Add gen3 helm repo
-  command: bin/helm repo add gen3 https://helm.gen3.org
+---
+- name: Create gen3 namespace
+  command: >
+    bin/kubectl create namespace gen3 --dry-run=client -o yaml
   args:
     chdir: /home/{{ gen3.user }}
-  register: helm_repo_add_gen3
-  changed_when: '"already exists" not in helm_repo_add_gen3.stdout'
+  register: gen3_ns_yaml
+  changed_when: false
 
-- name: Update gen3 helm repos
-  command: bin/helm repo update gen3
+- name: Apply gen3 namespace
+  command: bin/kubectl apply -f -
   args:
     chdir: /home/{{ gen3.user }}
-  register: helm_repo_update
+    stdin: "{{ gen3_ns_yaml.stdout }}"
+  register: gen3_ns_apply
+  changed_when: '"unchanged" not in gen3_ns_apply.stdout'
 
 - name: Create .s3cfg file
-  tags: [s3cfg,s3]
+  tags: [s3cfg, s3]
   template:
     src: s3cfg
     dest: ~/.s3cfg
@@ -28,8 +32,8 @@
     virtualenv_command: virtualenv
     virtualenv: ~/.venv
 
-- name: Create s3 bucket
-  tags: [s3,bucket]
+- name: Create S3 buckets
+  tags: [s3, bucket]
   command: "~/.venv/bin/s3cmd mb s3://{{ item }}"
   with_items:
     - "{{ gen3.user_bucket_name }}"
@@ -39,53 +43,106 @@
     - create_bucket.rc != 0
     - '"already exists" not in create_bucket.stderr'
 
-- name: Create/update values.yml and other config files
-  tags: values,config
+- name: Create user.yaml config file
+  tags: [values, config]
   template:
-    src: "{{ item }}"
-    dest: "~/{{ item }}"
+    src: user.yaml
+    dest: "~/user.yaml"
     mode: 0600
-  with_items:
-    - values.yml
-    - do_users.yaml
-    - ingress.yaml
-    - ingressconfig.yaml
-    - kubedns.yaml
-    - kubedns2.yaml
-    - revproxy.yaml
-    - portal.yaml
-    - user.yaml
 
-#- name: Create/update useryaml
-#  tags: useryaml
-#  template:
-#    src: "{{ item }}"
-#    dest: "~/{{ item }}"
-#    mode: 0600
-#  with_items:
-#    - user.yaml
-#    - useryamljob.yaml
-#
-#- name: Update user.yaml
-#  tags: useryaml
-#  template:
-#      src: user.yaml
-#      dest: ~/user.yaml
-#      mode: 0600
-#  notify: run do_users
-
-- name: Stick user.yaml in s3
-  tags: s3,user
+- name: Upload user.yaml to S3
+  tags: [s3, user]
   command: "~/.venv/bin/s3cmd put ~/user.yaml s3://{{ gen3.user_bucket_name }}/user.yaml"
 
-- name: Start gen3 helm
-  tags: helm
-  command: bin/helm upgrade --install elwazirelease gen3/gen3 -f ~/values.yml -f ~/portal.yaml  # -f ingress.yaml -f ingressconfig.yaml -f kubedns.yaml -f revproxy.yaml
+- name: Apply gen3-db-creds Kubernetes Secret
+  tags: [secrets]
+  command: bin/kubectl apply -f -
   args:
     chdir: /home/{{ gen3.user }}
+    stdin: "{{ lookup('template', 'gen3-db-creds.yaml.j2') }}"
+  register: gen3_db_creds_apply
+  changed_when: '"unchanged" not in gen3_db_creds_apply.stdout'
 
-- name: Apply kubedns2.yaml
-  tags: kubedns
-  command: bin/kubectl apply -f ~/kubedns2.yaml
+- name: Get rke2-coredns ClusterIP
+  tags: [kubedns]
+  command: >
+    bin/kubectl get svc rke2-coredns -n kube-system
+    -o jsonpath='{.spec.clusterIP}'
   args:
-      chdir: /home/{{ gen3.user }}
+    chdir: /home/{{ gen3.user }}
+  register: coredns_ip
+  changed_when: false
+
+- name: Apply kube-dns alias
+  tags: [kubedns]
+  command: bin/kubectl apply -f -
+  args:
+    chdir: /home/{{ gen3.user }}
+    stdin: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: kube-dns
+        namespace: kube-system
+      spec:
+        ports:
+        - {name: udp-53, port: 53, protocol: UDP, targetPort: 53}
+        - {name: tcp-53, port: 53, protocol: TCP, targetPort: 53}
+      ---
+      apiVersion: v1
+      kind: Endpoints
+      metadata:
+        name: kube-dns
+        namespace: kube-system
+      subsets:
+      - addresses:
+        - ip: {{ coredns_ip.stdout }}
+        ports:
+        - {name: udp-53, port: 53, protocol: UDP}
+        - {name: tcp-53, port: 53, protocol: TCP}
+  register: kubedns_apply
+  changed_when: '"unchanged" not in kubedns_apply.stdout'
+
+- name: Apply ArgoCD Application
+  tags: [argocd]
+  command: bin/kubectl apply -f -
+  args:
+    chdir: /home/{{ gen3.user }}
+    stdin: "{{ lookup('template', 'argocd-application.yaml.j2') }}"
+  register: argocd_app_apply
+  changed_when: '"unchanged" not in argocd_app_apply.stdout'
+
+- name: Wait for ArgoCD to sync gen3 Application
+  tags: [argocd]
+  command: >
+    bin/kubectl wait application.argoproj.io/gen3
+    -n argocd
+    --for=jsonpath='{.status.sync.status}'=Synced
+    --timeout=600s
+  args:
+    chdir: /home/{{ gen3.user }}
+  changed_when: false
+
+- name: Apply ingressconfig.yaml
+  tags: [ingress]
+  template:
+    src: ingressconfig.yaml
+    dest: ~/ingressconfig.yaml
+    mode: 0600
+
+- name: Apply ingress nginx config
+  tags: [ingress]
+  command: bin/kubectl apply -f ~/ingressconfig.yaml
+  args:
+    chdir: /home/{{ gen3.user }}
+  register: ingressconfig_apply
+  changed_when: '"unchanged" not in ingressconfig_apply.stdout'
+
+- name: Restart ingress-nginx controller pods
+  tags: [ingress]
+  command: >
+    bin/kubectl rollout restart daemonset rke2-ingress-nginx-controller
+    -n kube-system
+  args:
+    chdir: /home/{{ gen3.user }}
+  ignore_errors: true

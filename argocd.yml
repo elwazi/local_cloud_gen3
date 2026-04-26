@@ -1,0 +1,7 @@
+---
+- name: Install and configure ArgoCD
+  hosts: gen3
+  become: yes
+  become_user: "{{ gen3.user }}"
+  roles:
+    - argocd

@@ -29,11 +29,6 @@ ssh_public_key = "TODO:CONFIGURE_ME"
 # Ansible Variables
 timezone = "TODO:CONFIGURE_ME"
 postgres_password = "TODO:CONFIGURE_ME"
-postgres_fence_password = "TODO:CONFIGURE_ME"
-postgres_peregrine_password = "TODO:CONFIGURE_ME"
-postgres_sheepdog_password = "TODO:CONFIGURE_ME"
-postgres_indexd_password = "TODO:CONFIGURE_ME"
-postgres_arborist_password = "TODO:CONFIGURE_ME"
 
 google_client_id = "TODO:CONFIGURE_ME"
 google_client_secret = "TODO:CONFIGURE_ME"
