@@ -1,6 +1,6 @@
 ---
 # tasks file for storage role (Garage S3)
-- { import_tasks: build.yml, tags: [never, build], become: yes }
+- { import_tasks: build.yml, tags: [build], become: yes }
 
 - name: Ensure garage_data_dir mount point exists
   become: yes
