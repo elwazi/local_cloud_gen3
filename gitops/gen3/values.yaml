@@ -1,0 +1,63 @@
+global:
+  dev: false
+  postgres:
+    dbCreate: true
+    externalSecret: "gen3-db-creds"
+
+fence:
+  image:
+    pullPolicy: IfNotPresent
+
+guppy:
+  image:
+    pullPolicy: IfNotPresent
+  tierAccessLimit: "1000"
+  enabled: false
+  dbRestore: false
+
+peregrine:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+arborist:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+indexd:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+metadata:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+sheepdog:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+wts:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+pidgin:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: false
+
+audit:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
