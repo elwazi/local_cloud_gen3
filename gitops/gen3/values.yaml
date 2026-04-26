@@ -43,6 +43,15 @@ gen3:
   audit:
     enabled: false
 
+  hatchery:
+    enabled: false
+
+  manifestservice:
+    enabled: false
+
+  sower:
+    enabled: false
+
   portal:
     image:
       pullPolicy: IfNotPresent
