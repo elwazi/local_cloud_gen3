@@ -3,7 +3,7 @@
 
 - name: Build storage node
   become: yes
-  tags: [never, build]
+  tags: [build]
   block:
     - name: Install required packages
       apt:

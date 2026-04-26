@@ -4,7 +4,6 @@
   become: yes
   tags:
     - build
-    - never
   block:
     - name: Upgrade all existing packages
       apt:
