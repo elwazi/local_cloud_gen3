@@ -5,7 +5,7 @@ locals {
 
 resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
   name       = "${var.name_prefix}-sshkey"
-  public_key = var.ssh_public_key
+  public_key = file("${var.ssh_private_key_file}.pub")
 }
 
 resource "local_file" "hosts_cfg" {

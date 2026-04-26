@@ -24,7 +24,6 @@ k8s_node_count = 2
 gen3_hostname = "TODO:CONFIGURE_ME"
 
 name_prefix = "gen3-elwazi"
-ssh_public_key       = "TODO:CONFIGURE_ME"
 ssh_private_key_file = "~/.ssh/id_rsa"
 
 # Ansible Variables

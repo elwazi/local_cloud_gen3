@@ -219,11 +219,6 @@ variable "name_prefix" {
   default = "gen3-dev"
 }
 
-variable "ssh_public_key" {
-  type = string
-  description = "Your ssh public key"
-}
-
 variable "ssh_private_key_file" {
   type        = string
   description = "Path to the SSH private key used by Ansible to connect to nodes"
