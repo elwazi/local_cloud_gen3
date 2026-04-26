@@ -1,41 +1,33 @@
 ---
 - name: Create argocd namespace
   command: >
-    bin/kubectl create namespace argocd --dry-run=client -o yaml
-  args:
-    chdir: /home/{{ gen3.user }}
+    /var/lib/rancher/rke2/bin/kubectl create namespace argocd --dry-run=client -o yaml
   register: argocd_ns_yaml
   changed_when: false
 
 - name: Apply argocd namespace
-  command: bin/kubectl apply -f -
+  command: /var/lib/rancher/rke2/bin/kubectl apply -f -
   args:
-    chdir: /home/{{ gen3.user }}
     stdin: "{{ argocd_ns_yaml.stdout }}"
   register: argocd_ns_apply
   changed_when: '"unchanged" not in argocd_ns_apply.stdout'
 
 - name: Apply ArgoCD install manifest
   command: >
-    bin/kubectl apply -n argocd
+    /var/lib/rancher/rke2/bin/kubectl apply -n argocd
     -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.13.3/manifests/install.yaml
-  args:
-    chdir: /home/{{ gen3.user }}
   register: argocd_install
   changed_when: '"unchanged" not in argocd_install.stdout'
 
 - name: Wait for ArgoCD server deployment to be ready
   command: >
-    bin/kubectl rollout status deployment/argocd-server
+    /var/lib/rancher/rke2/bin/kubectl rollout status deployment/argocd-server
     -n argocd --timeout=300s
-  args:
-    chdir: /home/{{ gen3.user }}
   changed_when: false
 
 - name: Register git repository with ArgoCD
-  command: bin/kubectl apply -f -
+  command: /var/lib/rancher/rke2/bin/kubectl apply -f -
   args:
-    chdir: /home/{{ gen3.user }}
     stdin: |
       apiVersion: v1
       kind: Secret
