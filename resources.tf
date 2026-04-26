@@ -50,7 +50,8 @@ resource "local_file" "hosts_cfg" {
       garage_access_key = var.garage_access_key
       garage_secret_key = var.garage_secret_key
 
-      timezone = var.timezone
+      ssh_private_key_file = var.ssh_private_key_file
+      timezone             = var.timezone
     }
   )
   filename = "inventory.yaml"

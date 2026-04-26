@@ -224,6 +224,12 @@ variable "ssh_public_key" {
   description = "Your ssh public key"
 }
 
+variable "ssh_private_key_file" {
+  type        = string
+  description = "Path to the SSH private key used by Ansible to connect to nodes"
+  default     = "~/.ssh/id_rsa"
+}
+
 // variables used in ansible configuration
 
 variable "google_client_id" {
