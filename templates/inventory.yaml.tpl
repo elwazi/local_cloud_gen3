@@ -44,7 +44,7 @@ servers:
 
     ansible_connection: ssh
     ansible_user: ${admin_user}
-    ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/ -o IdentityAgent=none -o IdentitiesOnly=yes -o ProxyJump=ubuntu@${load_balancer_float_ip} -i ~/.ssh/ilifu/id_rsa"
+    ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -o ProxyJump=${admin_user}@${load_balancer_float_ip} -i ~/.ssh/ilifu/id_rsa"
     # ansible_ssh_private_key_file: ~/.ssh/ilifu/id_rsa
 
     timezone: '${ timezone }'

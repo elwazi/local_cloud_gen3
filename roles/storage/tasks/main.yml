@@ -2,6 +2,14 @@
 # tasks file for storage role (Garage S3)
 - { import_tasks: build.yml, tags: [never, build], become: yes }
 
+- name: Ensure garage_data_dir mount point exists
+  become: yes
+  file:
+    path: "{{ garage_data_dir }}"
+    state: directory
+    mode: "0755"
+  tags: [storage, mount]
+
 - name: Create ext4 filesystem on data volume
   become: yes
   community.general.filesystem:
