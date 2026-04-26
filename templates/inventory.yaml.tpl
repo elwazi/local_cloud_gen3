@@ -100,3 +100,6 @@ servers:
       'user': '${postgres_user}',
       'password': '${postgres_password}',
     }
+
+    argocd_repo_url: "${argocd_repo_url}"
+    argocd_repo_token: "${argocd_repo_token}"
