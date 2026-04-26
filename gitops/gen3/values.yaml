@@ -16,10 +16,7 @@ guppy:
   dbRestore: false
 
 peregrine:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  enabled: false
 
 arborist:
   image:
@@ -34,30 +31,16 @@ indexd:
   dbRestore: false
 
 metadata:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  enabled: false
 
 sheepdog:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  enabled: false
 
 wts:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  enabled: false
 
 pidgin:
-  image:
-    pullPolicy: IfNotPresent
   enabled: false
 
 audit:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  enabled: false
