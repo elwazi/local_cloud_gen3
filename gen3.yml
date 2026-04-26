@@ -1,6 +1,7 @@
 ---
-# gen3.yml
 - hosts: gen3
   tags: [gen3]
+  become: yes
+  become_user: "{{ gen3.user }}"
   roles:
     - gen3

@@ -2,5 +2,7 @@
 - name: Install and configure ArgoCD
   hosts: gen3
   become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/rke2/rke2.yaml
   roles:
     - argocd
