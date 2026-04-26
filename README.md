@@ -84,7 +84,6 @@ Edit `variables.auto.hcl` with values for your environment. All variables are de
 
 **PostgreSQL**
 * `postgres_user` / `postgres_password` — master PostgreSQL credentials
-* `postgres_fence_password`, `postgres_peregrine_password`, `postgres_sheepdog_password`, `postgres_indexd_password`, `postgres_arborist_password`, `postgres_metadata_password`, `postgres_guppy_password`, `postgres_audit_password`, `postgres_wts_password` — per-service database passwords
 
 **Garage S3 storage**
 * `garage_rpc_secret` — Garage cluster RPC secret (generate: `openssl rand -hex 32`)
