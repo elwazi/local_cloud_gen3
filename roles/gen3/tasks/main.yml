@@ -80,6 +80,7 @@
 - name: Copy kubeconfig file
   tags: [kubeconfig]
   become: yes
+  become_user: root
   copy:
       src: "/etc/rancher/rke2/rke2.yaml"
       dest: "/home/{{ gen3.user }}/.kube/config"
