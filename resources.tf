@@ -8,7 +8,7 @@ resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
   public_key = file("${var.ssh_private_key_file}.pub")
 }
 
-resource "local_file" "hosts_cfg" {
+resource "local_file" "inventory" {
   content = templatefile("templates/inventory.yaml.tpl",
     {
       admin_user = var.admin_user
