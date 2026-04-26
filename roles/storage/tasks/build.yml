@@ -16,6 +16,7 @@
       get_url:
         url: "https://garagehq.deuxfleurs.fr/_releases/{{ garage_version }}/x86_64-unknown-linux-musl/garage"
         dest: /usr/local/bin/garage
+        checksum: "{{ garage_checksum }}"
         mode: "0755"
 
     - name: Create garage system user
@@ -34,8 +35,8 @@
         mode: "0755"
       loop:
         - /etc/garage
-        - /var/lib/garage/meta
-        - /data
+        - "{{ garage_meta_dir }}"
+        - "{{ garage_data_dir }}"
 
     - name: Install garage systemd unit
       copy:

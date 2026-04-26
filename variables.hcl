@@ -219,9 +219,10 @@ variable "name_prefix" {
   default = "gen3-dev"
 }
 
-variable "ssh_public_key" {
-  type = string
-  description = "Your ssh public key"
+variable "ssh_private_key_file" {
+  type        = string
+  description = "Path to the SSH private key used by Ansible to connect to nodes"
+  default     = "~/.ssh/id_rsa"
 }
 
 // variables used in ansible configuration
@@ -323,6 +324,18 @@ variable "garage_access_key" {
 variable "garage_secret_key" {
   type        = string
   description = "Garage S3 secret key (hex string, generate with: openssl rand -hex 32)"
+  sensitive   = true
+}
+
+variable "argocd_repo_url" {
+  type        = string
+  description = "Git repository URL for ArgoCD to watch (e.g. https://github.com/org/repo.git)"
+}
+
+variable "argocd_repo_token" {
+  type        = string
+  description = "Personal access token for ArgoCD to read the repo (leave empty for public repos)"
+  default     = ""
   sensitive   = true
 }
 

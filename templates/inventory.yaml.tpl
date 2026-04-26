@@ -14,8 +14,8 @@ servers:
       vars:
         ansible_connection: ssh
         ansible_user: ${admin_user}
-        ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -i ~/.ssh/ilifu/id_rsa"
-        # ansible_ssh_private_key_file: ~/.ssh/ilifu/id_rsa
+        ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes"
+        ansible_ssh_private_key_file: ${ssh_private_key_file}
     database_nodes:
       hosts:
         ${ database_node.name }:
@@ -44,8 +44,8 @@ servers:
 
     ansible_connection: ssh
     ansible_user: ${admin_user}
-    ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -o ProxyJump=${admin_user}@${load_balancer_float_ip} -i ~/.ssh/ilifu/id_rsa"
-    # ansible_ssh_private_key_file: ~/.ssh/ilifu/id_rsa
+    ansible_ssh_common_args: "-o ControlPersist=15m -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -o ProxyJump=${admin_user}@${load_balancer_float_ip}"
+    ansible_ssh_private_key_file: ${ssh_private_key_file}
 
     timezone: '${ timezone }'
     gen3_subnet: ${cidr}
@@ -100,3 +100,6 @@ servers:
       'user': '${postgres_user}',
       'password': '${postgres_password}',
     }
+
+    argocd_repo_url: "${argocd_repo_url}"
+    argocd_repo_token: "${argocd_repo_token}"

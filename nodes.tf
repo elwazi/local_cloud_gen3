@@ -77,7 +77,7 @@ resource "openstack_compute_instance_v2" "rancher_rke2_server_nodes" {
 
 resource "openstack_compute_instance_v2" "storage_node" {
   name        = local.storage_node_name
-  image_name  = local.load_balancer_image_name # base Ubuntu image — Garage installed by Ansible
+  image_name  = local.load_balancer_image_name # load balancer image used as base — Garage installed by Ansible
   flavor_name = var.storage_node_flavour
   key_pair    = openstack_compute_keypair_v2.gen3_ssh_key.name
   security_groups = [
@@ -99,7 +99,7 @@ resource "openstack_compute_volume_attach_v2" "storage_data_volume_attach" {
   volume_id   = openstack_blockstorage_volume_v3.storage_data_volume.id
 }
 
-data "openstack_images_image_v2" "database_image" {
+data "openstack_images_image_v2" "base_image" {
   name = local.load_balancer_image_name
 }
 
@@ -113,7 +113,7 @@ resource "openstack_compute_instance_v2" "database_node" {
   }
   block_device {
     source_type           = "image"
-    uuid                  = data.openstack_images_image_v2.database_image.id
+    uuid                  = data.openstack_images_image_v2.base_image.id
     volume_size           = var.database_node_disk_size_gib
     destination_type      = "volume"
     delete_on_termination = false

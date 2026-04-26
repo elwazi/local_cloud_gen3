@@ -5,10 +5,10 @@ locals {
 
 resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
   name       = "${var.name_prefix}-sshkey"
-  public_key = var.ssh_public_key
+  public_key = file("${var.ssh_private_key_file}.pub")
 }
 
-resource "local_file" "hosts_cfg" {
+resource "local_file" "inventory" {
   content = templatefile("templates/inventory.yaml.tpl",
     {
       admin_user = var.admin_user
@@ -50,7 +50,11 @@ resource "local_file" "hosts_cfg" {
       garage_access_key = var.garage_access_key
       garage_secret_key = var.garage_secret_key
 
-      timezone = var.timezone
+      ssh_private_key_file = var.ssh_private_key_file
+      timezone             = var.timezone
+
+      argocd_repo_url   = var.argocd_repo_url
+      argocd_repo_token = var.argocd_repo_token
     }
   )
   filename = "inventory.yaml"

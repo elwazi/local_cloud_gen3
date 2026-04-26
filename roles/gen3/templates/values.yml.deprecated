@@ -1,4 +1,4 @@
-global:
+If global:
   hostname: {{ gen3.hostname }}
   dev: false
   postgres:
