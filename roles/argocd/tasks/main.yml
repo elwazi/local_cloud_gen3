@@ -12,6 +12,8 @@
   args:
     chdir: /home/{{ gen3.user }}
     stdin: "{{ argocd_ns_yaml.stdout }}"
+  register: argocd_ns_apply
+  changed_when: '"unchanged" not in argocd_ns_apply.stdout'
 
 - name: Apply ArgoCD install manifest
   command: >
@@ -49,3 +51,5 @@
         username: git
         password: "{{ argocd_repo_token }}"
         {% endif %}
+  register: argocd_repo_apply
+  changed_when: '"unchanged" not in argocd_repo_apply.stdout'
