@@ -63,18 +63,12 @@
   register: gen3_db_creds_apply
   changed_when: '"unchanged" not in gen3_db_creds_apply.stdout'
 
-- name: Render ArgoCD Application manifest
-  tags: [argocd]
-  template:
-    src: argocd-application.yaml.j2
-    dest: ~/argocd-application.yaml
-    mode: 0600
-
 - name: Apply ArgoCD Application
   tags: [argocd]
-  command: bin/kubectl apply -f ~/argocd-application.yaml
+  command: bin/kubectl apply -f -
   args:
     chdir: /home/{{ gen3.user }}
+    stdin: "{{ lookup('template', 'argocd-application.yaml.j2') }}"
   register: argocd_app_apply
   changed_when: '"unchanged" not in argocd_app_apply.stdout'
 
