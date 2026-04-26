@@ -56,7 +56,7 @@ ansible-playbook site.yml --limit rancher_servers
 
 1. **`variables.auto.hcl`** — secrets/config values for local use; symlinked as `variables.auto.pkrvars.hcl` (Packer) and `variables.auto.tfvars` (Terraform)
    **`variables.hcl`** — variable definitions shared by Packer (`variables.pkr.hcl`) and Terraform (`variables.tf`) via symlinks
-2. **Packer** (`images.openstack.pkr.hcl`) — builds base, rancher-server, rancher-worker, load-balancer, and database images from Ubuntu 24.04
+2. **Packer** (`images.openstack.pkr.hcl`) — builds base, rancher-server, rancher-worker, and load-balancer images from Ubuntu 24.04 (database image build is disabled; database node boots from the load-balancer image)
 3. **Terraform** (`network.tf`, `nodes.tf`, `resources.tf`) — provisions OpenStack network, security groups, VMs, and volumes; outputs a generated `inventory.yaml` via `templates/inventory.yaml.tpl`
 4. **Ansible** — configures VMs using the generated inventory; `deploy.sh` orchestrates parallel execution
 
@@ -79,7 +79,7 @@ ansible-playbook site.yml --limit rancher_servers
 | `database` | PostgreSQL with 17+ Gen3-specific users/DBs |
 | `rancher` | RKE2 Kubernetes cluster (server + workers) |
 | `storage` | Garage S3-compatible object storage |
-| `load_balancer` | Nginx reverse proxy |
+| `load_balancer` | Caddy reverse proxy |
 | `argocd` | ArgoCD GitOps controller on the gen3 host |
 | `gen3` | Helm chart deployment of Gen3 microservices |
 

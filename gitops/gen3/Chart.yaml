@@ -1,0 +1,7 @@
+apiVersion: v2
+name: gen3
+version: 0.1.0
+dependencies:
+  - name: gen3
+    repository: https://helm.gen3.org
+    version: "0.1.34"

@@ -99,7 +99,7 @@ resource "openstack_compute_volume_attach_v2" "storage_data_volume_attach" {
   volume_id   = openstack_blockstorage_volume_v3.storage_data_volume.id
 }
 
-data "openstack_images_image_v2" "database_image" {
+data "openstack_images_image_v2" "base_image" {
   name = local.load_balancer_image_name
 }
 
@@ -113,7 +113,7 @@ resource "openstack_compute_instance_v2" "database_node" {
   }
   block_device {
     source_type           = "image"
-    uuid                  = data.openstack_images_image_v2.database_image.id
+    uuid                  = data.openstack_images_image_v2.base_image.id
     volume_size           = var.database_node_disk_size_gib
     destination_type      = "volume"
     delete_on_termination = false
