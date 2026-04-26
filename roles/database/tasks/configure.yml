@@ -24,9 +24,9 @@
           - acl
           - default-jre
           - libpq-dev
-          - postgresql-18
-          - postgresql-client-18
-          - postgresql-contrib-18
+          - postgresql-{{ postgres_major_version }}
+          - postgresql-client-{{ postgres_major_version }}
+          - postgresql-contrib-{{ postgres_major_version }}
           - python3-psycopg2
         state: latest
         update-cache: yes
@@ -44,14 +44,14 @@
 
     - name: Configure postgres to listen to local network
       lineinfile:
-        path: "/etc/postgresql/18/main/postgresql.conf"
+        path: "/etc/postgresql/{{ postgres_major_version }}/main/postgresql.conf"
         regex: "^listen_addresses.*"
         line: "listen_addresses = '{% for ip in ansible_facts['all_ipv4_addresses'] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
 
     - name: Configure postgres to allow connections on subnet
       lineinfile:
-        path: "/etc/postgresql/18/main/pg_hba.conf"
+        path: "/etc/postgresql/{{ postgres_major_version }}/main/pg_hba.conf"
         regex: "host *all *all *{{ gen3_subnet }} *md5"
         line: "host    all             all             {{ gen3_subnet }}         md5"
       notify: Restart postgres
