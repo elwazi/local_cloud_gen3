@@ -34,8 +34,8 @@
         mode: "0755"
       loop:
         - /etc/garage
-        - /var/lib/garage/meta
-        - /data
+        - "{{ garage_meta_dir }}"
+        - "{{ garage_data_dir }}"
 
     - name: Install garage systemd unit
       copy:
