@@ -1,0 +1,7 @@
+---
+# ArgoCD — git repository access
+# Set argocd_repo_url to the remote URL of this repository.
+# If the repository is private, set argocd_repo_token to a personal access
+# token or deploy token with read access. Leave empty for public repos.
+argocd_repo_url: "https://github.com/<org>/<repo>.git"
+argocd_repo_token: ""
