@@ -21,35 +21,36 @@ spec:
               password: "{{ postgres.password }}"
               host: "{{ postgres.host_ip }}"
               port: "5432"
-        fence:
-          FENCE_CONFIG:
-            OPENID_CONNECT:
-              google:
-                client_id: "{{ google_client_id }}"
-                client_secret: "{{ google_client_secret }}"
-            AWS_CREDENTIALS:
-              "gen3":
+        gen3:
+          fence:
+            FENCE_CONFIG:
+              OPENID_CONNECT:
+                google:
+                  client_id: "{{ google_client_id }}"
+                  client_secret: "{{ google_client_secret }}"
+              AWS_CREDENTIALS:
+                "gen3":
+                  aws_access_key_id: "{{ gen3.ec2.access }}"
+                  aws_secret_access_key: "{{ gen3.ec2.secret }}"
+              S3_BUCKETS:
+                "{{ gen3.data_bucket_name }}":
+                  cred: "gen3"
+                  endpoint_url: "https://{{ s3.host_base }}"
+                "{{ gen3.user_bucket_name }}":
+                  cred: "gen3"
+                  endpoint_url: "https://{{ s3.host_base }}"
+              DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
+            usersync:
+              usersync: true
+              secrets:
                 aws_access_key_id: "{{ gen3.ec2.access }}"
                 aws_secret_access_key: "{{ gen3.ec2.secret }}"
-            S3_BUCKETS:
-              "{{ gen3.data_bucket_name }}":
-                cred: "gen3"
-                endpoint_url: "https://{{ s3.host_base }}"
-              "{{ gen3.user_bucket_name }}":
-                cred: "gen3"
-                endpoint_url: "https://{{ s3.host_base }}"
-            DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
-          usersync:
-            usersync: true
-            secrets:
-              aws_access_key_id: "{{ gen3.ec2.access }}"
-              aws_secret_access_key: "{{ gen3.ec2.secret }}"
-            userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
-        secrets:
-          awsAccessKeyId: "{{ gen3.ec2.access }}"
-          awsSecretAccessKey: "{{ gen3.ec2.secret }}"
-        guppy:
-          esEndpoint: "{{ postgres.host_ip }}:9200"
+              userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
+          secrets:
+            awsAccessKeyId: "{{ gen3.ec2.access }}"
+            awsSecretAccessKey: "{{ gen3.ec2.secret }}"
+          guppy:
+            esEndpoint: "{{ postgres.host_ip }}:9200"
   destination:
     server: https://kubernetes.default.svc
     namespace: gen3

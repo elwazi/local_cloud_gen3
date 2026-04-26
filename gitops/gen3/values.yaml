@@ -4,43 +4,46 @@ global:
     dbCreate: true
     externalSecret: "gen3-db-creds"
 
-fence:
-  image:
-    pullPolicy: IfNotPresent
+gen3:
+  fence:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
 
-guppy:
-  image:
-    pullPolicy: IfNotPresent
-  tierAccessLimit: "1000"
-  enabled: false
-  dbRestore: false
+  guppy:
+    enabled: false
 
-peregrine:
-  enabled: false
+  peregrine:
+    enabled: false
 
-arborist:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  arborist:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
+    dbRestore: false
 
-indexd:
-  image:
-    pullPolicy: IfNotPresent
-  enabled: true
-  dbRestore: false
+  indexd:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
+    dbRestore: false
 
-metadata:
-  enabled: false
+  metadata:
+    enabled: false
 
-sheepdog:
-  enabled: false
+  sheepdog:
+    enabled: false
 
-wts:
-  enabled: false
+  wts:
+    enabled: false
 
-pidgin:
-  enabled: false
+  pidgin:
+    enabled: false
 
-audit:
-  enabled: false
+  audit:
+    enabled: false
+
+  portal:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
