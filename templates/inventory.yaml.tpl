@@ -75,10 +75,6 @@ servers:
         },
         'logo_base64': '${gen3_portal_logo}'
       },
-      'ec2': {
-        'access': '${garage_access_key}',
-        'secret': '${garage_secret_key}',
-      },
     }
 
     s3: {
