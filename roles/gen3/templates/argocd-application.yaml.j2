@@ -42,11 +42,7 @@ spec:
               DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
             usersync:
               usersync: true
-              secrets:
-                aws_access_key_id: "{{ gen3.garage.access_key }}"
-                aws_secret_access_key: "{{ gen3.garage.secret_key }}"
-                endpoint_url: "https://{{ s3.host_base }}"
-              userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
+              userYamlS3Path: "none"
           secrets:
             awsAccessKeyId: "{{ gen3.garage.access_key }}"
             awsSecretAccessKey: "{{ gen3.garage.secret_key }}"

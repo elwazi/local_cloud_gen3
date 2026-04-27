@@ -43,17 +43,6 @@
     - create_bucket.rc != 0
     - '"already exists" not in create_bucket.stderr'
 
-- name: Create user.yaml config file
-  tags: [values, config]
-  template:
-    src: user.yaml
-    dest: "~/user.yaml"
-    mode: 0600
-
-- name: Upload user.yaml to S3
-  tags: [s3, user]
-  command: "~/.venv/bin/s3cmd put ~/user.yaml s3://{{ gen3.user_bucket_name }}/user.yaml"
-
 - name: Apply gen3-db-creds Kubernetes Secret
   tags: [secrets]
   command: bin/kubectl apply -f -
