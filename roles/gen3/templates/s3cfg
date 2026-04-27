@@ -1,5 +1,5 @@
 host_base = {{ s3.host_base }}
 host_bucket = {{ s3.host_bucket }}
-access_key = {{ gen3.garage.access_key }}
-secret_key = {{ gen3.garage.secret_key }}
+access_key = {{ garage.access_key }}
+secret_key = {{ garage.secret_key }}
 use_https = True

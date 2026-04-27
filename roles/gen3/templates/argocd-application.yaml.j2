@@ -36,8 +36,8 @@ spec:
                   client_secret: "{{ google_client_secret }}"
               AWS_CREDENTIALS:
                 "gen3":
-                  aws_access_key_id: "{{ gen3.garage.access_key }}"
-                  aws_secret_access_key: "{{ gen3.garage.secret_key }}"
+                  aws_access_key_id: "{{ garage.access_key }}"
+                  aws_secret_access_key: "{{ garage.secret_key }}"
               S3_BUCKETS:
                 "{{ gen3.data_bucket_name }}":
                   cred: "gen3"
@@ -50,8 +50,8 @@ spec:
               usersync: true
               userYamlS3Path: "none"
           secrets:
-            awsAccessKeyId: "{{ gen3.garage.access_key }}"
-            awsSecretAccessKey: "{{ gen3.garage.secret_key }}"
+            awsAccessKeyId: "{{ garage.access_key }}"
+            awsSecretAccessKey: "{{ garage.secret_key }}"
           guppy:
             esEndpoint: "{{ postgres.host_ip }}:9200"
   destination:
