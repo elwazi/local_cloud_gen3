@@ -12,6 +12,12 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+        - values.fence.yaml
+        - values.users.yaml
+        - values.arborist.yaml
+        - values.indexd.yaml
+        - values.portal.yaml
+        - values.disabled.yaml
       valuesObject:
         global:
           hostname: "{{ gen3.hostname }}"

@@ -1,0 +1,6 @@
+gen3:
+  indexd:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
+    dbRestore: false

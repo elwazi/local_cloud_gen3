@@ -1,0 +1,7 @@
+gen3:
+  fence:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
+    usersync:
+      userYamlS3Path: "none"

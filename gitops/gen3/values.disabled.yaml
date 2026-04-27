@@ -1,0 +1,21 @@
+gen3:
+  guppy:
+    enabled: false
+  peregrine:
+    enabled: false
+  metadata:
+    enabled: false
+  sheepdog:
+    enabled: false
+  wts:
+    enabled: false
+  pidgin:
+    enabled: false
+  audit:
+    enabled: false
+  hatchery:
+    enabled: false
+  manifestservice:
+    enabled: false
+  sower:
+    enabled: false
