@@ -1,0 +1,3 @@
+gen3:
+  manifestservice:
+    enabled: false

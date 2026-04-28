@@ -1,0 +1,5 @@
+gen3:
+  peregrine:
+    image:
+      pullPolicy: IfNotPresent
+    enabled: true
