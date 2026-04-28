@@ -5,3 +5,10 @@ gen3:
     enabled: true
     usersync:
       userYamlS3Path: "none"
+    FENCE_CONFIG:
+      BASE_URL: http://genemap.ilifu.ac.za/user
+
+      JWT_KEY_PAIRS:
+        - kid: "fence_key_key"
+          type: "symmetric"
+          public_key: "secret"
