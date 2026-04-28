@@ -128,3 +128,11 @@
         insertafter: "^#network.host:.*"
       become: yes
       notify: Restart elasticsearch
+
+    - name: Configure elasticsearch single-node discovery
+      lineinfile:
+        path: "/etc/elasticsearch/elasticsearch.yml"
+        regex: "^discovery.type:.*"
+        line: "discovery.type: single-node"
+      become: yes
+      notify: Restart elasticsearch
