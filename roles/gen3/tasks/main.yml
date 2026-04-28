@@ -1,11 +1,11 @@
 ---
 # tasks file for gen3
-- name: Install virtualenv
+- name: Install uv
   tags: [virtualenv]
   become: yes
-  apt:
-    name: python3-virtualenv
-    state: present
+  shell: curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+  args:
+    creates: /usr/local/bin/uv
 
 - name: Add gen3 unix group
   become: yes
@@ -92,18 +92,16 @@
       remote_src: true
       mode: 0600
 
-- name: Copy kubectl binaries to bin
+- name: Link kubectl binaries to bin
   become: yes
-  become_user: "{{ gen3.user }}"
   tags: [kubectl]
-  copy:
-    src: "{{ item }}"
-    dest: "~/bin/"
-    mode: 0755
-    remote_src: true
+  file:
+    src: "/var/lib/rancher/rke2/bin/{{ item }}"
+    dest: "/home/{{ gen3.user }}/bin/{{ item }}"
+    state: link
   with_items:
-    - /var/lib/rancher/rke2/bin/kubectl
-    - /var/lib/rancher/rke2/bin/kubelet
+    - kubectl
+    - kubelet
 
 - name: Add kubectl command line completion
   become: yes

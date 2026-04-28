@@ -22,15 +22,17 @@
     dest: ~/.s3cfg
     mode: 0600
 
-- name: Create virtualenv
+- name: Create venv with uv
   tags: [virtualenv]
-  pip:
-    name:
-      - s3cmd
-      - python-openstackclient
-    state: latest
-    virtualenv_command: virtualenv
-    virtualenv: ~/.venv
+  command: uv venv ~/.venv
+  args:
+    creates: ~/.venv
+
+- name: Install packages with uv
+  tags: [virtualenv]
+  command: uv pip install --python ~/.venv s3cmd python-openstackclient
+  register: uv_install
+  changed_when: "'Installed' in uv_install.stdout"
 
 - name: Create S3 buckets
   tags: [s3, bucket]

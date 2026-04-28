@@ -4,10 +4,9 @@
 - name: "Build hosts file"
   tags: hosts
   become: yes
-  lineinfile:
-    path: /etc/hosts
-    regexp: '.*{{ item }}$'
-    line: "{{ hostvars[item].private_ip }} {{ item }}"
-    state: present
-  when: hostvars[item].private_ip is defined
-  with_items: "{{ groups['all'] }}"
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"
