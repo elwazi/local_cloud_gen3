@@ -21,7 +21,11 @@ PermissionError: [Errno 13] Permission denied: '/fence/keys/key/jwt_public_key.p
 
 ### Root cause
 
-The Gen3 Helm chart (v0.1.34) auto-generates the `fence-jwt-keys` Secret containing **only** `jwt_private_key.pem`. The `fence:master` image derives the RSA public key at startup and unconditionally writes it to `/fence/keys/key/jwt_public_key.pem`. That directory is a Kubernetes Secret volume mount, which is read-only — the write always fails and the process crashes.
+Affects **gen3 chart 0.1.34** (and earlier). The chart auto-generates the `fence-jwt-keys`
+Secret containing **only** `jwt_private_key.pem`, then mounts it directly at
+`/fence/keys/key/` (read-only). The `fence` image derives the RSA public key at startup
+and unconditionally tries to write it to `/fence/keys/key/jwt_public_key.pem` — which
+always fails because Secret volume mounts are read-only.
 
 Confirmed:
 
@@ -31,9 +35,32 @@ bin/kubectl get secret fence-jwt-keys -n gen3 -o jsonpath='{.data}' \
 # ['jwt_private_key.pem']   <-- only the private key, public key missing
 ```
 
-### Fix
+### Fix — upgrade the chart (recommended)
 
-Two parts — patch the Deployment to give fence a writable keys directory, and tell ArgoCD not to revert the patch.
+Upstream fixed this in **fence chart 0.1.67** (gen3 chart ≥ 0.3.x, released Dec 2025).
+The new chart version no longer mounts the Secret at `/fence/keys/key/`. Instead it mounts
+the Secret read-only at `/tmp/keys/readonly/` and the container's startup script copies
+and derives the public key into a writable path:
+
+```bash
+mkdir -p /fence/keys/key
+cp /tmp/keys/readonly/jwt_private_key.pem /fence/keys/key/jwt_private_key.pem
+openssl rsa -in /fence/keys/key/jwt_private_key.pem -pubout > /fence/keys/key/jwt_public_key.pem
+```
+
+No volume patching or ArgoCD workarounds are needed.
+
+**Steps:**
+
+1. Update `gitops/gen3/Chart.yaml` dependency version from `"0.1.34"` to `"0.3.36"` (or
+   latest — check https://github.com/uc-cdis/gen3-helm/releases).
+2. Run `helm dependency update gitops/gen3/` to pull the new chart.
+3. Commit and push; ArgoCD will sync and redeploy.
+
+### Workaround — if stuck on chart 0.1.34
+
+If upgrading is not immediately possible, patch the Deployment to give fence a writable
+keys directory and prevent ArgoCD from reverting the patch.
 
 **Part 1 — patch fence-deployment** (run on the gen3 host):
 
@@ -83,12 +110,6 @@ In `roles/gen3/templates/argocd-application.yaml.j2`, add after `syncPolicy`:
         - .spec.template.spec.initContainers
         - '.spec.template.spec.containers[] | select(.name=="fence") | .volumeMounts'
 ```
-
-### Proper long-term fix
-
-This is a workaround. The real fix is one of:
-- Pin `fence.image.tag` in `gitops/gen3/values.fence.yaml` to a specific stable version that doesn't write the public key at runtime (version compatible with chart 0.1.34 unknown — needs testing)
-- Add a custom init container overlay in `gitops/gen3/templates/` — not possible via standard Helm subchart override without chart modification or Kustomize post-rendering
 
 ---
 
