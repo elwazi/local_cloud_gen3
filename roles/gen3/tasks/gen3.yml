@@ -51,11 +51,11 @@
   register: gen3_db_creds_apply
   changed_when: '"unchanged" not in gen3_db_creds_apply.stdout'
 
-- name: Get rke2-coredns ClusterIP
+- name: Get rke2-coredns pod IP
   tags: [kubedns]
   command: >
-    bin/kubectl get svc rke2-coredns-rke2-coredns -n kube-system
-    -o jsonpath='{.spec.clusterIP}'
+    bin/kubectl get endpoints rke2-coredns-rke2-coredns -n kube-system
+    -o jsonpath='{.subsets[0].addresses[0].ip}'
   args:
     chdir: /home/{{ gen3.user }}
   register: coredns_ip
@@ -133,4 +133,4 @@
     -n kube-system
   args:
     chdir: /home/{{ gen3.user }}
-  ignore_errors: true
+  when: ingressconfig_apply.changed
