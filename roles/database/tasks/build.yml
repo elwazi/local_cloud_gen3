@@ -48,11 +48,12 @@
 
     - name: Add elasticsearch repository
       apt_repository:
-        repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+        repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
 
     - name: Install elasticsearch
       apt:
         name: elasticsearch
+        state: latest
         update-cache: yes
 
     - name: Enable elasticsearch service
