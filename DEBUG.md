@@ -140,22 +140,4 @@ The `useryaml` Job (runs `fence-create sync` to load user.yaml into fence DB) al
 
 ## Reset procedure
 
-```bash
-# 1. Delete namespaces
-bin/kubectl delete namespace gen3 argocd --wait
-
-# 2. Drop postgres roles (databases must be dropped first)
-ansible -i inventory.yaml database_nodes -m shell \
-  -a "sudo -u postgres psql -c 'DROP DATABASE IF EXISTS fence_gen3' \
-      -c 'DROP DATABASE IF EXISTS arborist_gen3' \
-      -c 'DROP DATABASE IF EXISTS indexd_gen3'" -b
-
-ansible -i inventory.yaml database_nodes -m shell \
-  -a "sudo -u postgres psql -c 'DROP ROLE IF EXISTS fence_gen3, arborist_gen3, indexd_gen3;'" -b
-
-# 3. Redeploy
-ansible-playbook -i inventory.yaml argocd.yml gen3.yml
-
-# 4. Watch db-create jobs
-bin/kubectl get jobs -n gen3 -w
-```
+See `RESET.md` for full reset and restart procedures.

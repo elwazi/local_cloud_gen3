@@ -79,46 +79,40 @@ ansible-playbook -i inventory.yaml argocd.yml gen3.yml
 
 ## Full reset — drops database, keeps S3
 
-Use for a clean slate. Drop databases **after** deleting the namespace — active
+Use for a clean slate. Delete the namespace **before** dropping databases — active
 connections block `DROP DATABASE`.
 
 ```bash
 # 1. Delete namespaces
 bin/kubectl delete namespace gen3 argocd --wait
 
-# 2. Drop all gen3 databases
-ansible -i inventory.yaml database_nodes -m shell -b \
-  -a "sudo -u postgres psql -tc \
-      \"SELECT 'DROP DATABASE IF EXISTS ' || quote_ident(datname) || ';' \
-        FROM pg_database WHERE datname LIKE '%\_gen3'\" \
-      | sudo -u postgres psql"
+# 2. Drop all gen3 databases and roles
+ansible-playbook -i inventory.yaml database.yml --tags reset
 
-# 3. Drop all gen3 roles
-ansible -i inventory.yaml database_nodes -m shell -b \
-  -a "sudo -u postgres psql -tc \
-      \"SELECT 'DROP ROLE IF EXISTS ' || quote_ident(rolname) || ';' \
-        FROM pg_roles WHERE rolname LIKE '%\_gen3'\" \
-      | sudo -u postgres psql"
-
-# 4. Redeploy
+# 3. Redeploy
 ansible-playbook -i inventory.yaml argocd.yml gen3.yml
 
-# 5. Watch db-create jobs before checking other pods
+# 4. Watch db-create jobs before checking other pods
 bin/kubectl get jobs -n gen3 -w
 ```
 
 ---
 
-## Nuclear reset — drops database and S3
+## Nuclear reset — drops database and S3 data
 
-All data is lost.
+All data is lost. The database is on the dedicated `gen3-database.genemap` VM;
+S3 data is in the Garage object store. Both must be cleared separately.
 
 ```bash
-# 1–4. Same as full reset above
+# 1. Delete namespaces
+bin/kubectl delete namespace gen3 argocd --wait
 
-# 5. Wipe the data bucket (run on the gen3 host as the gen3 user)
+# 2. Drop all gen3 databases and roles
+ansible-playbook -i inventory.yaml database.yml --tags reset
+
+# 3. Wipe the S3 data bucket (on the gen3 host as the gen3 user)
 s3cmd del --recursive --force s3://genemap.ilifu.ac.za-data-bucket/
 
-# 6. Redeploy
+# 4. Redeploy
 ansible-playbook -i inventory.yaml argocd.yml gen3.yml
 ```
