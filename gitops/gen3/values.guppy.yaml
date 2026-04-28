@@ -1,3 +1,10 @@
 gen3:
   guppy:
-    enabled: false
+    enabled: true
+    indices:
+      - index: gen3_subject
+        type: subject
+      - index: gen3_file
+        type: file
+    configIndex: gen3_array_config
+    authFilterField: auth_resource_path
