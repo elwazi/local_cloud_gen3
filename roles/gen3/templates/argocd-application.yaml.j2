@@ -60,6 +60,15 @@ spec:
             awsSecretAccessKey: "{{ garage.secret_key }}"
           guppy:
             esEndpoint: "{{ postgres.host_ip }}:9200"
+          revproxy:
+            ingress:
+              enabled: true
+              className: "nginx"
+              hosts:
+                - host: "{{ gen3.hostname }}"
+                  paths:
+                    - path: /
+                      pathType: Prefix
   destination:
     server: https://kubernetes.default.svc
     namespace: gen3
