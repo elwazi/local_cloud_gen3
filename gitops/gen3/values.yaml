@@ -1,5 +1,6 @@
 global:
   dev: false
+  hostname: genemap.ilifu.ac.za
   postgres:
     dbCreate: true
     externalSecret: "gen3-db-creds"
