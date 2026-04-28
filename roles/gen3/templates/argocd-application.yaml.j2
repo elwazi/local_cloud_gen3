@@ -51,9 +51,6 @@ spec:
                 "{{ gen3.data_bucket_name }}":
                   cred: "gen3"
                   endpoint_url: "https://{{ s3.host_base }}"
-                "{{ gen3.user_bucket_name }}":
-                  cred: "gen3"
-                  endpoint_url: "https://{{ s3.host_base }}"
               DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
             usersync:
               usersync: true

@@ -55,7 +55,6 @@ servers:
       'user': '${gen3_user}',
       'admin_email': '${gen3_admin_email}',
       'data_bucket_name': '${gen3_hostname}-data-bucket',
-      'user_bucket_name': '${gen3_hostname}-user-bucket',
       'portal': {
         'appName': '${gen3_portal_appName}',
         'index': {

@@ -36,7 +36,6 @@
   tags: [s3, bucket]
   command: "~/.venv/bin/s3cmd mb s3://{{ item }}"
   with_items:
-    - "{{ gen3.user_bucket_name }}"
     - "{{ gen3.data_bucket_name }}"
   register: create_bucket
   failed_when:
