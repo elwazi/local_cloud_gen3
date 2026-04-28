@@ -102,10 +102,7 @@ Edit `variables.auto.hcl` with values for your environment. All variables are de
 cp group_vars/all.template group_vars/all
 ```
 
-Edit `group_vars/all` and set:
-
-* `argocd_repo_url` — the remote URL of this git repository (used by ArgoCD to pull `gitops/gen3/`)
-* `argocd_repo_token` — a GitHub personal access token with read access, if the repository is private; leave empty for public repos
+Edit `group_vars/all` and add a `gen3_users` list with the identities that should have access to the platform. See `group_vars/all.template` for the full field reference and examples. This file is gitignored — keep it out of version control.
 
 ## Build and deploy
 
@@ -143,15 +140,13 @@ This creates the network, security groups, and VMs, and generates `inventory.yam
 
 Logs for the parallel step are written to `logs/`.
 
-## GitOps updates
+## Gen3 configuration updates
 
-After the first deploy, Gen3 service configuration is managed via ArgoCD. Changes to `gitops/gen3/values.yaml` are applied automatically when pushed to the remote — no need to re-run Ansible.
+Gen3 now deploys from the upstream Helm chart (`https://helm.gen3.org/gen3`) and values are rendered by Ansible into the ArgoCD `Application`.
 
 To update Gen3 configuration:
 
 ```shell
-# Edit gitops/gen3/values.yaml
-git commit -am "chore: update gen3 values"
-git push
-# ArgoCD detects the change and syncs automatically
+# Edit roles/gen3/templates/argocd-application.yaml.j2 and/or group_vars/all
+ansible-playbook gen3.yml --tags argocd
 ```

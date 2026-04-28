@@ -96,7 +96,7 @@ ansible-playbook site.yml --limit rancher_servers
 - `terraform.tfstate` — tracked in git (intentional for this project)
 - `ansible.cfg` — sets Python 3.12 interpreter, 8 forks, 2-hour fact cache, smart gathering
 - `pyproject.toml` — Python project deps (ansible, python-openstackclient, s3cmd, s3fs); install with `uv sync`
-- `gitops/gen3/values.yaml` — Helm values file applied by ArgoCD for Gen3 services
+- `roles/gen3/templates/argocd-application.yaml.j2` — ArgoCD Application template that points to upstream `gen3` Helm chart and injects deployment values
 
 ## Important Notes
 

@@ -35,23 +35,20 @@
   changed_when: false
   when: argocd_install is changed
 
-- name: Register git repository with ArgoCD
+- name: Register Gen3 Helm repository with ArgoCD
   command: /var/lib/rancher/rke2/bin/kubectl apply -f -
   args:
     stdin: |
       apiVersion: v1
       kind: Secret
       metadata:
-        name: genemap-gen3-repo
+        name: gen3-helm-repo
         namespace: argocd
         labels:
           argocd.argoproj.io/secret-type: repository
       stringData:
-        url: "{{ argocd_repo_url }}"
-        type: git
-        {% if argocd_repo_token is defined and argocd_repo_token %}
-        username: git
-        password: "{{ argocd_repo_token }}"
-        {% endif %}
-  register: argocd_repo_apply
-  changed_when: '"unchanged" not in argocd_repo_apply.stdout'
+        url: https://helm.gen3.org
+        type: helm
+        name: gen3-helm
+  register: argocd_helm_repo_apply
+  changed_when: '"unchanged" not in argocd_helm_repo_apply.stdout'

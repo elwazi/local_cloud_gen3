@@ -15,6 +15,10 @@
   register: gen3_ns_apply
   changed_when: '"unchanged" not in gen3_ns_apply.stdout'
 
+- name: Resolve Gen3 users bucket name
+  set_fact:
+    gen3_user_bucket_name: "{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}"
+
 - name: Create .s3cfg file
   tags: [s3cfg, s3]
   template:
@@ -34,15 +38,18 @@
   register: uv_install
   changed_when: "'Installed' in uv_install.stdout"
 
-- name: Create S3 buckets
-  tags: [s3, bucket]
-  command: "~/.venv/bin/s3cmd mb s3://{{ item }}"
-  with_items:
-    - "{{ gen3.data_bucket_name }}"
-  register: create_bucket
-  failed_when:
-    - create_bucket.rc != 0
-    - '"already exists" not in create_bucket.stderr'
+- name: Render user.yaml from template for usersync upload
+  tags: [s3, user]
+  template:
+    src: users.yaml.j2
+    dest: ~/user.yaml
+    mode: 0600
+
+- name: Upload user.yaml to users bucket
+  tags: [s3, user]
+  command: "~/.venv/bin/s3cmd put --force ~/user.yaml s3://{{ gen3_user_bucket_name }}/user.yaml"
+  register: user_yaml_upload
+  changed_when: "'upload:' in user_yaml_upload.stdout"
 
 - name: Apply gen3-db-creds Kubernetes Secret
   tags: [secrets]

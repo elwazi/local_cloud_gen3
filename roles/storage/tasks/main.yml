@@ -109,6 +109,7 @@
   command: /usr/local/bin/garage -c /etc/garage/garage.toml bucket create {{ item }}
   loop:
     - "{{ gen3.data_bucket_name }}"
+    - "{{ gen3.user_bucket_name }}"
   register: create_bucket
   failed_when:
     - create_bucket.rc != 0
@@ -126,6 +127,7 @@
     {{ item }}
   loop:
     - "{{ gen3.data_bucket_name }}"
+    - "{{ gen3.user_bucket_name }}"
   register: grant_access
   failed_when:
     - grant_access.rc != 0

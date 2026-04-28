@@ -1,7 +1,0 @@
-global:
-  dev: false
-  hostname: genemap.ilifu.ac.za
-  postgres:
-    dbCreate: true
-    externalSecret: "gen3-db-creds"
-  dictionaryUrl: "https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json"

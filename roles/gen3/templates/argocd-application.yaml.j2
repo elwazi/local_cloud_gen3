@@ -6,69 +6,57 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "{{ argocd_repo_url }}"
-    targetRevision: HEAD
-    path: gitops/gen3
+    repoURL: https://helm.gen3.org
+    chart: gen3
+    targetRevision: "0.3.36"
     helm:
-      valueFiles:
-        - values.yaml
-        - values.fence.yaml
-        - values.users.yaml
-        - values.arborist.yaml
-        - values.indexd.yaml
-        - values.portal.yaml
-        - values.peregrine.yaml
-        - values.guppy.yaml
-        - values.metadata.yaml
-        - values.sheepdog.yaml
-        - values.wts.yaml
-        - values.pidgin.yaml
-        - values.audit.yaml
-        - values.hatchery.yaml
-        - values.manifestservice.yaml
-        - values.sower.yaml
       valuesObject:
         global:
           hostname: "{{ gen3.hostname }}"
+          dev: false
+          dictionaryUrl: "https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json"
           postgres:
+            dbCreate: true
             master:
               username: "{{ postgres.user }}"
               password: "{{ postgres.password }}"
               host: "{{ postgres.host_ip }}"
               port: "5432"
-        gen3:
-          fence:
-            FENCE_CONFIG:
-              OPENID_CONNECT:
-                google:
-                  client_id: "{{ google_client_id }}"
-                  client_secret: "{{ google_client_secret }}"
-              AWS_CREDENTIALS:
-                "gen3":
-                  aws_access_key_id: "{{ garage.access_key }}"
-                  aws_secret_access_key: "{{ garage.secret_key }}"
-              S3_BUCKETS:
-                "{{ gen3.data_bucket_name }}":
-                  cred: "gen3"
-                  endpoint_url: "https://{{ s3.host_base }}"
-              DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
-            usersync:
-              usersync: true
-              userYamlS3Path: "none"
-          secrets:
-            awsAccessKeyId: "{{ garage.access_key }}"
-            awsSecretAccessKey: "{{ garage.secret_key }}"
-          guppy:
-            esEndpoint: "{{ postgres.host_ip }}:9200"
-          revproxy:
-            ingress:
-              enabled: true
-              className: "nginx"
-              hosts:
-                - host: "{{ gen3.hostname }}"
-                  paths:
-                    - path: /
-                      pathType: Prefix
+        fence:
+          FENCE_CONFIG:
+            OPENID_CONNECT:
+              google:
+                client_id: "{{ google_client_id }}"
+                client_secret: "{{ google_client_secret }}"
+            AWS_CREDENTIALS:
+              "gen3":
+                aws_access_key_id: "{{ garage.access_key }}"
+                aws_secret_access_key: "{{ garage.secret_key }}"
+            S3_BUCKETS:
+              "{{ gen3.data_bucket_name }}":
+                cred: "gen3"
+                endpoint_url: "https://{{ s3.host_base }}"
+              "{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}":
+                cred: "gen3"
+                endpoint_url: "https://{{ s3.host_base }}"
+            DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
+          usersync:
+            usersync: true
+            userYamlS3Path: "s3://{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}/user.yaml"
+        secrets:
+          awsAccessKeyId: "{{ garage.access_key }}"
+          awsSecretAccessKey: "{{ garage.secret_key }}"
+        guppy:
+          esEndpoint: "{{ postgres.host_ip }}:9200"
+        revproxy:
+          ingress:
+            enabled: true
+            className: "nginx"
+            hosts:
+              - host: "{{ gen3.hostname }}"
+                paths:
+                  - path: /
+                    pathType: Prefix
   destination:
     server: https://kubernetes.default.svc
     namespace: gen3

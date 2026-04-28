@@ -1,7 +1,0 @@
-gen3:
-  portal:
-    image:
-      pullPolicy: IfNotPresent
-      repository: quay.io/cdis/data-portal
-      tag: master
-    enabled: true

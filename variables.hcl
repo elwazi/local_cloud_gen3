@@ -327,18 +327,6 @@ variable "garage_secret_key" {
   sensitive   = true
 }
 
-variable "argocd_repo_url" {
-  type        = string
-  description = "Git repository URL for ArgoCD to watch (e.g. https://github.com/org/repo.git)"
-}
-
-variable "argocd_repo_token" {
-  type        = string
-  description = "Personal access token for ArgoCD to read the repo (leave empty for public repos)"
-  default     = ""
-  sensitive   = true
-}
-
 variable "gen3_portal_logo_base64_png" {
     type        = string
     description = "Gen3 portal logo base64 png"

@@ -1,0 +1,233 @@
+# This file is rendered by Ansible from roles/gen3/templates/users.yaml.j2.
+# User identities (gen3_users) are stored in group_vars/all (gitignored / vault).
+# Do NOT edit ~/user.yaml on the host directly — it will be overwritten on next run.
+authz:
+  anonymous_policies:
+    - open_data_reader
+  all_users_policies: []
+
+  groups:
+    - name: data_submitters
+      policies:
+        - services.sheepdog-admin
+        - data_upload
+        - eLwaziProject_submitter
+      users:
+{% for user in gen3_users if 'data_submitters' in user.groups | default([]) %}
+        - {{ user.email }}
+{% endfor %}
+
+    - name: data_readers
+      policies:
+        - eLwaziProject_reader
+      users:
+{% for user in gen3_users if 'data_readers' in user.groups | default([]) %}
+        - {{ user.email }}
+{% endfor %}
+
+    - name: indexd_admins
+      policies:
+        - indexd_admin
+      users:
+{% for user in gen3_users if 'indexd_admins' in user.groups | default([]) %}
+        - {{ user.email }}
+{% endfor %}
+
+  resources:
+    - name: workspace
+    - name: data_file
+    - name: services
+      subresources:
+        - name: sheepdog
+          subresources:
+            - name: submission
+              subresources:
+                - name: program
+                - name: project
+        - name: indexd
+          subresources:
+            - name: admin
+        - name: audit
+          subresources:
+            - name: presigned_url
+            - name: login
+    - name: open
+    - name: programs
+      subresources:
+        - name: eLwazi
+          subresources:
+            - name: projects
+              subresources:
+                - name: eLwaziProject
+                - name: ContainersAndWorkflows
+
+  policies:
+    - id: workspace
+      description: be able to use workspace
+      resource_paths:
+        - /workspace
+      role_ids:
+        - workspace_user
+    - id: data_upload
+      description: upload raw data files to S3
+      role_ids:
+        - file_uploader
+      resource_paths:
+        - /data_file
+    - id: services.sheepdog-admin
+      description: CRUD access to programs and projects
+      role_ids:
+        - sheepdog_admin
+      resource_paths:
+        - /services/sheepdog/submission/program
+        - /services/sheepdog/submission/project
+    - id: indexd_admin
+      description: full access to indexd API
+      role_ids:
+        - indexd_admin
+      resource_paths:
+        - /programs
+    - id: open_data_reader
+      role_ids:
+        - open_data_reader
+      resource_paths:
+        - /open
+    - id: all_programs_reader
+      role_ids:
+        - reader
+        - storage_reader
+      resource_paths:
+        - /programs
+    - id: eLwaziProject_submitter
+      role_ids:
+        - reader
+        - creator
+        - updater
+        - deleter
+        - storage_reader
+        - storage_writer
+      resource_paths:
+        - /programs/eLwazi/projects/eLwaziProject
+        - /programs/eLwazi/projects/ContainersAndWorkflows
+    - id: eLwaziProject_reader
+      role_ids:
+        - reader
+        - storage_reader
+      resource_paths:
+        - /programs/eLwazi/projects/ContainersAndWorkflows
+
+  roles:
+    - id: file_uploader
+      permissions:
+        - id: file_upload
+          action:
+            service: fence
+            method: file_upload
+    - id: workspace_user
+      permissions:
+        - id: workspace_access
+          action:
+            service: jupyterhub
+            method: access
+    - id: sheepdog_admin
+      description: CRUD access to programs and projects
+      permissions:
+        - id: sheepdog_admin_action
+          action:
+            service: sheepdog
+            method: '*'
+    - id: indexd_admin
+      description: full access to indexd API
+      permissions:
+        - id: indexd_admin
+          action:
+            service: indexd
+            method: '*'
+    - id: admin
+      permissions:
+        - id: admin
+          action:
+            service: '*'
+            method: '*'
+    - id: creator
+      permissions:
+        - id: creator
+          action:
+            service: '*'
+            method: create
+    - id: open_data_reader
+      permissions:
+        - id: open_read_peregrine
+          action:
+            service: peregrine
+            method: read
+        - id: open_read_guppy
+          action:
+            service: guppy
+            method: read
+        - id: open_read_storage
+          action:
+            service: fence
+            method: read-storage
+    - id: reader
+      permissions:
+        - id: reader
+          action:
+            service: '*'
+            method: read
+    - id: updater
+      permissions:
+        - id: updater
+          action:
+            service: '*'
+            method: update
+    - id: deleter
+      permissions:
+        - id: deleter
+          action:
+            service: '*'
+            method: delete
+    - id: storage_writer
+      permissions:
+        - id: storage_creator
+          action:
+            service: '*'
+            method: write-storage
+    - id: storage_reader
+      permissions:
+        - id: storage_reader
+          action:
+            service: '*'
+            method: read-storage
+
+clients:
+  wts:
+    policies:
+      - all_programs_reader
+      - open_data_reader
+
+# Users are populated from the gen3_users Ansible variable (group_vars/all, gitignored).
+# Each entry may have: email, name (optional), groups (list), policies (list of direct policies).
+users:
+{% for user in gen3_users | default([]) %}
+{% if user.name | default('') or user.policies | default([]) %}
+  {{ user.email }}:
+{% if user.name | default('') %}
+    tags:
+      name: {{ user.name }}
+      email: {{ user.email }}
+{% endif %}
+{% if user.policies | default([]) %}
+    policies:
+{% for policy in user.policies %}
+      - {{ policy }}
+{% endfor %}
+{% endif %}
+{% else %}
+  {{ user.email }}: {}
+{% endif %}
+{% endfor %}
+
+cloud_providers: {}
+groups: {}
+
