@@ -104,7 +104,7 @@
 - name: Read portal logo
   tags: [argocd, portal]
   ansible.builtin.slurp:
-    src: "{{ role_path }}/files/portal/logo.png"
+    src: "{{ role_path }}/files/portal/{{ gen3.portal.logo_file | default('sickle_in_africa.png') }}"
   register: _portal_logo
   delegate_to: localhost
   become: false
