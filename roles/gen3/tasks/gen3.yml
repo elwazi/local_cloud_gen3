@@ -100,6 +100,27 @@
   register: kubedns_apply
   changed_when: '"unchanged" not in kubedns_apply.stdout'
 
+- name: Read portal logo
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/logo.png"
+  register: _portal_logo
+  delegate_to: localhost
+
+- name: Read portal favicon
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/favicon.png"
+  register: _portal_favicon
+  delegate_to: localhost
+
+- name: Read portal createdby logo
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/createdby.png"
+  register: _portal_createdby
+  delegate_to: localhost
+
 - name: Apply ArgoCD Application
   tags: [argocd]
   command: bin/kubectl apply -f -
