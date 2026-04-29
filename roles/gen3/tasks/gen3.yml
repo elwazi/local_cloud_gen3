@@ -104,7 +104,7 @@
 - name: Read portal logo
   tags: [argocd, portal]
   ansible.builtin.slurp:
-    src: "{{ role_path }}/files/portal/{{ gen3.portal.logo_file | default('sickle_in_africa.png') }}"
+    src: "{{ role_path }}/files/portal/{{ gen3_portal.logo_file | default('sickle_in_africa.png') }}"
   register: _portal_logo
   delegate_to: localhost
   become: false
@@ -129,7 +129,7 @@
   tags: [argocd, portal]
   ansible.builtin.slurp:
     src: "{{ role_path }}/files/portal/{{ item.file }}"
-  loop: "{{ gen3.portal.sponsors | default([]) }}"
+  loop: "{{ gen3_portal.sponsors | default([]) }}"
   register: _portal_sponsors
   delegate_to: localhost
   become: false
