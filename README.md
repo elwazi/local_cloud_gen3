@@ -8,10 +8,10 @@ Infrastructure-as-code for deploying eLwazi/GeneMap Gen3 — a private genomic d
 
 Install [Packer](https://developer.hashicorp.com/packer/install) and [Terraform](https://developer.hashicorp.com/terraform/install) using your OS package manager or the official binaries.
 
-Install Ansible and the OpenStack client via pip:
+Install Ansible and the OpenStack client:
 
 ```shell
-pip install ansible python-openstackclient
+uv sync
 ```
 
 ### Initialise Packer plugins
@@ -140,9 +140,20 @@ This creates the network, security groups, and VMs, and generates `inventory.yam
 
 Logs for the parallel step are written to `logs/`.
 
+## Managing Gen3 users
+
+User identities are stored in `group_vars/all` (gitignored) as a `gen3_users` list. See `group_vars/all.template` for the full field reference. On each run, `gen3.yml` renders the list into `user.yaml` via `roles/gen3/templates/users.yaml.j2` and uploads it to the `<hostname>-user-bucket` Garage S3 bucket. Fence's usersync job reads from that bucket on a schedule.
+
+To add or update users:
+
+```shell
+# Edit group_vars/all — update the gen3_users list
+ansible-playbook gen3.yml --tags user
+```
+
 ## Gen3 configuration updates
 
-Gen3 now deploys from the upstream Helm chart (`https://helm.gen3.org/gen3`) and values are rendered by Ansible into the ArgoCD `Application`.
+Gen3 deploys from the upstream Helm chart (`https://helm.gen3.org`, chart: `gen3`) and values are rendered by Ansible into the ArgoCD `Application`.
 
 To update Gen3 configuration:
 

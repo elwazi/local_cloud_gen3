@@ -78,10 +78,10 @@ ansible-playbook site.yml --limit rancher_servers
 | `common` | Shared services across all nodes |
 | `database` | PostgreSQL with 17+ Gen3-specific users/DBs |
 | `rancher` | RKE2 Kubernetes cluster (server + workers) |
-| `storage` | Garage S3-compatible object storage |
+| `storage` | Garage S3-compatible object storage; creates and grants key access to both S3 buckets (`data` and `user`) |
 | `load_balancer` | Caddy reverse proxy |
-| `argocd` | ArgoCD GitOps controller on the gen3 host |
-| `gen3` | Helm chart deployment of Gen3 microservices |
+| `argocd` | ArgoCD on the gen3 host; registers `https://helm.gen3.org` as a Helm repository |
+| `gen3` | Renders and uploads `user.yaml`; applies the ArgoCD Application that deploys Gen3 via Helm |
 
 ### Other Playbooks
 
@@ -97,6 +97,8 @@ ansible-playbook site.yml --limit rancher_servers
 - `ansible.cfg` — sets Python 3.12 interpreter, 8 forks, 2-hour fact cache, smart gathering
 - `pyproject.toml` — Python project deps (ansible, python-openstackclient, s3cmd, s3fs); install with `uv sync`
 - `roles/gen3/templates/argocd-application.yaml.j2` — ArgoCD Application template that points to upstream `gen3` Helm chart and injects deployment values
+- `roles/gen3/templates/users.yaml.j2` — Jinja2 template rendered from `gen3_users` (in `group_vars/all`) and uploaded to Garage S3 for fence/usersync
+- `group_vars/all.template` — documents all Ansible variables including the `gen3_users` list format
 
 ## Important Notes
 
