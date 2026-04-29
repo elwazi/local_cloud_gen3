@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="360"
+   height="200"
+   viewBox="0 0 95.25 52.916666"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-11.043831,-10.375617)">
+    <g
+       aria-label="ilifu"
+       id="text1"
+       style="font-size:50.8px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';fill:#023760;stroke-width:0.264583">
+      <path
+         d="m 20.746679,55.274349 h 6.7564 V 27.13115 h -6.7564 z m 0,-31.191199 h 6.7564 v -6.35 h -6.7564 z"
+         style="font-weight:600;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic Semi-Bold'"
+         id="path1" />
+      <path
+         d="m 32.938667,55.274349 h 6.7564 V 17.73315 h -6.7564 z"
+         style="font-weight:600;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic Semi-Bold'"
+         id="path2" />
+      <path
+         d="m 45.130655,55.274349 h 6.7564 V 27.13115 h -6.7564 z m 0,-31.191199 h 6.7564 v -6.35 h -6.7564 z"
+         style="font-weight:600;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic Semi-Bold'"
+         id="path3" />
+      <path
+         d="m 57.525845,55.274349 h 6.7564 V 33.27795 h 3.81 v -5.6388 h -3.81 c 0.0508,-2.5908 0.9144,-3.4036 3.6068,-3.4036 h 0.6096 v -6.4008 c -0.8128,-0.1016 -1.1684,-0.1016 -1.6764,-0.1016 -2.9464,0 -5.334,1.0668 -7.0612,3.1496 -1.3716,1.6256 -1.8796,3.2512 -2.2352,6.7564 h -2.4384 v 5.6388 h 2.4384 z"
+         style="font-weight:600;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic Semi-Bold'"
+         id="path4" />
+      <path
+         d="m 96.590982,27.13115 h -6.756399 v 13.258799 c 0,3.7592 -0.254,5.5372 -1.0668,6.7564 -0.9652,1.6764 -2.8448,2.5908 -5.1308,2.5908 -1.7272,0 -3.048,-0.5588 -3.9624,-1.778 -0.9652,-1.2192 -1.3716,-3.2512 -1.3716,-7.0612 V 27.13115 h -6.7564 v 15.087599 c 0,4.7752 0.5588,7.2644 2.1336,9.5504 1.8796,2.6924 4.8768,4.1656 8.5852,4.1656 3.4036,0 5.4864,-0.8636 8.0772,-3.3528 v 2.6924 h 6.248399 z"
+         style="font-weight:600;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic Semi-Bold'"
+         id="path5" />
+    </g>
+  </g>
+</svg>

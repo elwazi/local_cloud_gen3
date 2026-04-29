@@ -125,6 +125,14 @@
   delegate_to: localhost
   become: false
 
+- name: Read portal sponsor logo
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/sponsor.svg"
+  register: _portal_sponsor
+  delegate_to: localhost
+  become: false
+
 - name: Apply ArgoCD Application
   tags: [argocd]
   command: bin/kubectl apply -f -
