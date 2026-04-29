@@ -81,11 +81,11 @@ spec:
                   "projectDetails": "boardCounts"
                 },
                 "components": {
-                  "appName": "{{ gen3_portal.appName | default('Gen3 Data Commons') }}",
+                  "appName": {{ gen3_portal.appName | default('Gen3 Data Commons') | to_json }},
                   "index": {
                     "introduction": {
-                      "heading": "{{ gen3_portal.heading | default('Gen3 Data Commons') }}",
-                      "text": "{{ gen3_portal.intro_text | default('') }}",
+                      "heading": {{ gen3_portal.heading | default('Gen3 Data Commons') | to_json }},
+                      "text": {{ gen3_portal.intro_text | default('') | to_json }},
                       "link": "/submission"
                     },
                     "buttons": [
@@ -96,7 +96,7 @@ spec:
                     ]
                   },
                   "navigation": {
-                    "title": "{{ gen3_portal.nav_title | default(gen3.hostname) }}",
+                    "title": {{ gen3_portal.nav_title | default(gen3.hostname) | to_json }},
                     "items": [
                       { "icon": "dictionary", "link": "/DD", "color": "#a2a2a2", "name": "Dictionary" },
                       { "icon": "exploration", "link": "/explorer", "color": "#a2a2a2", "name": "Exploration" },
@@ -112,11 +112,11 @@ spec:
                     ]
                   },
                   "login": {
-                    "title": "{{ gen3_portal.login_title | default('Gen3 Data Commons') }}",
-                    "subTitle": "{{ gen3_portal.login_subtitle | default('') }}",
-                    "text": "{{ gen3_portal.login_text | default('') }}",
+                    "title": {{ gen3_portal.login_title | default('Gen3 Data Commons') | to_json }},
+                    "subTitle": {{ gen3_portal.login_subtitle | default('') | to_json }},
+                    "text": {{ gen3_portal.login_text | default('') | to_json }},
                     "contact": "If you have any questions about access or the registration process, please contact ",
-                    "email": "{{ gen3.admin_email }}"
+                    "email": {{ gen3.admin_email | to_json }}
                   },
                   "certs": {},
                   "footerLogos": [
@@ -124,7 +124,7 @@ spec:
                     {% set mime_types = {'svg': 'image/svg+xml', 'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'} %}
                     {% for result in _portal_sponsors.results %}
                     {% set ext = result.item.file.split('.')[-1] | lower %}
-                    ,{ "src": "data:{{ mime_types[ext] | default('image/png') }};base64,{{ result.content }}", "href": "{{ result.item.href }}", "alt": "{{ result.item.alt }}" }
+                    ,{ "src": "data:{{ mime_types[ext] | default('image/png') }};base64,{{ result.content }}", "href": {{ result.item.href | to_json }}, "alt": {{ result.item.alt | to_json }} }
                     {% endfor %}
                   ]
                 },
