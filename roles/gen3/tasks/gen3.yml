@@ -16,6 +16,7 @@
   changed_when: '"unchanged" not in gen3_ns_apply.stdout'
 
 - name: Resolve Gen3 users bucket name
+  tags: always
   set_fact:
     gen3_user_bucket_name: "{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}"
 
@@ -106,6 +107,7 @@
     src: "{{ role_path }}/files/portal/logo.png"
   register: _portal_logo
   delegate_to: localhost
+  become: false
 
 - name: Read portal favicon
   tags: [argocd, portal]
@@ -113,6 +115,7 @@
     src: "{{ role_path }}/files/portal/favicon.png"
   register: _portal_favicon
   delegate_to: localhost
+  become: false
 
 - name: Read portal createdby logo
   tags: [argocd, portal]
@@ -120,6 +123,7 @@
     src: "{{ role_path }}/files/portal/createdby.png"
   register: _portal_createdby
   delegate_to: localhost
+  become: false
 
 - name: Apply ArgoCD Application
   tags: [argocd]
