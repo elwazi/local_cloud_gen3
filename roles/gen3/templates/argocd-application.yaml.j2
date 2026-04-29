@@ -23,6 +23,8 @@ spec:
               host: "{{ postgres.host_ip }}"
               port: "5432"
         fence:
+          postgres:
+            password: "{{ postgres.service_passwords.fence }}"
           FENCE_CONFIG:
             OPENID_CONNECT:
               google:
@@ -43,6 +45,30 @@ spec:
           usersync:
             usersync: true
             userYamlS3Path: "s3://{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}/user.yaml"
+        arborist:
+          postgres:
+            password: "{{ postgres.service_passwords.arborist }}"
+        audit:
+          postgres:
+            password: "{{ postgres.service_passwords.audit }}"
+        indexd:
+          postgres:
+            password: "{{ postgres.service_passwords.indexd }}"
+        metadata:
+          postgres:
+            password: "{{ postgres.service_passwords.metadata }}"
+        peregrine:
+          postgres:
+            password: "{{ postgres.service_passwords.peregrine }}"
+        requestor:
+          postgres:
+            password: "{{ postgres.service_passwords.requestor }}"
+        sheepdog:
+          postgres:
+            password: "{{ postgres.service_passwords.sheepdog }}"
+        wts:
+          postgres:
+            password: "{{ postgres.service_passwords.wts }}"
         secrets:
           awsAccessKeyId: "{{ garage.access_key }}"
           awsSecretAccessKey: "{{ garage.secret_key }}"
