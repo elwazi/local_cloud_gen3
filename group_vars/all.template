@@ -3,8 +3,12 @@
 # Configure them in variables.auto.hcl (copied from variables.auto.hcl.template).
 
 # Portal branding — text customization.
-# Logo/favicon/createdby images are loaded automatically from roles/gen3/files/portal/*.png
-# Replace those PNG files with your own and re-run: ansible-playbook gen3.yml --tags argocd
+# Logo/favicon/createdby images are loaded from roles/gen3/files/portal/*.png
+# Replace those files with your own and re-run: ansible-playbook gen3.yml --tags argocd
+#
+# Sponsor logos (footerLogos) are data-driven: drop the file into
+# roles/gen3/files/portal/ and add an entry to gen3.portal.sponsors.
+# Supported formats: svg, png, jpg/jpeg.
 #
 # gen3:
 #   portal:
@@ -15,6 +19,13 @@
 #     login_title: "GeneMap Data Commons"
 #     login_subtitle: "Bringing genomic data to researchers"
 #     login_text: "Please log in with your institutional Google account."
+#     sponsors:
+#       - file: ilifu.svg
+#         href: https://www.ilifu.ac.za
+#         alt: ilifu
+#       - file: idia.png
+#         href: https://idia.ac.za
+#         alt: IDIA
 
 # gen3_users: User identities for Gen3 fence/arborist (rendered into user.yaml via
 # roles/gen3/templates/users.yaml.j2). Keep this file gitignored or use ansible-vault.

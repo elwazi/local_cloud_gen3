@@ -125,11 +125,12 @@
   delegate_to: localhost
   become: false
 
-- name: Read portal sponsor logo
+- name: Read sponsor logos
   tags: [argocd, portal]
   ansible.builtin.slurp:
-    src: "{{ role_path }}/files/portal/ilifu.svg"
-  register: _portal_sponsor
+    src: "{{ role_path }}/files/portal/{{ item.file }}"
+  loop: "{{ gen3.portal.sponsors | default([]) }}"
+  register: _portal_sponsors
   delegate_to: localhost
   become: false
 

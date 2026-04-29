@@ -119,8 +119,12 @@ spec:
                   },
                   "certs": {},
                   "footerLogos": [
-                    { "src": "/src/img/gen3.png", "href": "https://ctds.uchicago.edu/gen3", "alt": "Gen3 Data Commons" },
-                    { "src": "data:image/svg+xml;base64,{{ _portal_sponsor['content'] }}", "href": "https://www.ilifu.ac.za", "alt": "ilifu" }
+                    { "src": "/src/img/gen3.png", "href": "https://ctds.uchicago.edu/gen3", "alt": "Gen3 Data Commons" }
+                    {% set mime_types = {'svg': 'image/svg+xml', 'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'} %}
+                    {% for result in _portal_sponsors.results %}
+                    {% set ext = result.item.file.split('.')[-1] | lower %}
+                    ,{ "src": "data:{{ mime_types[ext] | default('image/png') }};base64,{{ result.content }}", "href": "{{ result.item.href }}", "alt": "{{ result.item.alt }}" }
+                    {% endfor %}
                   ]
                 },
                 "requiredCerts": [],
