@@ -15,6 +15,7 @@
 #   nav_title: "GeneMap"
 #   heading: "GeneMap Genomic Data Commons"
 #   intro_text: "Browse and submit genomic datasets."
+#   intro_link: "https://www.sickleinafrica.org/"  # CTA button URL (default: /submission)
 #   login_title: "GeneMap Data Commons"
 #   login_subtitle: "Bringing genomic data to researchers"
 #   login_text: "Please log in with your institutional Google account."

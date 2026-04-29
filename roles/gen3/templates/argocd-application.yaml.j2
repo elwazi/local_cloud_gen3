@@ -86,7 +86,7 @@ spec:
                     "introduction": {
                       "heading": {{ gen3_portal.heading | default('Gen3 Data Commons') | to_json }},
                       "text": {{ gen3_portal.intro_text | default('') | to_json }},
-                      "link": "/submission"
+                      "link": {{ gen3_portal.intro_link | default('/submission') | to_json }}
                     },
                     "buttons": [
                       { "name": "Define Data Field", "icon": "data-field-define", "body": "Browse the data dictionary.", "link": "/DD", "label": "Learn more" },
