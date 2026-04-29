@@ -53,8 +53,6 @@ resource "local_file" "inventory" {
       ssh_private_key_file = var.ssh_private_key_file
       timezone             = var.timezone
 
-      argocd_repo_url   = var.argocd_repo_url
-      argocd_repo_token = var.argocd_repo_token
     }
   )
   filename = "inventory.yaml"
