@@ -7,7 +7,7 @@
 # Replace those files with your own and re-run: ansible-playbook gen3.yml --tags argocd
 #
 # Sponsor logos (footerLogos) are data-driven: drop the file into
-# roles/gen3/files/portal/ and add an entry to gen3.portal.sponsors.
+# roles/gen3/files/portal/ and add an entry to gen3_portal.sponsors.
 # Supported formats: svg, png, jpg/jpeg.
 #
 # gen3_portal:
