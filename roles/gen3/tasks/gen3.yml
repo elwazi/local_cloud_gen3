@@ -112,7 +112,7 @@
 - name: Read portal favicon
   tags: [argocd, portal]
   ansible.builtin.slurp:
-    src: "{{ role_path }}/files/portal/favicon.png"
+    src: "{{ role_path }}/files/portal/{{ gen3_portal.favicon_file | default('favicon.png') }}"
   register: _portal_favicon
   delegate_to: localhost
   become: false
