@@ -69,7 +69,8 @@ def cmd_list(session: requests.Session, base: str, program: str | None) -> None:
 
 
 def cmd_create(session: requests.Session, base: str, program: str, project: str | None) -> None:
-    url = f"{base}/api/v0/submission/{program}"
+    # Program creation: PUT / (root of submission API)
+    url = f"{base}/api/v0/submission/"
     log.info("PUT %s", url)
     r = session.put(url, json={"type": "program", "dbgap_accession_number": program, "name": program})
     if r.status_code in (200, 201):
@@ -81,7 +82,8 @@ def cmd_create(session: requests.Session, base: str, program: str, project: str 
         sys.exit(1)
 
     if project:
-        url = f"{base}/api/v0/submission/{program}/{project}"
+        # Project creation: PUT /<program> (one level under program name)
+        url = f"{base}/api/v0/submission/{program}/"
         log.info("PUT %s", url)
         r = session.put(url, json={
             "type": "project", "code": project, "name": project,
