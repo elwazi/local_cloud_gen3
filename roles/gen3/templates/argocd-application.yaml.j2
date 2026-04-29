@@ -63,7 +63,10 @@ spec:
             logo: "{{ _portal_logo['content'] }}"
             favicon: "{{ _portal_favicon['content'] }}"
             createdby: "{{ _portal_createdby['content'] }}"
-            css: ""
+            css: |
+              .top-bar__logo img {
+                content: url("data:image/png;base64,{{ _portal_logo['content'] }}");
+              }
             json: |
               {
                 "graphql": {
