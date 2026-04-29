@@ -19,6 +19,9 @@
 #   login_subtitle: "Bringing genomic data to researchers"
 #   login_text: "Please log in with your institutional Google account."
 #   logo_file: sickle_in_africa.png
+#   css: |
+#     /* custom CSS injected into the portal */
+#     .nav-bar { background-color: #C52D3A; }
 #   sponsors:
 #     - file: ilifu.svg
 #       href: https://www.ilifu.ac.za
