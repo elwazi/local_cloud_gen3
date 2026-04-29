@@ -3,4 +3,16 @@ set -e
 
 # Re-upload user.yaml to S3 and re-apply the ArgoCD Application (Helm values, portal branding).
 # Pass --check for a dry run, or --tags argocd / --tags user to scope further.
-ansible-playbook -i inventory.yaml gen3.yml --tags user,argocd "$@"
+has_tags=false
+for arg in "$@"; do
+  if [ "$arg" = "--tags" ]; then
+    has_tags=true
+    break
+  fi
+done
+
+if [ "$has_tags" = true ]; then
+  ansible-playbook -i inventory.yaml gen3.yml "$@"
+else
+  ansible-playbook -i inventory.yaml gen3.yml --tags user,argocd "$@"
+fi
