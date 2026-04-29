@@ -20,6 +20,15 @@
   set_fact:
     gen3_user_bucket_name: "{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}"
 
+- name: Copy utility scripts to ~/bin
+  tags: [scripts]
+  copy:
+    src: "{{ item }}"
+    dest: "~/bin/{{ item | basename }}"
+    mode: 0755
+  with_fileglob:
+    - "{{ role_path }}/files/*.sh"
+
 - name: Create .s3cfg file
   tags: [s3cfg, s3]
   template:
@@ -51,6 +60,17 @@
   command: "~/.venv/bin/s3cmd put --force ~/user.yaml s3://{{ gen3_user_bucket_name }}/user.yaml"
   register: user_yaml_upload
   changed_when: "'upload:' in user_yaml_upload.stdout"
+
+- name: Grant fence admin to indexd_admins users
+  tags: [user, admin]
+  command: >
+    bin/kubectl exec -n gen3
+    $(bin/kubectl get pod -n gen3 -l app=fence -o name | head -1)
+    -- fence-create admin --username {{ item.email }}
+  args:
+    chdir: /home/{{ gen3.user }}
+  loop: "{{ gen3_users | selectattr('groups', 'defined') | selectattr('groups', 'contains', 'indexd_admins') | list }}"
+  changed_when: false
 
 - name: Apply gen3-db-creds Kubernetes Secret
   tags: [secrets]

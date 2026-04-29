@@ -11,7 +11,7 @@ authz:
       policies:
         - services.sheepdog-admin
         - data_upload
-        - eLwaziProject_submitter
+        - SickleInAfrica_submitter
       users:
 {% for user in gen3_users if 'data_submitters' in user.groups | default([]) %}
         - {{ user.email }}
@@ -19,7 +19,7 @@ authz:
 
     - name: data_readers
       policies:
-        - eLwaziProject_reader
+        - SickleInAfrica_reader
       users:
 {% for user in gen3_users if 'data_readers' in user.groups | default([]) %}
         - {{ user.email }}
@@ -54,12 +54,11 @@ authz:
     - name: open
     - name: programs
       subresources:
-        - name: eLwazi
+        - name: GeneMAP
           subresources:
             - name: projects
               subresources:
-                - name: eLwaziProject
-                - name: ContainersAndWorkflows
+                - name: SickleInAfrica
 
   policies:
     - id: workspace
@@ -98,7 +97,7 @@ authz:
         - storage_reader
       resource_paths:
         - /programs
-    - id: eLwaziProject_submitter
+    - id: SickleInAfrica_submitter
       role_ids:
         - reader
         - creator
@@ -107,14 +106,13 @@ authz:
         - storage_reader
         - storage_writer
       resource_paths:
-        - /programs/eLwazi/projects/eLwaziProject
-        - /programs/eLwazi/projects/ContainersAndWorkflows
-    - id: eLwaziProject_reader
+        - /programs/GeneMAP/projects/SickleInAfrica
+    - id: SickleInAfrica_reader
       role_ids:
         - reader
         - storage_reader
       resource_paths:
-        - /programs/eLwazi/projects/ContainersAndWorkflows
+        - /programs/GeneMAP/projects/SickleInAfrica
 
   roles:
     - id: file_uploader

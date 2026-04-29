@@ -26,6 +26,10 @@ spec:
           postgres:
             password: "{{ postgres.service_passwords.fence }}"
           FENCE_CONFIG:
+            ADMIN_USERS:
+{% for user in gen3_users if 'indexd_admins' in user.groups | default([]) %}
+              - {{ user.email }}
+{% endfor %}
             OPENID_CONNECT:
               google:
                 client_id: "{{ google_client_id }}"
