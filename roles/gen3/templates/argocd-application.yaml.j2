@@ -64,8 +64,54 @@ spec:
             favicon: "{{ _portal_favicon['content'] }}"
             createdby: "{{ _portal_createdby['content'] }}"
             css: |
+              /* SickleInAfrica colour theme */
+              :root {
+                --primary-color: #C52D3A;
+                --secondary-color: #0755BB;
+              }
+
+              /* Navigation bar */
+              .nav-bar,
+              .top-bar {
+                background-color: #C52D3A;
+              }
+
+              /* Navigation logo override */
               .top-bar__logo img {
                 content: url("data:image/png;base64,{{ _portal_logo['content'] }}");
+              }
+
+              /* Nav items */
+              .nav-bar__item a,
+              .nav-bar__item span {
+                color: #FFFFFF !important;
+              }
+
+              .nav-bar__item--active,
+              .nav-bar__item:hover {
+                background-color: rgba(0, 0, 0, 0.15) !important;
+              }
+
+              /* Buttons */
+              .button--primary,
+              .introduction__button {
+                background-color: #C52D3A;
+                border-color: #C52D3A;
+              }
+
+              .button--primary:hover,
+              .introduction__button:hover {
+                background-color: #a02530;
+                border-color: #a02530;
+              }
+
+              /* Links */
+              a {
+                color: #C52D3A;
+              }
+
+              a:hover {
+                color: #F91D1D;
               }
             json: |
               {
