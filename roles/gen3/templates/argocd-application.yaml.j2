@@ -45,6 +45,19 @@ spec:
           usersync:
             usersync: true
             userYamlS3Path: "s3://{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}/user.yaml"
+            env:
+              - name: AWS_ENDPOINT_URL
+                value: "https://{{ s3.host_base }}"
+              - name: AWS_ACCESS_KEY_ID
+                value: "{{ garage.access_key }}"
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "{{ garage.secret_key }}"
+              - name: AWS_DEFAULT_REGION
+                value: "us-east-1"
+              - name: AWS_REQUEST_CHECKSUM_CALCULATION
+                value: "when_required"
+              - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+                value: "when_required"
         arborist:
           postgres:
             password: "{{ postgres.service_passwords.arborist }}"
