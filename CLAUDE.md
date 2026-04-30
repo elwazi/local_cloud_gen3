@@ -15,7 +15,7 @@ terraform apply              # provision infrastructure → generates inventory.
 ./deploy.sh                  # full Ansible deployment (first time)
 ./update.sh                  # routine updates: re-upload user.yaml + re-apply ArgoCD Application
 ./update.sh --check          # dry-run: show what would change without applying
-./destroy_compute.sh         # tear down compute nodes (preserves network, storage, load balancer)
+./destroy_compute.sh         # destroy Kubernetes, storage, and database VMs (preserves load balancer, network, and Garage data volume)
 ansible-playbook gen3.yml --tags argocd  # Helm values / portal only
 ansible-playbook gen3.yml --tags user    # user.yaml only
 python create_gen3_project.py            # create/manage Gen3 programs and projects via Sheepdog API

@@ -10,4 +10,6 @@ inventory.yaml
 *openrc.sh
 *.auto.tfvars
 *auto*hcl
+!variables.auto.tfvars
+!variables.auto.pkrvars.hcl
 .worktrees/
