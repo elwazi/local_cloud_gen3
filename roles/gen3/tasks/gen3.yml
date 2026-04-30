@@ -71,15 +71,6 @@
   register: gen3_db_creds_apply
   changed_when: '"unchanged" not in gen3_db_creds_apply.stdout'
 
-- name: Get rke2-coredns pod IP
-  tags: [kubedns]
-  command: >
-    bin/kubectl get endpoints rke2-coredns-rke2-coredns -n kube-system
-    -o jsonpath='{.subsets[0].addresses[0].ip}'
-  args:
-    chdir: /home/{{ gen3.user }}
-  register: coredns_ip
-  changed_when: false
 
 - name: Apply kube-dns alias
   tags: [kubedns]
@@ -93,21 +84,11 @@
         name: kube-dns
         namespace: kube-system
       spec:
+        selector:
+          k8s-app: kube-dns
         ports:
         - {name: udp-53, port: 53, protocol: UDP, targetPort: 53}
         - {name: tcp-53, port: 53, protocol: TCP, targetPort: 53}
-      ---
-      apiVersion: v1
-      kind: Endpoints
-      metadata:
-        name: kube-dns
-        namespace: kube-system
-      subsets:
-      - addresses:
-        - ip: {{ coredns_ip.stdout }}
-        ports:
-        - {name: udp-53, port: 53, protocol: UDP}
-        - {name: tcp-53, port: 53, protocol: TCP}
   register: kubedns_apply
   changed_when: '"unchanged" not in kubedns_apply.stdout'
 
