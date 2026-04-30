@@ -74,7 +74,7 @@ gen3_users:
   - email: user@example.com
     name: User Name
     groups: [data_submitters, data_readers, indexd_admins]
-    policies: [eLwaziProject_submitter]
+    policies: [SickleInAfrica_submitter]
 ```
 
 See `group_vars/all.template` for the full field reference.
