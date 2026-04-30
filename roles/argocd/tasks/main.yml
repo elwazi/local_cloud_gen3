@@ -1,0 +1,54 @@
+---
+- name: Create argocd namespace
+  command: >
+    /var/lib/rancher/rke2/bin/kubectl create namespace argocd --dry-run=client -o yaml
+  register: argocd_ns_yaml
+  changed_when: false
+
+- name: Apply argocd namespace
+  command: /var/lib/rancher/rke2/bin/kubectl apply -f -
+  args:
+    stdin: "{{ argocd_ns_yaml.stdout }}"
+  register: argocd_ns_apply
+  changed_when: '"unchanged" not in argocd_ns_apply.stdout'
+
+- name: Check installed ArgoCD version
+  command: >
+    /var/lib/rancher/rke2/bin/kubectl get deployment argocd-server -n argocd
+    --ignore-not-found -o jsonpath='{.spec.template.spec.containers[0].image}'
+  register: argocd_current
+  changed_when: false
+  failed_when: false
+
+- name: Apply ArgoCD install manifest
+  command: >
+    /var/lib/rancher/rke2/bin/kubectl apply -n argocd --server-side --force-conflicts
+    -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.3.8/manifests/install.yaml
+  register: argocd_install
+  changed_when: '"unchanged" not in argocd_install.stdout'
+  when: argocd_current.rc != 0 or argocd_current.stdout == '' or 'v3.3.8' not in argocd_current.stdout
+
+- name: Wait for ArgoCD server deployment to be ready
+  command: >
+    /var/lib/rancher/rke2/bin/kubectl rollout status deployment/argocd-server
+    -n argocd --timeout=300s
+  changed_when: false
+  when: argocd_install is changed
+
+- name: Register Gen3 Helm repository with ArgoCD
+  command: /var/lib/rancher/rke2/bin/kubectl apply -f -
+  args:
+    stdin: |
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: gen3-helm-repo
+        namespace: argocd
+        labels:
+          argocd.argoproj.io/secret-type: repository
+      stringData:
+        url: https://helm.gen3.org
+        type: helm
+        name: gen3-helm
+  register: argocd_helm_repo_apply
+  changed_when: '"unchanged" not in argocd_helm_repo_apply.stdout'

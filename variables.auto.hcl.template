@@ -24,16 +24,11 @@ k8s_node_count = 2
 gen3_hostname = "TODO:CONFIGURE_ME"
 
 name_prefix = "gen3-elwazi"
-ssh_public_key = "TODO:CONFIGURE_ME"
+ssh_private_key_file = "~/.ssh/id_rsa"
 
 # Ansible Variables
 timezone = "TODO:CONFIGURE_ME"
 postgres_password = "TODO:CONFIGURE_ME"
-postgres_fence_password = "TODO:CONFIGURE_ME"
-postgres_peregrine_password = "TODO:CONFIGURE_ME"
-postgres_sheepdog_password = "TODO:CONFIGURE_ME"
-postgres_indexd_password = "TODO:CONFIGURE_ME"
-postgres_arborist_password = "TODO:CONFIGURE_ME"
 
 google_client_id = "TODO:CONFIGURE_ME"
 google_client_secret = "TODO:CONFIGURE_ME"

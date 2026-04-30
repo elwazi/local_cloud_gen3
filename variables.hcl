@@ -15,13 +15,13 @@ variable "admin_user" {
 variable "image_suffix" {
   type = string
   description = "Suffix to be appended to the end of image names"
-  default = "gen3-dev.elwazi.ubuntu.20_04"
+  default = "gen3-dev.elwazi.ubuntu.24_04"
 }
 
 variable "base_image_source" {
   type = string
   description = "Source URL for base image"
-  default = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+  default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
 variable "base_image_source_format" {
@@ -82,16 +82,23 @@ variable "rancher_rke2_worker_node_count" {
 #  description = "name of rancher host"
 #}
 
+variable "cidr" {
+  type    = string
+  default = "192.168.10.0/24"
+}
+
 variable "floating_ip_network_id" {
   description = "The name of the Floating IP network in your OpenStack"
   type = string
   default = "f99ab9af-902c-494b-abfc-32ccd5716234"
 }
 
+
+
 variable "network_ids" {
   type = list(string)
   description = "Name of networks to be used when building images"
-  default = ["0849e923-df2c-42a6-9ef8-1b0c9cd38182"]
+  # default = ["0849e923-df2c-42a6-9ef8-1b0c9cd38182"]
 }
 
 variable "security_groups" {
@@ -177,6 +184,18 @@ variable "load_balancer_node_flavour" {
   default = "ilifu-B"
 }
 
+variable "storage_node_flavour" {
+  type        = string
+  description = "OpenStack VM flavour to use for the storage node"
+  default     = "ilifu-B"
+}
+
+variable "storage_node_disk_size_gib" {
+  type        = number
+  description = "Disk size in GiB for the Garage S3 storage volume"
+  default     = 500
+}
+
 #variable "rancher_rke2_server_node_name" {
 #  type = string
 #  description = "Rancher management node's hostname"
@@ -200,9 +219,10 @@ variable "name_prefix" {
   default = "gen3-dev"
 }
 
-variable "ssh_public_key" {
-  type = string
-  description = "Your ssh public key"
+variable "ssh_private_key_file" {
+  type        = string
+  description = "Path to the SSH private key used by Ansible to connect to nodes"
+  default     = "~/.ssh/id_rsa"
 }
 
 // variables used in ansible configuration
@@ -239,102 +259,6 @@ variable "postgres_password" {
   type = string
   description = "Main postgres user password"
   sensitive = true
-}
-
-variable "postgres_fence_user" {
-  type = string
-  description = "fence user postgres username"
-  default = "fence_user"
-}
-
-variable "postgres_fence_password" {
-  type = string
-  description = "fence user postgres password"
-  sensitive = true
-}
-
-variable "postgres_peregrine_user" {
-  type = string
-  description = "peregrine user postgres username"
-  default = "peregrine_user"
-}
-
-variable "postgres_peregrine_password" {
-  type = string
-  description = "peregrine user postgres password"
-  sensitive = true
-}
-
-variable "postgres_sheepdog_user" {
-  type = string
-  description = "sheepdog user postgres username"
-  default = "sheepdog_user"
-}
-
-variable "postgres_sheepdog_password" {
-  type = string
-  description = "sheepdog user postgres password"
-  sensitive = true
-}
-
-variable "postgres_indexd_user" {
-  type = string
-  description = "indexd user postgres username"
-  default = "indexd_user"
-}
-
-variable "postgres_indexd_password" {
-  type = string
-  description = "indexd user postgres password"
-  sensitive = true
-}
-
-variable "postgres_arborist_user" {
-  type = string
-  description = "arborist user postgres username"
-  default = "arborist_user"
-}
-
-variable "postgres_arborist_password" {
-  type = string
-  description = "arborist user postgres password"
-  sensitive = true
-}
-
-variable "postgres_metadata_password" {
-  type = string
-  description = "metadata user postgres password"
-  sensitive = true
-}
-
-variable "postgres_guppy_password" {
-    type = string
-    description = "guppy user postgres password"
-    sensitive = true
-}
-
-variable "postgres_audit_password" {
-    type = string
-    description = "audit user postgres password"
-    sensitive = true
-}
-
-variable "postgres_wts_password" {
-    type = string
-    description = "wts user postgres password"
-    sensitive = true
-}
-
-variable "s3_host_server" {
-  type        = string
-  description = "S3 host server"
-  default     = "oss.ilifu.ac.za"
-}
-
-variable "s3_host_port" {
-    type        = number
-    description = "S3 host port"
-    default     = 6780
 }
 
 variable "gen3_portal_appName" {
@@ -383,6 +307,24 @@ variable "gen3_portal_login_email" {
   type        = string
   description = "Gen3 portal login email"
   default     = "support@elwazi.org"
+}
+
+variable "garage_rpc_secret" {
+  type        = string
+  description = "Garage RPC secret (hex string, generate with: openssl rand -hex 32)"
+  sensitive   = true
+}
+
+variable "garage_access_key" {
+  type        = string
+  description = "Garage S3 access key ID (hex string, generate with: openssl rand -hex 16)"
+  sensitive   = true
+}
+
+variable "garage_secret_key" {
+  type        = string
+  description = "Garage S3 secret key (hex string, generate with: openssl rand -hex 32)"
+  sensitive   = true
 }
 
 variable "gen3_portal_logo_base64_png" {

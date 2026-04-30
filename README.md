@@ -1,134 +1,195 @@
-# eLwazi
-Repository for keeping track of eLwazi private openstack gen3 infrastructure and
-documentation.
+# eLwazi / GeneMap Gen3
 
-[Installing gen3 on existing machines](#setting-up-the-infrastructure-on-existing-machines-using-ansible)
+Infrastructure-as-code for deploying a private genomic data management platform on OpenStack. The deployment pipeline is Packer (image building) → Terraform (cloud provisioning) → Ansible (service configuration), with ArgoCD providing continuous reconciliation of Gen3 services inside the RKE2 Kubernetes cluster.
 
-# Setting up the infrastructure on OpenStack using Packer, Terraform and Ansible
-The infrastructure is managed with a set of scripts that make use of
-[Packer](https://www.packer.io/) (for creating the OpenStack virtual machine images
-that are used), [Terraform](https://www.terraform.io/) (for deploying  infrastructure
-on OpenStack), and finally [Ansible](https://www.ansible.com/) for configuring the
-infrastructure — largely using the [gen3 helm charts](https://github.com/uc-cdis/gen3-helm).
+## Requirements
 
-## Installing software requirements on your machine
-You will need to install [Packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli)
-and [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) in
-addition to setting up a python virtual environment. Packer and Terraform can be
-installed by setting up the appropriate repositories and installing using your OS's
-package manager. The python virtual environment is ideally set up using pipenv by
-running the `pipenv sync` command. Alternatively ensure you have a python virtual
-environment with both the `python-openstackclient` and `ansible` packages installed.
-Remember to activate your virtual environment (with `pipenv shell` or `. ./.venv/bin/activate`).
+Install [Packer](https://developer.hashicorp.com/packer/install) and [Terraform](https://developer.hashicorp.com/terraform/install).
 
-### Initialising packer
-It is important to run `packer init images.openstack.pkr.hcl` once in your environment. This
-will ensure that the packer OpenStack plugin is installed.
+Install Python dependencies (Ansible, OpenStack client):
 
-## Get your OpenStack.rc file
-Connect to your OpenStack dashboard, switch to the correct project then download the
-`*-openrc.sh` file for your project (from the top-right dropdown menu). Before running most
-of the commands here you will need to have "sourced" this file so that the environmental
-variables are set so that packer/terraform can connect to your openstack infrastructure.
-In otherwords once you have the `*-openrc.sh` file you will need to run
-`source your-openrc.sh` and then the subsequent commands will work. Note you will need
-your OpenStack login details at the time of sourcing.
-
-## Setting up variables
-There are only two files that should need configuring for this installation and these
-contain the variables that Packer/Terraform and Ansible use.
-
-### Packer and Terraform
-The Packer and Terraform variables should be in a file named `variables.auto.hcl` and this
-can be made by copying the template file, i.e. `cp variables.auto.hcl.template variables.auto.hcl`.
-Note that there are symbolic link files (`gen3.auto.tfvars` and
-`gen3.auto.pkrvars.hcl`) that point at `variables.auto.hcl` and are auto-loaded by Packer
-and Terraform. A description of the required variables can be found in the file `variables.hcl`.
-Edit the contents in order to both personalise your gen3 instance and ensure that both
-Packer and Terraform will use the correct values for your OpenStack, e.g. you will almost
-certainly need to change the values of: `build_image_flavour`, `database_node_flavour` and
-`docker_node_flavour` so that appropriate OpenStack Virtual Machine flavours are used.
-The variables to be set are:
-* `admin_user`: Login name for admin user
-* `base_image_name`: Name to use for Base image
-* `base_image_source`: Source URL for base image
-* `base_image_source_format`: Image format of base image (qcow2 / raw / …)
-* `build_image_flavour`: Virtual Image Flavour to be used when building images
-* `database_image_name`: Name to give the database image
-* `database_node_name`: Database node's hostname
-* `k8s_image_name`: Name to give the k8s image
-* `k8s_control_plane_node_name`: k8s control plane's node's hostname
-* `k8s_node_name`: k8s node's base hostname
-* `k8s_node_count`: Number of k8s nodes to create
-* `floating_ip_network_id`: The name of the Floating IP network in your OpenStack
-* `network_ids`: Name of networks to be used when building images
-* `security_groups`: Security groups to be used (this should include an incoming ssh rule…)
-* `timezone`: Timezone to be used in machines
-* `database_node_flavour`: OpenStack VM flavour to use for the database node
-* `gen3_hostname`: Hostname for the gen3 deployment
-* `k8s_control_plane_node_flavour`: OpenStack VM flavour to use for the k8s control plane
-* `k8s_node_flavour`: OpenStack VM flavour to use for the k8s nodes
-* `floating_ip_pool_name`: OpenStack Floating IP address pool name
-* `name_prefix`: Name used in terraform infrastructure
-* `ssh_public_key`: Your ssh public key
-* `google_client_id`: Google client id
-* `google_client_secret`: Google client secret
-* `awsAccessKeyId`: AWS access key id
-* `awsSecretAccessKey`: AWS secret access key
-* `postgres_user`: Main postgres username
-* `postgres_password`: Main postgres user password
-* `postgres_fence_user`: fence user postgres username
-* `postgres_fence_password`: fence user postgres password
-* `postgres_peregrine_user`: peregrine user postgres username
-* `postgres_peregrine_password`: peregrine user postgres password
-* `postgres_sheepdog_user`: sheepdog user postgres username
-* `postgres_sheepdog_password`: sheepdog user postgres password
-* `postgres_indexd_user`: indexd user postgres username
-* `postgres_indexd_password`: indexd user postgres password
-* `postgres_arborist_user`: arborist user postgres username
-* `postgres_arborist_password`: arborist user postgres password
-
-### Ansible
-Ansible requires some of its own variables and these can be created by setting up the
-`group_vars/all` by using the template, i.e. `cp group_vars/all.template group_vars/all`
-and then updating the contents.
-You can modify the ansible `group_vars/all` file to reflect some settings such as:
-* `timezone`: This is the time zone setting for all the virtual machines.
-
-## Building the images
-Once the variables have been configured (the `build_image_flavour` is probably the most
-important as this often varies from system to system) the images can be built. This
-can be done with the command:
 ```shell
-$ ./build.sh
+uv sync
 ```
-The script checks for the existence of the target images on OpenStack. If they already
-exist, nothing happens. Otherwise, the images are built.
 
-## Deploying with Terraform
-The machines are first deployed with terraform. Firstly the environment must be
-initialised with `terraform init`. Afterwards `terraform plan` and `terraform apply`
-can be used to actually create the infrastructure including: the network and subnetwork;
-the security groups; the docker node; the database node. This will also create an
-`inventory.ini` file which can be used with ansible.
+## First-time setup
 
-## Infrastructure Configuration
-Finally the infrastructure can be configured using ansible. The `inventory.ini` file generated
-in the previous should be updated — specifically the passwords should be updated – these can
-easily be found by searching for the `TODO:CONFIGURE_ME` text.
+### 1. OpenStack credentials
 
-Then the playbook should be run with the command: `ansible-playbook -i inventory site.yml`.
-This will connect to the nodes and finalise the configuration of services on the nodes.
+Download the `*-openrc.sh` file from your OpenStack dashboard (top-right dropdown → OpenStack RC File). Source it before any cloud operations:
 
-# Setting up the infrastructure on existing machines using Ansible
-The first method which starts off using packer and terraform is useful if you have access
-to OpenStack cloud infrastructure, however if you simply have access to some Ubuntu machines
-(or virtual machines) then you can use the ansible scripts to install the infrastucture. The
-main difficulty is configuring the inventory and variables files so that the ansible scripts
-know what to do where.
+```shell
+source eLwazi-openrc.sh
+```
 
-## Setting up your inventory
+### 2. Packer/Terraform configuration (`variables.auto.hcl`)
 
-## Setting up your variables
+```shell
+cp variables.auto.hcl.template variables.auto.hcl
+```
 
-## Running the ansible scripts
+The repo includes symlinks `variables.auto.tfvars` and `variables.auto.pkrvars.hcl` pointing at this file so Terraform and Packer both pick it up automatically. Edit it with values for your environment:
+
+**Infrastructure**
+- `admin_user` — VM login name
+- `base_image_source` / `base_image_source_format` — source Ubuntu 24.04 image
+- `build_image_flavour` — VM flavour used during Packer builds
+- `floating_ip_network_id` / `floating_ip_pool_name` — OpenStack floating IP settings
+- `network_ids` / `security_groups` — OpenStack network/security group IDs
+- `name_prefix` / `node_suffix` / `image_suffix` — naming conventions
+- `timezone` — e.g. `Africa/Johannesburg`
+- `ssh_private_key_file` — path to the SSH private key file; the public key is derived from `ssh_private_key_file.pub`
+
+**Node sizing**
+- `database_node_flavour` / `database_node_disk_size_gib`
+- `rancher_rke2_server_node_count` / `rancher_rke2_server_node_flavour` / `rancher_rke2_server_node_disk_size_gib`
+- `rancher_rke2_worker_node_count` / `rancher_rke2_worker_node_flavour` / `rancher_rke2_worker_node_disk_size_gib`
+- `load_balancer_node_flavour`
+- `storage_node_flavour` / `storage_node_disk_size_gib`
+
+**Gen3**
+- `gen3_hostname` — public hostname
+- `gen3_user` — Linux account for Gen3 (default: `gen3`)
+- `gen3_admin_email`
+
+**Authentication & secrets**
+- `google_client_id` / `google_client_secret` — Google OIDC credentials
+- `postgres_user` / `postgres_password`
+- `garage_rpc_secret` — generate: `openssl rand -hex 32`
+- `garage_access_key` — generate: `openssl rand -hex 16`
+- `garage_secret_key` — generate: `openssl rand -hex 32`
+
+### 3. Ansible configuration (`group_vars/all`)
+
+```shell
+cp group_vars/all.template group_vars/all
+```
+
+This file is gitignored. Edit it to set:
+
+**Users** — identities with access to the platform:
+
+```yaml
+gen3_users:
+  - email: user@example.com
+    name: User Name
+    groups: [data_submitters, data_readers, indexd_admins]
+    policies: [SickleInAfrica_submitter]
+```
+
+See `group_vars/all.template` for the full field reference.
+
+**Portal branding:**
+
+```yaml
+gen3_portal:
+  appName: "My Data Commons"
+  nav_title: "MyCommons"
+  heading: "Welcome"
+  intro_text: "Browse and submit genomic datasets."
+  login_title: "My Data Commons"
+  login_subtitle: "Supporting genomic research"
+  login_text: "Please log in with your institutional Google account."
+  logo_file: my_logo.png        # file in roles/gen3/files/portal/
+  css: |
+    .nav-bar { background-color: #C52D3A !important; }
+  sponsors:
+    - file: sponsor.svg
+      href: https://example.org
+      alt: Sponsor Name
+```
+
+Portal image assets (logo, favicon, createdby, sponsor logos) live in `roles/gen3/files/portal/`. Drop a file there, reference it by filename in `group_vars/all`, and redeploy.
+
+### 4. Initialise Packer plugins (once)
+
+```shell
+packer init images.openstack.pkr.hcl
+```
+
+## Deploy
+
+### Build OpenStack images
+
+```shell
+./build.sh
+```
+
+Safe to re-run — checks for existing images before building.
+
+### Provision infrastructure
+
+```shell
+terraform init   # first time only
+terraform apply
+```
+
+Generates `inventory.yaml` for Ansible. Do not edit it manually.
+
+### Configure all services
+
+```shell
+./deploy.sh
+```
+
+Runs Ansible playbooks in order:
+
+| Step | Playbooks | Mode |
+|------|-----------|------|
+| 1 | `common.yml` | sequential |
+| 2 | `database.yml`, `storage.yml`, `load_balancer.yml`, `rancher.yml` | parallel |
+| 3 | `argocd.yml` | sequential |
+| 4 | `gen3.yml` | sequential |
+
+Logs for the parallel step are written to `logs/`.
+
+## Routine updates
+
+After the initial deploy, use `update.sh` for day-to-day changes — it re-uploads `user.yaml` to S3 and re-applies the ArgoCD Application:
+
+```shell
+./update.sh
+```
+
+Scope it further with tags:
+
+```shell
+./update.sh --tags user    # users only (re-upload user.yaml)
+./update.sh --tags argocd  # Helm values / portal branding only
+./update.sh --check        # dry run
+```
+
+## Managing users
+
+Edit `gen3_users` in `group_vars/all`, then:
+
+```shell
+./update.sh --tags user
+```
+
+Fence's usersync job polls the S3 bucket on a schedule and applies changes.
+
+## Creating programs and projects
+
+Before data can be submitted, at least one program and project must exist in Sheepdog. Download a credentials JSON from the Gen3 portal (Profile → Create API key), then:
+
+```shell
+# Check your admin access
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> whoami
+
+# List existing programs and projects
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> list
+
+# Create a program, then a project within it
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> create --program MyProgram
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> create --program MyProgram --project MyProject
+```
+
+By default the script looks for credentials at `~/.gen3/credentials.json`. Pass `--credentials /path/to/creds.json` to override.
+
+## Checking ArgoCD sync status
+
+```shell
+kubectl get application gen3 -n argocd
+kubectl get application gen3 -n argocd -o jsonpath='{.status.sync.status} {.status.health.status}{"\n"}'
+```

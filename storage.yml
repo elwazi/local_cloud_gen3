@@ -1,0 +1,7 @@
+---
+# storage.yml
+- hosts: storage_nodes
+  tags: [storage]
+  roles:
+    - base
+    - storage

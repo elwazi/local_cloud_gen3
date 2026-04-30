@@ -4,7 +4,6 @@
   become: yes
   tags:
     - build
-    - never
   block:
     - name: Upgrade all existing packages
       apt:
@@ -31,15 +30,15 @@
 
     - name: Add postgres repository
       apt_repository:
-        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts['distribution_release'] }}-pgdg main
         state: present
 
-    - name: Install postgres 13
+    - name: Install postgres {{ postgres_major_version }}
       apt:
           name:
-            - postgresql-13
-            - postgresql-client-13
-            - postgresql-contrib-13
+            - postgresql-{{ postgres_major_version }}
+            - postgresql-client-{{ postgres_major_version }}
+            - postgresql-contrib-{{ postgres_major_version }}
           update-cache: yes
 
     - name: Add elasticsearch repo key
@@ -49,11 +48,12 @@
 
     - name: Add elasticsearch repository
       apt_repository:
-        repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+        repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
 
     - name: Install elasticsearch
       apt:
         name: elasticsearch
+        state: latest
         update-cache: yes
 
     - name: Enable elasticsearch service

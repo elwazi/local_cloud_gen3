@@ -1,0 +1,133 @@
+If global:
+  hostname: {{ gen3.hostname }}
+  dev: false
+  postgres:
+    dbCreate: true
+    externalSecret: ""
+    master:
+      username: {{ postgres.user }}
+      password: {{ postgres.password }}
+      host: {{ postgres.host_ip }}
+      port: "5432"
+
+fence:
+  image:
+    pullPolicy: IfNotPresent
+  FENCE_CONFIG:
+    OPENID_CONNECT:
+      google:
+        client_id: "{{ google_client_id }}"
+        client_secret: "{{ google_client_secret }}"
+    AWS_CREDENTIALS:
+      "gen3":
+        aws_access_key_id: "{{ gen3.ec2.access }}"
+        aws_secret_access_key: "{{ gen3.ec2.secret }}"
+    S3_BUCKETS:
+      {{ gen3.data_bucket_name }}:
+        cred: "gen3"
+        endpoint_url: "https://{{ s3.host_base }}"
+      {{ gen3.user_bucket_name }}:
+        cred: "gen3"
+        endpoint_url: "https://{{ s3.host_base }}"
+    DATA_UPLOAD_BUCKET: "{{ gen3.data_bucket_name }}"
+
+  usersync:
+    usersync: true
+    secrets:
+      aws_access_key_id: "{{ gen3.ec2.access }}"
+      aws_secret_access_key: "{{ gen3.ec2.secret }}"
+    userYamlS3Path: "s3://{{ gen3.user_bucket_name }}/user.yaml"
+
+secrets:
+  awsAccessKeyId: "{{ gen3.ec2.access }}"
+  awsSecretAccessKey: "{{ gen3.ec2.secret }}"
+
+{# hatchery:
+  image:
+    tag: feat_localdev
+  hatchery:
+    containers:
+    - target-port: 8888
+      cpu-limit: '0.5'
+      memory-limit: 1Gi
+      name: "(Tutorials) Example Analysis Jupyter Lab Notebooks"
+      image: quay.io/cdis/heal-notebooks:combined_tutorials__latest
+      env:
+        FRAME_ANCESTORS: https://{{ .Values.global.hostname }}
+      args:
+      - "--NotebookApp.base_url=/lw-workspace/proxy/"
+      - "--NotebookApp.default_url=/lab"
+      - "--NotebookApp.password=''"
+      - "--NotebookApp.token=''"
+      - "--NotebookApp.shutdown_no_activity_timeout=5400"
+      - "--NotebookApp.quit_button=False"
+      command:
+      - start-notebook.sh
+      path-rewrite: "/lw-workspace/proxy/"
+      use-tls: 'false'
+      ready-probe: "/lw-workspace/proxy/"
+      lifecycle-post-start:
+      - "/bin/sh"
+      - "-c"
+      - export IAM=`whoami`; rm -rf /home/$IAM/pd/dockerHome; rm -rf /home/$IAM/pd/lost+found;
+        ln -s /data /home/$IAM/pd/; true
+      user-uid: 1000
+      fs-gid: 100
+      user-volume-location: "/home/jovyan/pd"
+      gen3-volume-location: "/home/jovyan/.gen3"
+#}
+
+guppy:
+  image:
+    pullPolicy: IfNotPresent
+  esEndpoint: "{{ postgres.host_ip }}:9200"
+  tierAccessLimit: "1000"
+  enabled: false
+  dbRestore: false
+
+peregrine:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+arborist:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+indexd:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+metadata:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+sheepdog:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+wts:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false
+
+pidgin:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: false
+
+audit:
+  image:
+    pullPolicy: IfNotPresent
+  enabled: true
+  dbRestore: false

@@ -5,7 +5,7 @@
   tags:
     - postgres
   block:
-# todo: add postgres repo so that postgres 13 can be installed
+    # add postgres repo so the configured postgres_major_version can be installed
     - name: Add postgres apt repository key
       apt_key:
         url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -13,7 +13,7 @@
 
     - name: Add postgres repository
       apt_repository:
-        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts['distribution_release'] }}-pgdg main
         state: present
 
     - name: Ensure acl, psycopg2 and libpq-dev are installed and are latest version
@@ -24,9 +24,9 @@
           - acl
           - default-jre
           - libpq-dev
-          - postgresql-13
-          - postgresql-client-13
-          - postgresql-contrib-13
+          - postgresql-{{ postgres_major_version }}
+          - postgresql-client-{{ postgres_major_version }}
+          - postgresql-contrib-{{ postgres_major_version }}
           - python3-psycopg2
         state: latest
         update-cache: yes
@@ -44,14 +44,14 @@
 
     - name: Configure postgres to listen to local network
       lineinfile:
-        path: "/etc/postgresql/13/main/postgresql.conf"
+        path: "/etc/postgresql/{{ postgres_major_version }}/main/postgresql.conf"
         regex: "^listen_addresses.*"
-        line: "listen_addresses = '{% for ip in ansible_all_ipv4_addresses %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
+        line: "listen_addresses = '{% for ip in ansible_facts['all_ipv4_addresses'] %}{{ ip }}{% if not loop.last %}, {% endif %}{% endfor %}, localhost'"
       notify: Restart postgres
 
     - name: Configure postgres to allow connections on subnet
       lineinfile:
-        path: "/etc/postgresql/13/main/pg_hba.conf"
+        path: "/etc/postgresql/{{ postgres_major_version }}/main/pg_hba.conf"
         regex: "host *all *all *{{ gen3_subnet }} *md5"
         line: "host    all             all             {{ gen3_subnet }}         md5"
       notify: Restart postgres
@@ -64,6 +64,13 @@
         password: "{{ postgres.password }}"
         role_attr_flags: "SUPERUSER"
         encrypted: yes
+
+    - name: Restore public schema CREATE privilege for PostgreSQL 15+
+      become: yes
+      become_user: postgres
+      community.postgresql.postgresql_query:
+        db: template1
+        query: "GRANT CREATE ON SCHEMA public TO PUBLIC"
 
 #    - name: Create databases
 #      become: yes
@@ -117,7 +124,15 @@
       lineinfile:
         path: "/etc/elasticsearch/elasticsearch.yml"
         regex: "^network.host:.*"
-        line: "network.host: {{ ansible_default_ipv4.address }}"
+        line: "network.host: {{ ansible_facts['default_ipv4']['address'] }}"
         insertafter: "^#network.host:.*"
+      become: yes
+      notify: Restart elasticsearch
+
+    - name: Configure elasticsearch single-node discovery
+      lineinfile:
+        path: "/etc/elasticsearch/elasticsearch.yml"
+        regex: "^discovery.type:.*"
+        line: "discovery.type: single-node"
       become: yes
       notify: Restart elasticsearch

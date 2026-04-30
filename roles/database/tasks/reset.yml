@@ -1,0 +1,40 @@
+---
+# Drop all gen3 databases and roles. Run with: --tags reset
+# WARNING: This is destructive and irreversible.
+# Delete the gen3 namespace before running this so active connections don't block DROP DATABASE.
+
+- name: Find gen3 databases
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_query:
+    db: postgres
+    query: "SELECT datname FROM pg_database WHERE datname LIKE '%\\_gen3'"
+  register: gen3_databases
+  tags: [never, reset]
+
+- name: Drop gen3 databases
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ item.datname }}"
+    state: absent
+  loop: "{{ gen3_databases.query_result }}"
+  tags: [never, reset]
+
+- name: Find gen3 roles
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_query:
+    db: postgres
+    query: "SELECT rolname FROM pg_roles WHERE rolname LIKE '%\\_gen3'"
+  register: gen3_roles
+  tags: [never, reset]
+
+- name: Drop gen3 roles
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "{{ item.rolname }}"
+    state: absent
+  loop: "{{ gen3_roles.query_result }}"
+  tags: [never, reset]

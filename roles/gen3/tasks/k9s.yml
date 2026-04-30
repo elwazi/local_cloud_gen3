@@ -1,9 +1,16 @@
+- name: Check k9s version
+  command: ~/bin/k9s version
+  register: k9s_version
+  failed_when: false
+  changed_when: false
+
 - name: Install k9s
   tags: k9s
+  when: k9s_version.rc != 0 or 'v0.50.18' not in k9s_version.stdout
   block:
     - name: Download k9s
       get_url:
-        url: https://github.com/derailed/k9s/releases/download/v0.27.3/k9s_Linux_amd64.tar.gz
+        url: https://github.com/derailed/k9s/releases/download/v0.50.18/k9s_Linux_amd64.tar.gz
         dest: ~/src/k9s.tar.gz
 
     - name: Extract k9s
@@ -11,4 +18,3 @@
         src: ~/src/k9s.tar.gz
         dest: ~/bin
         remote_src: true
-        creates: ~/bin/k9s

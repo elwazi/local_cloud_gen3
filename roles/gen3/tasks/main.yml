@@ -1,11 +1,22 @@
 ---
 # tasks file for gen3
-- name: Install virtualenv
+- name: Download uv {{ uv_version }}
   tags: [virtualenv]
   become: yes
-  apt:
-    name: python3-virtualenv
-    state: present
+  get_url:
+    url: "https://github.com/astral-sh/uv/releases/download/{{ uv_version }}/uv-x86_64-unknown-linux-musl.tar.gz"
+    dest: "/tmp/uv-{{ uv_version }}.tar.gz"
+    checksum: "{{ uv_checksum }}"
+
+- name: Install uv to /usr/local/bin
+  tags: [virtualenv]
+  become: yes
+  unarchive:
+    src: "/tmp/uv-{{ uv_version }}.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    creates: /usr/local/bin/uv
+    extra_opts: ["--strip-components=1", "--wildcards", "*/uv"]
 
 - name: Add gen3 unix group
   become: yes
@@ -68,18 +79,22 @@
           git:
             repo: https://github.com/romkatv/powerlevel10k.git
             dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+            update: false
         - name: Install zsh autosuggestions
           git:
             repo: https://github.com/zsh-users/zsh-autosuggestions
             dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+            update: false
         - name: Install zsh syntax highlighting
           git:
             repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
             dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+            update: false
 
 - name: Copy kubeconfig file
   tags: [kubeconfig]
   become: yes
+  become_user: root
   copy:
       src: "/etc/rancher/rke2/rke2.yaml"
       dest: "/home/{{ gen3.user }}/.kube/config"
@@ -88,18 +103,16 @@
       remote_src: true
       mode: 0600
 
-- name: Copy kubectl binaries to bin
+- name: Link kubectl binaries to bin
   become: yes
-  become_user: "{{ gen3.user }}"
   tags: [kubectl]
-  copy:
-    src: "{{ item }}"
-    dest: "~/bin/"
-    mode: 0755
-    remote_src: true
+  file:
+    src: "/var/lib/rancher/rke2/bin/{{ item }}"
+    dest: "/home/{{ gen3.user }}/bin/{{ item }}"
+    state: link
   with_items:
-    - /var/lib/rancher/rke2/bin/kubectl
-    - /var/lib/rancher/rke2/bin/kubelet
+    - kubectl
+    - kubelet
 
 - name: Add kubectl command line completion
   become: yes
@@ -112,6 +125,5 @@
     state: present
     create: yes
 
-- { import_tasks: helm.yml, tags: helm, become: yes, become_user: "{{ gen3.user }}" }
 - { import_tasks: k9s.yml, tags: k9s, become: yes, become_user: "{{ gen3.user }}" }
 - { import_tasks: gen3.yml, tags: gen3, become: yes, become_user: "{{ gen3.user }}" }

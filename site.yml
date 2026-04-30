@@ -1,10 +1,10 @@
 ---
-# - import_playbook: database.yml
-#- import_playbook: docker.yml
 - import_playbook: common.yml
-- import_playbook: load_balancer.yml
 - import_playbook: database.yml
+- import_playbook: storage.yml
+- import_playbook: load_balancer.yml
 - import_playbook: rancher.yml
+- import_playbook: argocd.yml
 - import_playbook: gen3.yml
 
 

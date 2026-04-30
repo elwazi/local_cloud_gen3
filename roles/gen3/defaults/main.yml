@@ -1,2 +1,5 @@
 ---
 # defaults file for gen3
+gen3_portal: {}
+uv_version: "0.11.8"
+uv_checksum: "sha256:de82507d12e31cfc86c1c776238f7c248e48e40d996dedc812d64fdd31c6ed12"
