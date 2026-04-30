@@ -71,6 +71,7 @@
   register: gen3_db_creds_apply
   changed_when: '"unchanged" not in gen3_db_creds_apply.stdout'
 
+
 - name: Apply kube-dns alias
   tags: [kubedns]
   command: bin/kubectl apply -f -
