@@ -61,16 +61,6 @@
   register: user_yaml_upload
   changed_when: "'upload:' in user_yaml_upload.stdout"
 
-- name: Grant fence admin to indexd_admins users
-  tags: [user, admin]
-  command: >
-    bin/kubectl exec -n gen3
-    $(bin/kubectl get pod -n gen3 -l app=fence -o name | head -1)
-    -- fence-create admin --username {{ item.email }}
-  args:
-    chdir: /home/{{ gen3.user }}
-  loop: "{{ gen3_users | selectattr('groups', 'defined') | selectattr('groups', 'contains', 'indexd_admins') | list }}"
-  changed_when: false
 
 - name: Apply gen3-db-creds Kubernetes Secret
   tags: [secrets]

@@ -29,6 +29,8 @@ spec:
             ADMIN_USERS:
 {% for user in gen3_users if 'indexd_admins' in user.groups | default([]) %}
               - {{ user.email }}
+{% else %}
+              []
 {% endfor %}
             OPENID_CONNECT:
               google:

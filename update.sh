@@ -5,10 +5,9 @@ set -e
 # Pass --check for a dry run, or --tags argocd / --tags user to scope further.
 has_tags=false
 for arg in "$@"; do
-  if [ "$arg" = "--tags" ]; then
-    has_tags=true
-    break
-  fi
+  case "$arg" in
+    --tags|--tags=*|-t) has_tags=true; break ;;
+  esac
 done
 
 if [ "$has_tags" = true ]; then

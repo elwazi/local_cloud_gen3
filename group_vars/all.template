@@ -20,7 +20,7 @@
 #   login_subtitle: "Bringing genomic data to researchers"
 #   login_text: "Please log in with your institutional Google account."
 #   logo_file: sickle_in_africa.png
-#   favicon_file: sickle_in_africa.png
+#   favicon_file: favicon.png
 #   css: |
 #     /* custom CSS injected into the portal */
 #     .nav-bar { background-color: #C52D3A; }

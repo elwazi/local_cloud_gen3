@@ -88,7 +88,7 @@ Image assets live in `roles/gen3/files/portal/`. Ansible slurps them at deploy t
 
 ## Important Notes
 
-- `terraform.tfstate` is tracked in git (intentional)
+- `terraform.tfstate` is gitignored (like `variables.auto.hcl` and `inventory.yaml` — all secrets/state stay off-repo)
 - `ansible.cfg` uses `result_format=yaml` and `profile_tasks` for readable output; logs to `logs/ansible.log`
 - Parallel jobs in `deploy.sh` write per-playbook logs to `logs/`
 - `group_vars/all.template` is the canonical reference for all Ansible variables
