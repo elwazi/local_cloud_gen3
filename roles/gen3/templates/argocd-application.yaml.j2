@@ -27,7 +27,7 @@ spec:
             password: "{{ postgres.service_passwords.fence }}"
           FENCE_CONFIG:
             ADMIN_USERS:
-{% for user in gen3_users if 'indexd_admins' in user.groups | default([]) %}
+{% for user in gen3_users | default([]) if 'indexd_admins' in user.groups | default([]) %}
               - {{ user.email }}
 {% else %}
               []
@@ -109,7 +109,7 @@ spec:
             favicon: "{{ _portal_favicon['content'] }}"
             createdby: "{{ _portal_createdby['content'] }}"
             css: |
-              {{ gen3_portal.css | default('') | indent(14) }}
+{{ gen3_portal.css | default('') | indent(14, True) }}
             json: |
               {
                 "graphql": {

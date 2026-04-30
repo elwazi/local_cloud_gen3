@@ -100,7 +100,7 @@ resource "openstack_compute_volume_attach_v2" "storage_data_volume_attach" {
 }
 
 data "openstack_images_image_v2" "base_image" {
-  name = local.load_balancer_image_name
+  name = local.base_image_name
 }
 
 resource "openstack_compute_instance_v2" "database_node" {
