@@ -28,7 +28,7 @@ source eLwazi-openrc.sh
 cp variables.auto.hcl.template variables.auto.hcl
 ```
 
-Symlinks `gen3.auto.tfvars` and `gen3.auto.pkrvars.hcl` point at this file so both tools pick it up automatically. Edit it with values for your environment:
+The repo includes symlinks `variables.auto.tfvars` and `variables.auto.pkrvars.hcl` pointing at this file so Terraform and Packer both pick it up automatically. Edit it with values for your environment:
 
 **Infrastructure**
 - `admin_user` — VM login name
@@ -168,6 +168,24 @@ Edit `gen3_users` in `group_vars/all`, then:
 ```
 
 Fence's usersync job polls the S3 bucket on a schedule and applies changes.
+
+## Creating programs and projects
+
+Before data can be submitted, at least one program and project must exist in Sheepdog. Download a credentials JSON from the Gen3 portal (Profile → Create API key), then:
+
+```shell
+# Check your admin access
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> whoami
+
+# List existing programs and projects
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> list
+
+# Create a program, then a project within it
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> create --program MyProgram
+uv run python create_gen3_project.py --endpoint https://<gen3_hostname> create --program MyProgram --project MyProject
+```
+
+By default the script looks for credentials at `~/.gen3/credentials.json`. Pass `--credentials /path/to/creds.json` to override.
 
 ## Checking ArgoCD sync status
 

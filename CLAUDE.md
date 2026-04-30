@@ -14,8 +14,11 @@ source eLwazi-openrc.sh      # required before any cloud operations
 terraform apply              # provision infrastructure → generates inventory.yaml
 ./deploy.sh                  # full Ansible deployment (first time)
 ./update.sh                  # routine updates: re-upload user.yaml + re-apply ArgoCD Application
+./update.sh --check          # dry-run: show what would change without applying
+./destroy_compute.sh         # destroy Kubernetes, storage, and database VMs (preserves load balancer, network, and Garage data volume)
 ansible-playbook gen3.yml --tags argocd  # Helm values / portal only
 ansible-playbook gen3.yml --tags user    # user.yaml only
+python create_gen3_project.py            # create/manage Gen3 programs and projects via Sheepdog API
 ```
 
 ## Configuration Files
@@ -73,7 +76,7 @@ Ansible renders `roles/gen3/templates/argocd-application.yaml.j2` with all Helm 
 
 | Role | Purpose |
 |------|---------|
-| `base` | OS hardening, packages, timezone |
+| `base` | OS image setup for Packer (`base_image` host group — not run against live cluster) |
 | `common` | Shared services across all nodes |
 | `database` | PostgreSQL with Gen3-specific users/DBs |
 | `rancher` | RKE2 Kubernetes cluster (server + workers) |
