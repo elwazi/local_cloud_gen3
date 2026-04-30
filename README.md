@@ -38,7 +38,7 @@ The repo includes symlinks `variables.auto.tfvars` and `variables.auto.pkrvars.h
 - `network_ids` / `security_groups` — OpenStack network/security group IDs
 - `name_prefix` / `node_suffix` / `image_suffix` — naming conventions
 - `timezone` — e.g. `Africa/Johannesburg`
-- `ssh_public_key`
+- `ssh_private_key_file` — path to the SSH private key file; the public key is derived from `ssh_private_key_file.pub`
 
 **Node sizing**
 - `database_node_flavour` / `database_node_disk_size_gib`
