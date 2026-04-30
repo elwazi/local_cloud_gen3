@@ -32,7 +32,7 @@ gen3_users:
   - email: user@example.com
     name: User Name
     groups: [data_submitters, data_readers, indexd_admins]
-    policies: [eLwaziProject_submitter]
+    policies: [PROJECT_submitter]
 ```
 
 **`gen3_portal`** — portal branding and customisation:
