@@ -7,10 +7,10 @@ echo "Running common.yml..."
 ansible-playbook -i inventory.yaml common.yml
 
 echo "Running database.yml, storage.yml, load_balancer.yml, rancher.yml in parallel..."
-ANSIBLE_LOG_PATH=logs/database.log      ansible-playbook -i inventory.yaml database.yml      > logs/database.log      2>&1 & pid_db=$!
-ANSIBLE_LOG_PATH=logs/storage.log       ansible-playbook -i inventory.yaml storage.yml       > logs/storage.log       2>&1 & pid_storage=$!
-ANSIBLE_LOG_PATH=logs/load_balancer.log ansible-playbook -i inventory.yaml load_balancer.yml > logs/load_balancer.log 2>&1 & pid_lb=$!
-ANSIBLE_LOG_PATH=logs/rancher.log       ansible-playbook -i inventory.yaml rancher.yml       > logs/rancher.log       2>&1 & pid_rancher=$!
+ANSIBLE_LOG_PATH=/dev/null ansible-playbook -i inventory.yaml database.yml      > logs/database.log      2>&1 & pid_db=$!
+ANSIBLE_LOG_PATH=/dev/null ansible-playbook -i inventory.yaml storage.yml       > logs/storage.log       2>&1 & pid_storage=$!
+ANSIBLE_LOG_PATH=/dev/null ansible-playbook -i inventory.yaml load_balancer.yml > logs/load_balancer.log 2>&1 & pid_lb=$!
+ANSIBLE_LOG_PATH=/dev/null ansible-playbook -i inventory.yaml rancher.yml       > logs/rancher.log       2>&1 & pid_rancher=$!
 
 fail=0
 wait $pid_db      || { echo "database.yml failed — see logs/database.log";           fail=1; }
