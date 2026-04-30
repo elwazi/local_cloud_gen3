@@ -5,7 +5,7 @@
   tags:
     - postgres
   block:
-# todo: add postgres repo so that postgres 18 can be installed
+    # add postgres repo so the configured postgres_major_version can be installed
     - name: Add postgres apt repository key
       apt_key:
         url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
