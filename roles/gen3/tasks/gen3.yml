@@ -16,8 +16,18 @@
   changed_when: '"unchanged" not in gen3_ns_apply.stdout'
 
 - name: Resolve Gen3 users bucket name
+  tags: always
   set_fact:
     gen3_user_bucket_name: "{{ gen3.user_bucket_name | default(gen3.hostname ~ '-user-bucket') }}"
+
+- name: Copy utility scripts to ~/bin
+  tags: [scripts]
+  copy:
+    src: "{{ item }}"
+    dest: "~/bin/{{ item | basename }}"
+    mode: 0755
+  with_fileglob:
+    - "{{ role_path }}/files/*.sh"
 
 - name: Create .s3cfg file
   tags: [s3cfg, s3]
@@ -50,6 +60,7 @@
   command: "~/.venv/bin/s3cmd put --force ~/user.yaml s3://{{ gen3_user_bucket_name }}/user.yaml"
   register: user_yaml_upload
   changed_when: "'upload:' in user_yaml_upload.stdout"
+
 
 - name: Apply gen3-db-creds Kubernetes Secret
   tags: [secrets]
@@ -99,6 +110,39 @@
         - {name: tcp-53, port: 53, protocol: TCP}
   register: kubedns_apply
   changed_when: '"unchanged" not in kubedns_apply.stdout'
+
+- name: Read portal logo
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/{{ gen3_portal.logo_file | default('sickle_in_africa.png') }}"
+  register: _portal_logo
+  delegate_to: localhost
+  become: false
+
+- name: Read portal favicon
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/{{ gen3_portal.favicon_file | default('favicon.png') }}"
+  register: _portal_favicon
+  delegate_to: localhost
+  become: false
+
+- name: Read portal createdby logo
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/createdby.png"
+  register: _portal_createdby
+  delegate_to: localhost
+  become: false
+
+- name: Read sponsor logos
+  tags: [argocd, portal]
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/portal/{{ item.file }}"
+  loop: "{{ gen3_portal.sponsors | default([]) }}"
+  register: _portal_sponsors
+  delegate_to: localhost
+  become: false
 
 - name: Apply ArgoCD Application
   tags: [argocd]

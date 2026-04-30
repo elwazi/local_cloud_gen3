@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "ansible>=13.3.0",
+    "gen3>=4.27.8",
     "python-openstackclient>=9.0.0",
     "s3cmd>=2.4.0",
     "s3fs>=2026.2.0",

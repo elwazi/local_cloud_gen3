@@ -95,5 +95,10 @@ servers:
       'host_ip': '${database_node.access_ip_v4}',
       'user': '${postgres_user}',
       'password': '${postgres_password}',
+      'service_passwords': {
+%{ for svc, pw in gen3_db_service_passwords ~}
+        '${svc}': '${pw}',
+%{ endfor ~}
+      }
     }
 

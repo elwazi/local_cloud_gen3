@@ -1,163 +1,177 @@
 # eLwazi / GeneMap Gen3
 
-Infrastructure-as-code for deploying eLwazi/GeneMap Gen3 — a private genomic data management platform on OpenStack. The deployment pipeline is Packer (image building) → Terraform (cloud provisioning) → Ansible (service configuration), with ArgoCD providing GitOps-based continuous reconciliation of Gen3 services.
+Infrastructure-as-code for deploying a private genomic data management platform on OpenStack. The deployment pipeline is Packer (image building) → Terraform (cloud provisioning) → Ansible (service configuration), with ArgoCD providing continuous reconciliation of Gen3 services inside the RKE2 Kubernetes cluster.
 
-# Setting up the infrastructure on OpenStack
+## Requirements
 
-## Software requirements
+Install [Packer](https://developer.hashicorp.com/packer/install) and [Terraform](https://developer.hashicorp.com/terraform/install).
 
-Install [Packer](https://developer.hashicorp.com/packer/install) and [Terraform](https://developer.hashicorp.com/terraform/install) using your OS package manager or the official binaries.
-
-Install Ansible and the OpenStack client:
+Install Python dependencies (Ansible, OpenStack client):
 
 ```shell
 uv sync
 ```
 
-### Initialise Packer plugins
+## First-time setup
 
-Run once to install the OpenStack plugin:
+### 1. OpenStack credentials
 
-```shell
-packer init images.openstack.pkr.hcl
-```
-
-## OpenStack credentials
-
-Download the `*-openrc.sh` file from your OpenStack dashboard (top-right dropdown → OpenStack RC File). Source it before running any cloud operations:
+Download the `*-openrc.sh` file from your OpenStack dashboard (top-right dropdown → OpenStack RC File). Source it before any cloud operations:
 
 ```shell
 source eLwazi-openrc.sh
 ```
 
-You will be prompted for your OpenStack password. All subsequent Packer, Terraform, and Ansible commands require this environment to be set.
-
-## Setting up variables
-
-Two files must be created from their templates before deploying.
-
-### Packer and Terraform (`variables.auto.hcl`)
+### 2. Packer/Terraform configuration (`variables.auto.hcl`)
 
 ```shell
 cp variables.auto.hcl.template variables.auto.hcl
 ```
 
-Symlinks `gen3.auto.tfvars` and `gen3.auto.pkrvars.hcl` point at this file so both Packer and Terraform pick it up automatically.
-
-Edit `variables.auto.hcl` with values for your environment. All variables are defined in `variables.hcl`. The variables to configure are:
+Symlinks `gen3.auto.tfvars` and `gen3.auto.pkrvars.hcl` point at this file so both tools pick it up automatically. Edit it with values for your environment:
 
 **Infrastructure**
-* `admin_user` — login name for the admin user
-* `image_suffix` — suffix appended to all built image names
-* `base_image_source` — source URL for the base Ubuntu 24.04 image
-* `base_image_source_format` — image format (`qcow2`)
-* `build_image_flavour` — VM flavour used when building images with Packer
-* `floating_ip_network_id` — OpenStack floating IP network ID
-* `floating_ip_pool_name` — OpenStack floating IP pool name
-* `network_ids` — list of OpenStack network IDs to attach nodes to
-* `security_groups` — list of security group IDs
-* `name_prefix` — prefix applied to all infrastructure names
-* `node_suffix` — suffix appended to node hostnames
-* `timezone` — timezone for all VMs (e.g. `Africa/Johannesburg`)
-* `ssh_public_key` — SSH public key for admin access
+- `admin_user` — VM login name
+- `base_image_source` / `base_image_source_format` — source Ubuntu 24.04 image
+- `build_image_flavour` — VM flavour used during Packer builds
+- `floating_ip_network_id` / `floating_ip_pool_name` — OpenStack floating IP settings
+- `network_ids` / `security_groups` — OpenStack network/security group IDs
+- `name_prefix` / `node_suffix` / `image_suffix` — naming conventions
+- `timezone` — e.g. `Africa/Johannesburg`
+- `ssh_public_key`
 
 **Node sizing**
-* `database_node_flavour` — VM flavour for the PostgreSQL node
-* `database_node_disk_size_gib` — database node volume size (default: 40)
-* `rancher_rke2_server_node_count` — number of RKE2 server nodes (default: 3)
-* `rancher_rke2_worker_node_count` — number of RKE2 worker nodes (default: 2)
-* `rancher_rke2_server_node_flavour` — VM flavour for RKE2 server nodes
-* `rancher_rke2_worker_node_flavour` — VM flavour for RKE2 worker nodes
-* `rancher_rke2_server_node_disk_size_gib` — RKE2 server volume size (default: 80)
-* `rancher_rke2_worker_node_disk_size_gib` — RKE2 worker volume size (default: 160)
-* `load_balancer_node_flavour` — VM flavour for the load balancer node
-* `storage_node_flavour` — VM flavour for the Garage S3 storage node
-* `storage_node_disk_size_gib` — Garage storage volume size (default: 500)
+- `database_node_flavour` / `database_node_disk_size_gib`
+- `rancher_rke2_server_node_count` / `rancher_rke2_server_node_flavour` / `rancher_rke2_server_node_disk_size_gib`
+- `rancher_rke2_worker_node_count` / `rancher_rke2_worker_node_flavour` / `rancher_rke2_worker_node_disk_size_gib`
+- `load_balancer_node_flavour`
+- `storage_node_flavour` / `storage_node_disk_size_gib`
 
 **Gen3**
-* `gen3_hostname` — public hostname for the Gen3 deployment
-* `gen3_user` — Linux user account for Gen3 (default: `gen3`)
-* `gen3_admin_email` — admin email address
+- `gen3_hostname` — public hostname
+- `gen3_user` — Linux account for Gen3 (default: `gen3`)
+- `gen3_admin_email`
 
-**Authentication**
-* `google_client_id` / `google_client_secret` — Google OIDC credentials
+**Authentication & secrets**
+- `google_client_id` / `google_client_secret` — Google OIDC credentials
+- `postgres_user` / `postgres_password`
+- `garage_rpc_secret` — generate: `openssl rand -hex 32`
+- `garage_access_key` — generate: `openssl rand -hex 16`
+- `garage_secret_key` — generate: `openssl rand -hex 32`
 
-**PostgreSQL**
-* `postgres_user` / `postgres_password` — master PostgreSQL credentials
-
-**Garage S3 storage**
-* `garage_rpc_secret` — Garage cluster RPC secret (generate: `openssl rand -hex 32`)
-* `garage_access_key` — Garage S3 access key (generate: `openssl rand -hex 16`)
-* `garage_secret_key` — Garage S3 secret key (generate: `openssl rand -hex 32`)
-
-**Portal branding** (all have defaults)
-* `gen3_portal_appName`, `gen3_portal_navigation_title`
-* `gen3_portal_index_introduction_heading`, `gen3_portal_index_introduction_text`
-* `gen3_portal_login_title`, `gen3_portal_login_subtitle`, `gen3_portal_login_text`, `gen3_portal_login_email`
-* `gen3_portal_logo_base64_png` — portal logo as a base64-encoded PNG
-
-### Ansible (`group_vars/all`)
+### 3. Ansible configuration (`group_vars/all`)
 
 ```shell
 cp group_vars/all.template group_vars/all
 ```
 
-Edit `group_vars/all` and add a `gen3_users` list with the identities that should have access to the platform. See `group_vars/all.template` for the full field reference and examples. This file is gitignored — keep it out of version control.
+This file is gitignored. Edit it to set:
 
-## Build and deploy
+**Users** — identities with access to the platform:
 
-### 1. Build OpenStack images
+```yaml
+gen3_users:
+  - email: user@example.com
+    name: User Name
+    groups: [data_submitters, data_readers, indexd_admins]
+    policies: [SickleInAfrica_submitter]
+```
+
+See `group_vars/all.template` for the full field reference.
+
+**Portal branding:**
+
+```yaml
+gen3_portal:
+  appName: "My Data Commons"
+  nav_title: "MyCommons"
+  heading: "Welcome"
+  intro_text: "Browse and submit genomic datasets."
+  login_title: "My Data Commons"
+  login_subtitle: "Supporting genomic research"
+  login_text: "Please log in with your institutional Google account."
+  logo_file: my_logo.png        # file in roles/gen3/files/portal/
+  css: |
+    .nav-bar { background-color: #C52D3A !important; }
+  sponsors:
+    - file: sponsor.svg
+      href: https://example.org
+      alt: Sponsor Name
+```
+
+Portal image assets (logo, favicon, createdby, sponsor logos) live in `roles/gen3/files/portal/`. Drop a file there, reference it by filename in `group_vars/all`, and redeploy.
+
+### 4. Initialise Packer plugins (once)
+
+```shell
+packer init images.openstack.pkr.hcl
+```
+
+## Deploy
+
+### Build OpenStack images
 
 ```shell
 ./build.sh
 ```
 
-Checks for existing images before building — safe to re-run.
+Safe to re-run — checks for existing images before building.
 
-### 2. Provision infrastructure
+### Provision infrastructure
 
 ```shell
-terraform init
+terraform init   # first time only
 terraform apply
 ```
 
-This creates the network, security groups, and VMs, and generates `inventory.yaml` which Ansible uses. Do not edit `inventory.yaml` manually.
+Generates `inventory.yaml` for Ansible. Do not edit it manually.
 
-### 3. Configure all services
+### Configure all services
 
 ```shell
 ./deploy.sh
 ```
 
-`deploy.sh` runs Ansible playbooks in the following order:
+Runs Ansible playbooks in order:
 
 | Step | Playbooks | Mode |
 |------|-----------|------|
 | 1 | `common.yml` | sequential |
 | 2 | `database.yml`, `storage.yml`, `load_balancer.yml`, `rancher.yml` | parallel |
-| 3 | `argocd.yml` | sequential — installs ArgoCD on the RKE2 cluster |
-| 4 | `gen3.yml` | sequential — creates Kubernetes secrets and applies the ArgoCD Application |
+| 3 | `argocd.yml` | sequential |
+| 4 | `gen3.yml` | sequential |
 
 Logs for the parallel step are written to `logs/`.
 
-## Managing Gen3 users
+## Routine updates
 
-User identities are stored in `group_vars/all` (gitignored) as a `gen3_users` list. See `group_vars/all.template` for the full field reference. On each run, `gen3.yml` renders the list into `user.yaml` via `roles/gen3/templates/users.yaml.j2` and uploads it to the `<hostname>-user-bucket` Garage S3 bucket. Fence's usersync job reads from that bucket on a schedule.
-
-To add or update users:
+After the initial deploy, use `update.sh` for day-to-day changes — it re-uploads `user.yaml` to S3 and re-applies the ArgoCD Application:
 
 ```shell
-# Edit group_vars/all — update the gen3_users list
-ansible-playbook gen3.yml --tags user
+./update.sh
 ```
 
-## Gen3 configuration updates
-
-Gen3 deploys from the upstream Helm chart (`https://helm.gen3.org`, chart: `gen3`) and values are rendered by Ansible into the ArgoCD `Application`.
-
-To update Gen3 configuration:
+Scope it further with tags:
 
 ```shell
-# Edit roles/gen3/templates/argocd-application.yaml.j2 and/or group_vars/all
-ansible-playbook gen3.yml --tags argocd
+./update.sh --tags user    # users only (re-upload user.yaml)
+./update.sh --tags argocd  # Helm values / portal branding only
+./update.sh --check        # dry run
+```
+
+## Managing users
+
+Edit `gen3_users` in `group_vars/all`, then:
+
+```shell
+./update.sh --tags user
+```
+
+Fence's usersync job polls the S3 bucket on a schedule and applies changes.
+
+## Checking ArgoCD sync status
+
+```shell
+kubectl get application gen3 -n argocd
+kubectl get application gen3 -n argocd -o jsonpath='{.status.sync.status} {.status.health.status}{"\n"}'
 ```

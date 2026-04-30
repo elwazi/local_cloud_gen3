@@ -3,6 +3,12 @@ locals {
   rancher_node_name = "gen3-rancher.${var.node_suffix}"
 }
 
+resource "random_password" "gen3_db" {
+  for_each = toset(["fence", "arborist", "audit", "indexd", "metadata", "peregrine", "requestor", "sheepdog", "wts"])
+  length   = 32
+  special  = false
+}
+
 resource "openstack_compute_keypair_v2" "gen3_ssh_key" {
   name       = "${var.name_prefix}-sshkey"
   public_key = file("${var.ssh_private_key_file}.pub")
@@ -38,8 +44,9 @@ resource "local_file" "inventory" {
       load_balancer_float_ip = openstack_networking_floatingip_v2.load_balancer_float_ip.address # todo: change back to this
       load_balancer_node     = openstack_compute_instance_v2.load_balancer_node
 
-      postgres_user     = var.postgres_user
-      postgres_password = var.postgres_password
+      postgres_user              = var.postgres_user
+      postgres_password          = var.postgres_password
+      gen3_db_service_passwords  = { for svc, pw in random_password.gen3_db : svc => pw.result }
 
       rancher_rke2_server_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_server_nodes.* : node]
       rancher_rke2_worker_nodes = [for node in openstack_compute_instance_v2.rancher_rke2_worker_nodes.* : node]
@@ -53,8 +60,6 @@ resource "local_file" "inventory" {
       ssh_private_key_file = var.ssh_private_key_file
       timezone             = var.timezone
 
-      argocd_repo_url   = var.argocd_repo_url
-      argocd_repo_token = var.argocd_repo_token
     }
   )
   filename = "inventory.yaml"
