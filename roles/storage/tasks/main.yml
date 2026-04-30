@@ -27,6 +27,16 @@
     state: mounted
   tags: [storage, mount]
 
+- name: Set ownership on garage data directory
+  become: yes
+  file:
+    path: "{{ garage_data_dir }}"
+    state: directory
+    owner: garage
+    group: garage
+    mode: "0755"
+  tags: [storage, mount]
+
 - name: Deploy garage.toml
   become: yes
   template:
